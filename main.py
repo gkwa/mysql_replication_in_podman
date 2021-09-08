@@ -26,7 +26,7 @@ set -o errexit
 
 podman --version
 
-# podman login --username mtmonacelli registry.redhat.io
+# podman login --username mtmonacelli registry.redhat.io $REGISTRY_REDHAT_IO_PASSWORD
 
 {{ status() }}
 
@@ -51,7 +51,7 @@ rm -rf ./reptest/
 mkdir -p reptest/{{ pod.containers[0].name }}
 cat <<'__eot__' >reptest/{{ pod.containers[0].name }}/my.cnf
 [mysqld]
-bind-address = 127.0.0.1
+# bind-address = 127.0.0.1
 __eot__
 {% endfor %}
 

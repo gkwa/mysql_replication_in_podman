@@ -3,5 +3,5 @@ install:
 - bash -x setup_debian.sh
 - bash -x create_test.sh
 test_script:
-- bash -x test.sh
+- bash test.sh
 build: off
