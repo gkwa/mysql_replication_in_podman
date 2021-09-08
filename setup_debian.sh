@@ -6,8 +6,9 @@ curl -sSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainers
 
 sudo apt-get -qy update
 sudo apt-get -qy install podman
+
+podman --version
+
 sudo apt-get -qy install python3-pip
 # sudo apt-get -qy install python-venv
 sudo apt-get -qy install python3.8-venv
-
-podman --version

@@ -1,6 +1,6 @@
 image: Ubuntu2004
 install:
-- bash -x setup.sh
+- bash -x setup_debian.sh
 - bash -x create_test.sh
 test_script:
 - bash -x test.sh
