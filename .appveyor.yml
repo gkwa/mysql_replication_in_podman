@@ -1,6 +1,6 @@
 image: Ubuntu
 install:
 - ./setup.sh
-build: off
 - python main.py >doit.sh
 - bash -x doit.sh
+build: off
