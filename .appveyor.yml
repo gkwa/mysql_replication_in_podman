@@ -2,5 +2,6 @@ image: Ubuntu2004
 install:
 - bash -x setup.sh
 - bash -x create_test.sh
+test_script:
 - bash -x test.sh
 build: off
