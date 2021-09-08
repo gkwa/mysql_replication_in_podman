@@ -3,5 +3,6 @@ install:
 - bash -x setup.sh
 - python main.py >doit.sh
 - chmod +x doit.sh
-- bash -x doit.sh
+- bash -x setup_python.sh
+- source .venv/bin/activate && bash -x doit.sh
 build: off
