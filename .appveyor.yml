@@ -1,7 +1,6 @@
 image: Ubuntu2004
 install:
 - bash -x setup.sh
-- chmod +x doit.sh
 - bash -x create_test.sh
 - bash -x test.sh
 build: off
