@@ -2,5 +2,6 @@ image: Ubuntu2004
 install:
 - bash -x setup.sh
 - python main.py >doit.sh
+- chmod +x doit.sh
 - bash -x doit.sh
 build: off
