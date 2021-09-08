@@ -1,0 +1,20 @@
+global:
+  network: reptest
+  internal_port: 3306
+pods:
+- name: my1p
+  volume: my1dbdata
+  containers:
+  - name: my1c
+- name: my2p
+  volume: my2dbdata
+  containers:
+  - name: my2c
+- name: my3p
+  volume: my3dbdata
+  containers:
+  - name: my3c
+- name: my4p
+  volume: my4dbdata
+  containers:
+  - name: my4c
