@@ -28,7 +28,7 @@ curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/instal
 secret=$(python3 -c "import uuid; print(uuid.uuid4())")
 echo -n "$secret" >$tmp/secret
 
-salt=$(./appveyor-tools/secure-file -encrypt $tmp/auth.json -secret $secret -out $tmp/auth.json.enc | cut -d: -f2 | tr -d ' ')
+salt=$(./appveyor-tools/secure-file -encrypt $tmp/auth.json -secret $secret -out $tmp/auth.json.enc | sed -e 's#Salt: *##')
 echo -n "$salt" |python -m base64 >$tmp/salt
 
 # now try decrypting it to verify it all worked
