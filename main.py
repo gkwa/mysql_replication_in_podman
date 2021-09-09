@@ -80,7 +80,7 @@ podman volume inspect {{ pod.volume }}
 {%- endfor %}
 
 {% for pod in manifest['pods'] %}
-until podman exec -ti {{ pod.containers[0].name }} bash -c 'mysql --host {{ pod.name }} --user=user --password=pass --execute "SHOW DATABASES;"'; do sleep 3; done;
+until podman exec -ti {{ pod.containers[0].name }} bash -c 'mysql --host {{ pod.name }} --user=user --password=pass --execute "SHOW DATABASES;"'; do sleep 5; done;
 {%- endfor %}
 
 {% for pod in manifest['pods'] %}{% set ip='ip' ~ loop.index %}
