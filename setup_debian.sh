@@ -6,6 +6,8 @@ curl -sSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainers
 
 sudo apt-get -qy update
 sudo apt-get -qy install podman
+sudo apt-get -qy install unzip
+sudo apt-get -qy install jq
 
 podman --version
 

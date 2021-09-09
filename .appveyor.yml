@@ -1,7 +1,16 @@
+environment:
+  my_salt:
+    secure: SnTO5YDIDoH1yOrSrJ8N9MB8F7V2HT1XmN4fMoLfJbW0PLYIufSaRixlKg3Q7os639J78X0kNS7QUBjdawt48A==
+  my_secret:
+    secure: z6ef4A9PokH8ftDJCsw3bpz6bFRXk0vOwy2a/VQHB7qUrLGKy/m0EzbJyBtHuddC
 image: Ubuntu2004
 install:
+- mkdir -p /tmp/sensitive
+- ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret "$my_secret" -salt "$my_salt" -out /tmp/sensitive/auth.json.decrypted
+- cp /tmp/sensitive/auth.json.decrypted /run/user/0/containers/auth.json
 - bash -x setup_debian.sh
 - bash -x create_test.sh
+- curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -
 test_script:
 - bash test.sh
 build: off
