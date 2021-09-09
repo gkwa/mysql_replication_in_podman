@@ -6,11 +6,6 @@ environment:
 image: Ubuntu2004
 install:
 - mkdir -p /tmp/sensitive
-- dotnet --version
-- bash -x secure_file_setup.sh
-- curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -
-- dotnet --version
-- dotnet --list-sdks
 - ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret "$my_secret" -salt "$my_salt" -out /tmp/sensitive/auth.json.decrypted
 - cp /tmp/sensitive/auth.json.decrypted /run/user/0/containers/auth.json
 - bash -x setup_debian.sh
