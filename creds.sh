@@ -32,8 +32,7 @@ salt=$(./appveyor-tools/secure-file -encrypt $tmp/auth.json -secret $secret -out
 echo -n "$salt" |python -m base64 >$tmp/salt
 
 # now try decrypting it to verify it all worked
-./appveyor-tools/secure-file -decrypt $tmp/auth.json.enc -secret $secret -salt "$salt" -out $tmp/auth.json.decrypted
-# ls $tmp/auth.json.decrypted
+./appveyor-tools/secure-file -decrypt $tmp/auth.json.enc -secret "$secret" -salt "$salt" -out $tmp/auth.json.decrypted
 cat $tmp/auth.json.decrypted
 
 credentials=$(jq -r .auths.'"registry.redhat.io"'.auth $tmp/auth.json.decrypted | python -m base64 -d)
