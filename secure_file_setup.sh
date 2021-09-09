@@ -1,15 +1,5 @@
 #!/bin/bash
 
-dotnet --version
-
-cat <<'__eot__' >global.json
-{
-  "sdk": {
-    "version": "3.1.412"
-  }
-}
-__eot__
-
 dotnet --list-sdks
 dotnet --version
 
