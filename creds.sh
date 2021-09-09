@@ -26,11 +26,10 @@ cat $tmp/auth.json
 
 curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -
 secret=$(python3 -c "import uuid; print(uuid.uuid4())")
-echo -n $secret |python -m base64 >$tmp/secret
+echo -n "$secret" |python -m base64 >$tmp/secret
 
 salt=$(./appveyor-tools/secure-file -encrypt $tmp/auth.json -secret $secret -out $tmp/auth.json.enc | cut -d: -f2 | tr -d ' ')
-# ls $tmp/auth.json.enc
-echo -n $salt |python -m base64 >$tmp/salt
+echo -n "$salt" |python -m base64 >$tmp/salt
 
 # now try decrypting it to verify it all worked
 ./appveyor-tools/secure-file -decrypt $tmp/auth.json.enc -secret $secret -salt "$salt" -out $tmp/auth.json.decrypted
