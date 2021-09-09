@@ -5,6 +5,8 @@ set +o history
 
 PASSWORD="$1"
 
+echo $PASSWORD
+
 # base64 encode basic credentials
 auth=$(echo -n "mtmonacelli:$PASSWORD" | python -m base64)
 
@@ -35,7 +37,8 @@ echo -n "$salt" |python -m base64 >$tmp/salt
 
 # now try decrypting it to verify it all worked
 ./appveyor-tools/secure-file -decrypt $tmp/auth.json.enc -secret "$secret" -salt "$salt" -out $tmp/auth.json.decrypted.tmp
-cat $tmp/auth.json.decrypted
+cat $tmp/auth.json.decrypted.tmp |python -m base64 -d >$tmp/auth.json.decrypted
+rm -f $tmp/auth.json.decrypted.tmp
 
 credentials=$(jq -r .auths.'"registry.redhat.io"'.auth $tmp/auth.json.decrypted | python -m base64 -d)
 echo $credentials
