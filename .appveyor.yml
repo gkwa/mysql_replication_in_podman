@@ -6,8 +6,8 @@ install:
 - echo salt:$my_salt
 - echo secret:$my_secret
 - ls -la ./auth.json.enc
-# - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
-# - sh: sleep 60m
+- sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
+- sh: sleep 60m
 - sh: ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret $my_secret -salt $my_salt -out /tmp/auth.json.decrypted
 - cp /tmp/auth.json.decrypted /run/user/0/containers/auth.json
 - bash -x setup_debian.sh
