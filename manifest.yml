@@ -1,5 +1,5 @@
 global:
-  network: reptest
+  network: replication
   internal_port: 3306
 pods:
 - name: my1p
