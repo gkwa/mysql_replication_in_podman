@@ -5,7 +5,13 @@ echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers
 curl -sSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | sudo apt-key add -
 
 sudo apt-get -qy update
-sudo apt-get -qy install podman unzip jq git python3-pip python3-venv
+sudo apt-get -qy install \
+     podman \
+     unzip \
+     jq \
+     git \
+     python3-pip \
+     python3-venv
 
 git clone https://github.com/sstephenson/bats.git /usr/local/src/bats
 cd /usr/local/src/bats
