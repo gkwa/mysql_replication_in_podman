@@ -4,9 +4,10 @@ image: Ubuntu2004
 install:
 - bash -x secure_file_setup.sh
 - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
-- sh: ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret $my_secret -salt $my_salt -out /tmp/auth.json.decrypted
+- sh: ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret $my_secret -salt $my_salt -out /tmp/auth.json.decrypted.tmp
+- sudo mkdir -p $HOME/.docker/
+- cat /tmp/auth.json.decrypted.tmp | sudo python -m base64 -d >$HOME/.docker/config.json
 # https://ci.appveyor.com/project/TaylorMonacelli/mysql-replication-in-podman/builds/40699358
-- sudo bash ./containers.sh 
 - sudo bash -x setup_debian.sh
 - sudo bash -x create_test.sh
 test_script:
