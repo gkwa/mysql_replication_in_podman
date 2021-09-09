@@ -1,8 +1,8 @@
 environment:
   my_salt:
-    secure: q1Xlchd5rfjmJ/W/B6yotEvobZiEQxi2epndq5/5EUsFUarbRWDW0Yv4CP5bMsvoeHyBsmfQwrX04Y2EmuZS+w==
+    secure: pY+l2Pbf2Yyqifv2OGJtf6HlnYArlp1yITWhb8jr1cryjqujPMQaFe9kMwacFgH3Myv92kkq9Qtpk6DhFLHRNGrXOmD+ndHaCZ/NPJWiIIo=
   my_secret:
-    secure: /R3hEzhY1CDikDl1y3TEF0o9M4WLAbIkQbDu8OaVkGt2kDPWroXYYjJQQ/I+YHJr
+    secure: QMQlsox93ucriLcqZtErM7nwP9KflI+jJWk/kgYVSljmcgBuHcPXJr1+PoxZFCpFgXAMRL6xAFFFTNqqq4VVwg==
 image: Ubuntu2004
 install:
 - mkdir -p /tmp/sensitive
