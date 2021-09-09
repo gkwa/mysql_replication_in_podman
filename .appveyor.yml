@@ -4,9 +4,9 @@ image: Ubuntu2004
 install:
 - bash -x secure_file_setup.sh
 - ls -la ./auth.json.enc
-# - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
-# - sh: sleep 60m
 - sh: ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret $my_secret -salt $my_salt -out /tmp/auth.json.decrypted
+- sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
+- sh: sleep 60m
 - bash -x ./containers.sh
 - bash -x setup_debian.sh
 - bash -x create_test.sh
