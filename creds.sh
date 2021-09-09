@@ -33,7 +33,8 @@ echo -n "$secret" >$tmp/secret
 
 salt=$(./appveyor-tools/secure-file -encrypt $tmp/auth.json -secret $secret -out $tmp/auth.json.enc | sed -e 's#Salt: *##')
 rm -f $tmp/auth.json.enc.tmp
-echo -n "$salt" |python -m base64 >$tmp/salt
+# echo -n "$salt" |python -m base64 >$tmp/salt
+echo -n "$salt" >$tmp/salt
 
 # now try decrypting it to verify it all worked
 ./appveyor-tools/secure-file -decrypt $tmp/auth.json.enc -secret "$secret" -salt "$salt" -out $tmp/auth.json.decrypted.tmp
