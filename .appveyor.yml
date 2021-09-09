@@ -11,5 +11,5 @@ install:
 - sudo bash -x setup_debian.sh
 - sudo bash -x create_test.sh
 test_script:
-- bash test.sh
+- sudo bash -x test.sh
 build: off
