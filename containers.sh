@@ -10,6 +10,8 @@ cat /tmp/auth.json.decrypted.tmp |python -m base64 -d >/tmp/auth.json.decrypted
 mkdir -p $HOME/.docker/
 cp /tmp/auth.json.decrypted $HOME/.docker/config.json
 
+sudo ls $HOME/.docker/config.json
+
 sudo mkdir -p /run/user/$uid/containers
 sudo cp /tmp/auth.json.decrypted /run/user/$uid/containers/auth.json
 sudo chown -R $uid:$gid /run/user/$uid/containers

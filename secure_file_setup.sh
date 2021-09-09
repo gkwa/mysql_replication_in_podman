@@ -11,5 +11,3 @@ curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/instal
 # export PATH=$PATH:$HOME/dotnet
 # dotnet --list-sdks
 # dotnet --version
-
-echo $PWD

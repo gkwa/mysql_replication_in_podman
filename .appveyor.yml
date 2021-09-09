@@ -2,16 +2,14 @@ environment:
   APPVEYOR_SSH_KEY: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFp48yQviDu3U2mGdwv7CO3O84IAj4LJUXzyGbs6mT0q taylor.monacelli@streambox.com
 image: Ubuntu2004
 install:
-- sudo bash -x secure_file_setup.sh
-- ls -la ./auth.json.enc
+- bash -x secure_file_setup.sh
 - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 - sh: ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret $my_secret -salt $my_salt -out /tmp/auth.json.decrypted
-# - sh: sleep 60m
 # https://ci.appveyor.com/project/TaylorMonacelli/mysql-replication-in-podman/builds/40699358
-- bash ./containers.sh
-- bash -x setup_debian.sh
-- bash -x create_test.sh
+- sudo bash ./containers.sh 
+- sudo bash -x setup_debian.sh
+- sudo bash -x create_test.sh
 test_script:
-- podman info --debug
-- bash -x test.sh
+- sudo podman info --debug
+- sudo bash -x test.sh
 build: off
