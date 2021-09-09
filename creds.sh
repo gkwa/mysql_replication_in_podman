@@ -26,7 +26,7 @@ cat $tmp/auth.json
 
 curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -
 secret=$(python3 -c "import uuid; print(uuid.uuid4())")
-echo -n "$secret" |python -m base64 >$tmp/secret
+echo -n "$secret" >$tmp/secret
 
 salt=$(./appveyor-tools/secure-file -encrypt $tmp/auth.json -secret $secret -out $tmp/auth.json.enc | cut -d: -f2 | tr -d ' ')
 echo -n "$salt" |python -m base64 >$tmp/salt

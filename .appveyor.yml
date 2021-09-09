@@ -1,8 +1,8 @@
 environment:
   my_salt:
-    secure: O4hKaZJ7JnJdk5Y+Z9ofQZsMy8wRjYAGnTmBtjiDr/A7QwdD9REJHWuE+SqFzvDdwfr69QlRw2B7OBD0ixRhm9dKZ4iiwd+VoAJpCxhGkQo=
+    secure: lwrEEcxmfRcEwjDdJTnrvKb2WGRhlOJn5owzMXekjShulrpis05M4Xfi+8SAf6d72v1g3AXdOIiCkV2S32mijF9HMA/j/nBIsjuvmZBBG2A=
   my_secret:
-    secure: i3hzj1aGKbRsQHQkCw8C4huBICHF8qIFyBWb7Y08a/dKvtkrl+L7mcax24MaldT5Y7sHcADgoonYGePDY4tH2A==
+    secure: FCWXvjTOGJhrUIf5ylQF2e0MubEOtn4pqbwFkffTVP67bGw7S/cHX4cxp4nWWD7F
 image: Ubuntu2004
 install:
 - bash -x secure_file_setup.sh
