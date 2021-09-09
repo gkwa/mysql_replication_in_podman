@@ -7,6 +7,7 @@ install:
 # - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 # - sh: sleep 60m
 - sh: ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret $my_secret -salt $my_salt -out /tmp/auth.json.decrypted
+- sh: mkdir -p /run/user/$(id -u)/containers
 - cp /tmp/auth.json.decrypted /run/user/$(id -u)/containers/auth.json
 - bash -x setup_debian.sh
 - bash -x create_test.sh
