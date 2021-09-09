@@ -1,10 +1,4 @@
 image: Ubuntu2004
-# environment:
-#   my_salt:
-#     secure: 5FROKw3oLF8ysG1RQCbnLbUwTkLAGLCopZt9zzrnxoebDWUqjDsSP3Z4O9Y3fAMBpeNWXyivyAk5bK99k352POcD94nbZijUGtNqo1feIsA=
-#   my_secret:
-#     secure: nUQy3j6f5ZwmXmKlRjMHI+uk/mn81k32uC62aovYKZVEMgCbc0qE90R01VNewUZ3
-
 install:
 - bash -x secure_file_setup.sh
 - echo salt:$my_salt
