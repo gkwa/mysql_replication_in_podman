@@ -3,6 +3,7 @@
 uid=$(id -u)
 gid=$(id -g)
 
+echo $uid:$gid
 echo XDG_RUNTIME_DIR: $XDG_RUNTIME_DIR
 
 cp /tmp/auth.json.decrypted /tmp/auth.json.decrypted.tmp
