@@ -7,6 +7,8 @@ image: Ubuntu2004
 install:
 - mkdir -p /tmp/sensitive
 - bash -x secure_file_setup.sh
+- echo salt:$my_salt
+- echo secret:$my_secret
 - ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret "$my_secret" -salt "$my_salt" -out /tmp/sensitive/auth.json.decrypted
 - cp /tmp/sensitive/auth.json.decrypted /run/user/0/containers/auth.json
 - bash -x setup_debian.sh
