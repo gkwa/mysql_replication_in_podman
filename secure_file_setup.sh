@@ -1,6 +1,5 @@
 #!/bin/bash
 
-dotnet --list-sdks
 dotnet --version
 
 cat <<'__eot__' >global.json
