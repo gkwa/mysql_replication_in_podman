@@ -1,4 +1,5 @@
 @test "test1" {
-    result=$(podman ls | grep -c Running)
-    [ "$result" -eq 4 ]
+    run podman ls
+    [ $status -eq 0]
+    [ $(echo $output | grep -c Running) -eq 4 ]
 }
