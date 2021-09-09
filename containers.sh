@@ -8,7 +8,7 @@ echo XDG_RUNTIME_DIR: $XDG_RUNTIME_DIR
 cp /tmp/auth.json.decrypted /tmp/auth.json.decrypted.tmp
 cat /tmp/auth.json.decrypted.tmp | sudo python -m base64 -d >/tmp/auth.json.decrypted
 mkdir -p $HOME/.docker/
-cp /tmp/auth.json.decrypted $HOME/.docker/config.json
+sudo cp /tmp/auth.json.decrypted $HOME/.docker/config.json
 
 sudo cat /tmp/auth.json.decrypted >$HOME/.docker/config.json
 
