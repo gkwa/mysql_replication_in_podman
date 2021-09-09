@@ -1,9 +1,9 @@
 image: Ubuntu2004
 environment:
   my_salt:
-    secure: IA0zlM2jU2hngUs/ge5H3gkJPBAjjS4nmg7szx/WgY7EQYanWQZXlCNrRK6RtA9OBKTWjF1CRbscf39tHo8DKqrl/CXOfgZkRITwSnau6t4=
+    secure: 5FROKw3oLF8ysG1RQCbnLbUwTkLAGLCopZt9zzrnxoebDWUqjDsSP3Z4O9Y3fAMBpeNWXyivyAk5bK99k352POcD94nbZijUGtNqo1feIsA=
   my_secret:
-    secure: gk6yPzySJXpjxSyCTDFLDw6HiEfJlZ68u2saKVCYHP3T2S/zV+L2ePcHHc4VSoLP
+    secure: nUQy3j6f5ZwmXmKlRjMHI+uk/mn81k32uC62aovYKZVEMgCbc0qE90R01VNewUZ3
 install:
 - bash -x secure_file_setup.sh
 - echo salt:$my_salt
