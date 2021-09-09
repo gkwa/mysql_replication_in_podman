@@ -12,4 +12,5 @@ install:
 test_script:
 - sudo podman info --debug
 - sudo bash -x test.sh
+- sudo bats test.bats
 build: off
