@@ -41,6 +41,8 @@ cat $tmp/auth.json.decrypted.tmp |python -m base64 -d >$tmp/auth.json.decrypted
 rm -f $tmp/auth.json.decrypted.tmp
 
 
+
+
 credentials=$(jq -r .auths.'"registry.redhat.io"'.auth $tmp/auth.json.decrypted | python -m base64 -d)
 echo $credentials
 
