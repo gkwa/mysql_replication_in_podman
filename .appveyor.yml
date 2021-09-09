@@ -7,7 +7,8 @@ install:
 - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 - sh: ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret $my_secret -salt $my_salt -out /tmp/auth.json.decrypted
 # - sh: sleep 60m
-- bash ./containers.sh # don't use -x or it will reveal pass
+# https://ci.appveyor.com/project/TaylorMonacelli/mysql-replication-in-podman/builds/40699358
+- bash ./containers.sh
 - bash -x setup_debian.sh
 - bash -x create_test.sh
 test_script:
