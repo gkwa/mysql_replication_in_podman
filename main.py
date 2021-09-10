@@ -126,10 +126,15 @@ replica_ip{{ pod.replica.number }}=$(podman inspect {{ pod.replica.container }} 
 mkdir -p reptest/{{ pod.containers[0].name }}/extra
 cat <<__eot__ >reptest/{{ pod.containers[0].name }}/extra/user.sql
 CREATE USER '{{ global.user_replication }}'@'{{ pod.replica.fqdn }}' IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}';
-CREATE USER '{{ global.user_replication }}'@'$replica_ip{{ pod.replica.number }}' IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}';
-
 GRANT REPLICATION SLAVE ON *.* TO '{{ global.user_replication }}'@'{{ pod.replica.fqdn }}';
+
+CREATE USER '{{ global.user_replication }}'@'$replica_ip{{ pod.replica.number }}' IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}';
 GRANT REPLICATION SLAVE ON *.* TO '{{ global.user_replication }}'@'$replica_ip{{ pod.replica.number }}';
+
+-- fixme: sanity check
+CREATE USER '{{ global.user_replication }}'@'%' IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}';
+GRANT REPLICATION SLAVE ON *.* TO '{{ global.user_replication }}'@'%';
+
 FLUSH PRIVILEGES;
 __eot__
 {% endfor %}
