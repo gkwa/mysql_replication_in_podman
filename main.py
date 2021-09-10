@@ -54,6 +54,10 @@ podman volume create {{ pod.volume }}
 rm -rf reptest/
 
 {% for pod in pods %}
+mkdir -p reptest/{{ pod.containers[0].name }}/extra
+{%- endfor %}
+
+{% for pod in pods %}
 mkdir -p reptest/{{ pod.containers[0].name }}
 cat <<'__eot__' >reptest/{{ pod.containers[0].name }}/my.cnf
 [mysqld]
@@ -118,10 +122,12 @@ time podman exec --tty --interactive {{ container }} mysql --user={{ global.user
 
 {{ status() }}
 {% for pod in pods %}
+replica_ip{{ pod.replica.number }}=$(podman inspect {{ pod.replica.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ manifest['global']['network'] }}.IPAddress{%- raw -%} }} {%- endraw -%}')
 mkdir -p reptest/{{ pod.containers[0].name }}/extra
 cat <<__eot__ >reptest/{{ pod.containers[0].name }}/extra/user.sql
 CREATE USER '{{ global.user_replication }}'@'{{ pod.replica.fqdn }}' IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}';
 GRANT REPLICATION SLAVE ON *.* TO '{{ global.user_replication }}'@'{{ pod.replica.fqdn }}';
+GRANT REPLICATION SLAVE ON *.* TO '{{ global.user_replication }}'@'$replica_ip{{ pod.replica.number }}';
 FLUSH PRIVILEGES;
 __eot__
 {% endfor %}
