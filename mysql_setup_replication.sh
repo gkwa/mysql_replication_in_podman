@@ -126,10 +126,10 @@ podman pod ls
 
 
 
-until podman exec -ti my1c mysql --host=my1p --user=user --password=pass --execute "SHOW DATABASES;"; do sleep 5; done;
-until podman exec -ti my2c mysql --host=my2p --user=user --password=pass --execute "SHOW DATABASES;"; do sleep 5; done;
-until podman exec -ti my3c mysql --host=my3p --user=user --password=pass --execute "SHOW DATABASES;"; do sleep 5; done;
-until podman exec -ti my4c mysql --host=my4p --user=user --password=pass --execute "SHOW DATABASES;"; do sleep 5; done;
+until podman exec --tty --interactive my1c mysql --host=my1p --user=user --password=pass --execute "SHOW DATABASES;"; do sleep 5; done;
+until podman exec --tty --interactive my2c mysql --host=my2p --user=user --password=pass --execute "SHOW DATABASES;"; do sleep 5; done;
+until podman exec --tty --interactive my3c mysql --host=my3p --user=user --password=pass --execute "SHOW DATABASES;"; do sleep 5; done;
+until podman exec --tty --interactive my4c mysql --host=my4p --user=user --password=pass --execute "SHOW DATABASES;"; do sleep 5; done;
 
 
 podman inspect my1c | grep -i ipaddr
@@ -159,28 +159,29 @@ mysql --port=3306 --host=$ip3 --user=user --password=pass --execute "SHOW DATABA
 mysql --port=3306 --host=$ip4 --user=user --password=pass --execute "SHOW DATABASES;"
 
 # FIXME: NoneNoneNoneNone
+
 # dns test
 
 
-time podman exec -ti my1c mysql --user=root --password=demo --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec -ti my1c mysql --user=root --password=demo --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec -ti my1c mysql --user=root --password=demo --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec -ti my1c mysql --user=root --password=demo --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my1c mysql --user=root --password=demo --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my1c mysql --user=root --password=demo --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my1c mysql --user=root --password=demo --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my1c mysql --user=root --password=demo --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
 
-time podman exec -ti my2c mysql --user=root --password=demo --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec -ti my2c mysql --user=root --password=demo --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec -ti my2c mysql --user=root --password=demo --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec -ti my2c mysql --user=root --password=demo --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my2c mysql --user=root --password=demo --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my2c mysql --user=root --password=demo --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my2c mysql --user=root --password=demo --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my2c mysql --user=root --password=demo --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
 
-time podman exec -ti my3c mysql --user=root --password=demo --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec -ti my3c mysql --user=root --password=demo --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec -ti my3c mysql --user=root --password=demo --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec -ti my3c mysql --user=root --password=demo --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my3c mysql --user=root --password=demo --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my3c mysql --user=root --password=demo --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my3c mysql --user=root --password=demo --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my3c mysql --user=root --password=demo --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
 
-time podman exec -ti my4c mysql --user=root --password=demo --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec -ti my4c mysql --user=root --password=demo --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec -ti my4c mysql --user=root --password=demo --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec -ti my4c mysql --user=root --password=demo --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my4c mysql --user=root --password=demo --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my4c mysql --user=root --password=demo --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my4c mysql --user=root --password=demo --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my4c mysql --user=root --password=demo --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
 
 # podman ps -a --pod
 podman ps --pod

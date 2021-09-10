@@ -77,7 +77,7 @@ podman volume inspect {{ pod.volume }}
 {{ status() }}
 
 {% for pod in manifest['pods'] %}
-until podman exec -ti {{ pod.containers[0].name }} mysql --host={{ pod.name }} --user=user --password=pass --execute "SHOW DATABASES;"; do sleep 5; done;
+until podman exec --tty --interactive {{ pod.containers[0].name }} mysql --host={{ pod.name }} --user=user --password=pass --execute "SHOW DATABASES;"; do sleep 5; done;
 {%- endfor %}
 
 {% for pod in manifest['pods'] %}{% set ip='ip' ~ loop.index %}
@@ -96,10 +96,11 @@ mysql --port={{ manifest['global']['internal_port'] }} --host=${{ip}} --user=use
 {%- endfor %}
 
 # FIXME: {% set containers = [] %}{% for pod in manifest['pods'] %}{{ containers.append( pod.containers[0].name ) }}{% endfor %}
+
 # dns test
 {% for container in containers %}
 {% for pod in manifest['pods'] %}
-time podman exec -ti {{ container }} mysql --user=root --password=demo --host={{ pod.name }}.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive {{ container }} mysql --user=root --password=demo --host={{ pod.name }}.dns.podman --execute 'SHOW DATABASES;' </dev/null
 {%- endfor %}
 {%- endfor %}
 
