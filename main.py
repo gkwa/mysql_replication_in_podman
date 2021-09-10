@@ -3,7 +3,9 @@ import pathlib
 import jinja2
 import yaml
 
-in_file = pathlib.Path("manifest.yml")
+manifest_path = pathlib.Path(__file__).parent.resolve() / "manifest.yml"
+
+in_file = manifest_path
 
 with open(in_file, "r") as stream:
     try:
@@ -52,16 +54,12 @@ podman volume create {{ pod.volume }}
 rm -rf reptest/
 
 {% for pod in pods %}
-mkdir -p reptest/{{ pod.containers[0].name }}/extra
-{% endfor %}
-
-{% for pod in pods %}
 mkdir -p reptest/{{ pod.containers[0].name }}
 cat <<'__eot__' >reptest/{{ pod.containers[0].name }}/my.cnf
 [mysqld]
 bind-address             = {{ pod.name }}.dns.podman
 server_id                = {{ loop.index }}
-#log_bin                 = /var/log/mysql/mysql-bin.log
+log_bin                  = /var/log/mysql/mysql-bin.log
 binlog_do_db             = db
 __eot__
 {% endfor %}
@@ -114,14 +112,14 @@ mysql --port={{ global.internal_port }} --host=${{ip}} --user={{ global.user_non
 # dns test
 {% for container in containers %}
 {% for pod in pods %}
-time podman exec --tty --interactive {{ container }} mysql --user={{ global.user_root}} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive {{ container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SHOW DATABASES;' </dev/null
 {%- endfor %}
 {%- endfor %}
 
 {{ status() }}
 {% for pod in pods %}
 mkdir -p reptest/{{ pod.containers[0].name }}/extra
-cat <<__eot__ >reptest/{{ pod.containers[0].name }}/extra/add_user.sql
+cat <<__eot__ >reptest/{{ pod.containers[0].name }}/extra/user.sql
 CREATE USER '{{ global.user_replication }}'@'{{ pod.replica.fqdn }}' IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}';
 GRANT REPLICATION SLAVE ON *.* TO '{{ global.user_replication }}'@'{{ pod.replica.fqdn }}';
 FLUSH PRIVILEGES;
@@ -129,16 +127,15 @@ __eot__
 {% endfor %}
 
 {%- for pod in pods %}
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root}} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SOURCE /tmp/extra/add_user.sql;'
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SOURCE /tmp/extra/user.sql;'
 {%- endfor %}
 
 # desc mysql.user;
 {%- for pod in pods %}
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root}} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SELECT User, Host from mysql.user;'
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SELECT User, Host from mysql.user;'
 {%- endfor %}
 """
 
 template = jinja2.Template(tmpl_str)
 result = template.render(manifest=manifest)
 print(result)
-

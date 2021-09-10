@@ -56,22 +56,12 @@ podman volume create my4dbdata
 rm -rf reptest/
 
 
-mkdir -p reptest/my1c/extra
-
-mkdir -p reptest/my2c/extra
-
-mkdir -p reptest/my3c/extra
-
-mkdir -p reptest/my4c/extra
-
-
-
 mkdir -p reptest/my1c
 cat <<'__eot__' >reptest/my1c/my.cnf
 [mysqld]
 bind-address             = my1p.dns.podman
 server_id                = 1
-#log_bin                 = /var/log/mysql/mysql-bin.log
+log_bin                  = /var/log/mysql/mysql-bin.log
 binlog_do_db             = db
 __eot__
 
@@ -80,7 +70,7 @@ cat <<'__eot__' >reptest/my2c/my.cnf
 [mysqld]
 bind-address             = my2p.dns.podman
 server_id                = 2
-#log_bin                 = /var/log/mysql/mysql-bin.log
+log_bin                  = /var/log/mysql/mysql-bin.log
 binlog_do_db             = db
 __eot__
 
@@ -89,7 +79,7 @@ cat <<'__eot__' >reptest/my3c/my.cnf
 [mysqld]
 bind-address             = my3p.dns.podman
 server_id                = 3
-#log_bin                 = /var/log/mysql/mysql-bin.log
+log_bin                  = /var/log/mysql/mysql-bin.log
 binlog_do_db             = db
 __eot__
 
@@ -98,7 +88,7 @@ cat <<'__eot__' >reptest/my4c/my.cnf
 [mysqld]
 bind-address             = my4p.dns.podman
 server_id                = 4
-#log_bin                 = /var/log/mysql/mysql-bin.log
+log_bin                  = /var/log/mysql/mysql-bin.log
 binlog_do_db             = db
 __eot__
 
@@ -208,37 +198,37 @@ podman pod ls
 
 
 mkdir -p reptest/my1c/extra
-cat <<__eot__ >reptest/my1c/extra/add_user.sql
+cat <<__eot__ >reptest/my1c/extra/user.sql
 CREATE USER 'repl'@'my2p.dns.podname' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my2p.dns.podname';
 FLUSH PRIVILEGES;
 __eot__
 
 mkdir -p reptest/my2c/extra
-cat <<__eot__ >reptest/my2c/extra/add_user.sql
+cat <<__eot__ >reptest/my2c/extra/user.sql
 CREATE USER 'repl'@'my3p.dns.podname' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my3p.dns.podname';
 FLUSH PRIVILEGES;
 __eot__
 
 mkdir -p reptest/my3c/extra
-cat <<__eot__ >reptest/my3c/extra/add_user.sql
+cat <<__eot__ >reptest/my3c/extra/user.sql
 CREATE USER 'repl'@'my4p.dns.podname' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my4p.dns.podname';
 FLUSH PRIVILEGES;
 __eot__
 
 mkdir -p reptest/my4c/extra
-cat <<__eot__ >reptest/my4c/extra/add_user.sql
+cat <<__eot__ >reptest/my4c/extra/user.sql
 CREATE USER 'repl'@'my1p.dns.podname' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my1p.dns.podname';
 FLUSH PRIVILEGES;
 __eot__
 
-podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra/add_user.sql;'
-podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'SOURCE /tmp/extra/add_user.sql;'
-podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SOURCE /tmp/extra/add_user.sql;'
-podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SOURCE /tmp/extra/add_user.sql;'
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra/user.sql;'
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'SOURCE /tmp/extra/user.sql;'
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SOURCE /tmp/extra/user.sql;'
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SOURCE /tmp/extra/user.sql;'
 
 # desc mysql.user;
 podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SELECT User, Host from mysql.user;'
