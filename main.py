@@ -60,8 +60,8 @@ __eot__
 
 {% for pod in manifest['pods'] %}
 # bridge mode networking
-podman pod create --name {{ pod.name }} -p {{ manifest['global']['internal_port'] }}{{loop.index}}:{{ manifest['global']['internal_port'] }} --network {{ manifest['global']['network'] }}
-podman container create --name {{ pod.containers[0].name }} --rm --health-start-period=80s --log-driver journald --pod={{ pod.name }} -v ./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf -v {{ pod.volume }}:/var/lib/mysql/data:Z -e MYSQL_ROOT_PASSWORD=demo -e MYSQL_USER=user -e MYSQL_PASSWORD=pass -e MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman pod create --name={{ pod.name }} --publish={{ manifest['global']['internal_port'] }}{{loop.index}}:{{ manifest['global']['internal_port'] }} --network={{ manifest['global']['network'] }}
+podman container create --name={{ pod.containers[0].name }} --rm --health-start-period=80s --log-driver=journald --pod={{ pod.name }} --volume=./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=demo --env=MYSQL_USER=user --env=MYSQL_PASSWORD=pass --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 podman pod ls
 {% endfor %}
 
@@ -70,7 +70,7 @@ podman pod start {{ pod.name }}
 {%- endfor %}
 
 {% for pod in manifest['pods'] %}
-podman wait {{ pod.containers[0].name }} --condition running
+podman wait {{ pod.containers[0].name }} --condition=running
 {%- endfor %}
 
 {% for pod in manifest['pods'] %}
