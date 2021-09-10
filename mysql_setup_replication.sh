@@ -2,7 +2,7 @@
 
 set -o errexit
 
-podman --version
+podman info --debug
 
 # podman login --username mtmonacelli registry.redhat.io $REGISTRY_REDHAT_IO_PASSWORD
 
@@ -243,3 +243,8 @@ podman exec --tty --interactive my2c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SOURCE /tmp/extra/add_user.sql;'
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SOURCE /tmp/extra/add_user.sql;'
 
+# desc mysql.user;
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SELECT User, Host from mysql.user;'
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'SELECT User, Host from mysql.user;'
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SELECT User, Host from mysql.user;'
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SELECT User, Host from mysql.user;'
