@@ -19,7 +19,6 @@ podman ps --pod
 podman ps -a --pod
 podman network ls
 podman volume ls
-podman ps
 podman pod ls
 {% endmacro -%}
 
