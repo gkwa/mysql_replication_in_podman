@@ -208,18 +208,24 @@ cat <<__eot__ >reptest/my1c/extra/user.sql
 CREATE USER 'repl'@'my2p.dns.podname' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my2p.dns.podname';
 -- DROP USER 'repl'@'my2p.dns.podname';
--- podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "DROP USER 'repl'@'my2p.dns.podname';"
+-- podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "DROP USER 'repl'@'my2p.dns.podname';" </dev/null
+
+
+CREATE USER 'repl'@'my2p' IDENTIFIED WITH mysql_native_password BY 'repl';
+GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my2p';
+-- DROP USER 'repl'@'my2p';
+-- podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "DROP USER 'repl'@'my2p';" </dev/null
 
 CREATE USER 'repl'@'$replica_ip' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'$replica_ip';
 -- DROP USER 'repl'@'$replica_ip';
--- podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "DROP USER 'repl'@'$replica_ip';"
+-- podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "DROP USER 'repl'@'$replica_ip';" </dev/null
 
 -- fixme: sanity check
 CREATE USER 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';
 -- DROP USER 'repl'@'%';
--- podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "DROP USER 'repl'@'%';"
+-- podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "DROP USER 'repl'@'%';" </dev/null
 
 FLUSH PRIVILEGES;
 __eot__
@@ -231,18 +237,24 @@ cat <<__eot__ >reptest/my2c/extra/user.sql
 CREATE USER 'repl'@'my3p.dns.podname' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my3p.dns.podname';
 -- DROP USER 'repl'@'my3p.dns.podname';
--- podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "DROP USER 'repl'@'my3p.dns.podname';"
+-- podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "DROP USER 'repl'@'my3p.dns.podname';" </dev/null
+
+
+CREATE USER 'repl'@'my3p' IDENTIFIED WITH mysql_native_password BY 'repl';
+GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my3p';
+-- DROP USER 'repl'@'my3p';
+-- podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "DROP USER 'repl'@'my3p';" </dev/null
 
 CREATE USER 'repl'@'$replica_ip' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'$replica_ip';
 -- DROP USER 'repl'@'$replica_ip';
--- podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "DROP USER 'repl'@'$replica_ip';"
+-- podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "DROP USER 'repl'@'$replica_ip';" </dev/null
 
 -- fixme: sanity check
 CREATE USER 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';
 -- DROP USER 'repl'@'%';
--- podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "DROP USER 'repl'@'%';"
+-- podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "DROP USER 'repl'@'%';" </dev/null
 
 FLUSH PRIVILEGES;
 __eot__
@@ -254,18 +266,24 @@ cat <<__eot__ >reptest/my3c/extra/user.sql
 CREATE USER 'repl'@'my4p.dns.podname' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my4p.dns.podname';
 -- DROP USER 'repl'@'my4p.dns.podname';
--- podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "DROP USER 'repl'@'my4p.dns.podname';"
+-- podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "DROP USER 'repl'@'my4p.dns.podname';" </dev/null
+
+
+CREATE USER 'repl'@'my4p' IDENTIFIED WITH mysql_native_password BY 'repl';
+GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my4p';
+-- DROP USER 'repl'@'my4p';
+-- podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "DROP USER 'repl'@'my4p';" </dev/null
 
 CREATE USER 'repl'@'$replica_ip' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'$replica_ip';
 -- DROP USER 'repl'@'$replica_ip';
--- podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "DROP USER 'repl'@'$replica_ip';"
+-- podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "DROP USER 'repl'@'$replica_ip';" </dev/null
 
 -- fixme: sanity check
 CREATE USER 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';
 -- DROP USER 'repl'@'%';
--- podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "DROP USER 'repl'@'%';"
+-- podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "DROP USER 'repl'@'%';" </dev/null
 
 FLUSH PRIVILEGES;
 __eot__
@@ -277,18 +295,24 @@ cat <<__eot__ >reptest/my4c/extra/user.sql
 CREATE USER 'repl'@'my1p.dns.podname' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my1p.dns.podname';
 -- DROP USER 'repl'@'my1p.dns.podname';
--- podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "DROP USER 'repl'@'my1p.dns.podname';"
+-- podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "DROP USER 'repl'@'my1p.dns.podname';" </dev/null
+
+
+CREATE USER 'repl'@'my1p' IDENTIFIED WITH mysql_native_password BY 'repl';
+GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my1p';
+-- DROP USER 'repl'@'my1p';
+-- podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "DROP USER 'repl'@'my1p';" </dev/null
 
 CREATE USER 'repl'@'$replica_ip' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'$replica_ip';
 -- DROP USER 'repl'@'$replica_ip';
--- podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "DROP USER 'repl'@'$replica_ip';"
+-- podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "DROP USER 'repl'@'$replica_ip';" </dev/null
 
 -- fixme: sanity check
 CREATE USER 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';
 -- DROP USER 'repl'@'%';
--- podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "DROP USER 'repl'@'%';"
+-- podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "DROP USER 'repl'@'%';" </dev/null
 
 FLUSH PRIVILEGES;
 __eot__
@@ -300,7 +324,7 @@ podman exec --tty --interactive my3c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SOURCE /tmp/extra/user.sql;'
 
 # desc mysql.user;
-podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SELECT User, Host from mysql.user;'
-podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'SELECT User, Host from mysql.user;'
-podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SELECT User, Host from mysql.user;'
-podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SELECT User, Host from mysql.user;'
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user;'
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user;'
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user;'
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user;'

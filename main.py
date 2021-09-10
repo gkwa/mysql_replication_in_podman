@@ -129,18 +129,25 @@ cat <<__eot__ >reptest/{{ pod.containers[0].name }}/extra/user.sql
 CREATE USER '{{ global.user_replication }}'@'{{ pod.replica.fqdn }}' IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}';
 GRANT REPLICATION SLAVE ON *.* TO '{{ global.user_replication }}'@'{{ pod.replica.fqdn }}';
 -- DROP USER '{{ global.user_replication }}'@'{{ pod.replica.fqdn }}';
--- podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "DROP USER 'repl'@'{{ pod.replica.fqdn }}';"
+-- podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "DROP USER 'repl'@'{{ pod.replica.fqdn }}';" </dev/null
+
+{% set tmp = pod.replica.fqdn.split('.') %}
+{%- set hostname = tmp[0] %}
+CREATE USER '{{ global.user_replication }}'@'{{ hostname }}' IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}';
+GRANT REPLICATION SLAVE ON *.* TO '{{ global.user_replication }}'@'{{ hostname }}';
+-- DROP USER '{{ global.user_replication }}'@'{{ hostname }}';
+-- podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "DROP USER 'repl'@'{{ hostname }}';" </dev/null
 
 CREATE USER '{{ global.user_replication }}'@'$replica_ip{{ pod.replica.number }}' IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}';
 GRANT REPLICATION SLAVE ON *.* TO '{{ global.user_replication }}'@'$replica_ip{{ pod.replica.number }}';
 -- DROP USER '{{ global.user_replication }}'@'$replica_ip{{ pod.replica.number }}';
--- podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "DROP USER 'repl'@'$replica_ip{{ pod.replica.number }}';"
+-- podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "DROP USER 'repl'@'$replica_ip{{ pod.replica.number }}';" </dev/null
 
 -- fixme: sanity check
 CREATE USER '{{ global.user_replication }}'@'%' IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}';
 GRANT REPLICATION SLAVE ON *.* TO '{{ global.user_replication }}'@'%';
 -- DROP USER '{{ global.user_replication }}'@'%';
--- podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "DROP USER 'repl'@'%';"
+-- podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "DROP USER 'repl'@'%';" </dev/null
 
 FLUSH PRIVILEGES;
 __eot__
@@ -153,7 +160,7 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 
 # desc mysql.user;
 {%- for pod in pods %}
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SELECT User, Host from mysql.user;'
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user;'
 {%- endfor %}
 """
 
