@@ -11,6 +11,6 @@ install:
 - sudo bash -x create_test.sh
 test_script:
 - sudo podman info --debug
-- sudo bash -x test.sh
+- sudo time bash -x test.sh
 # - sudo bats test.bats
 build: off
