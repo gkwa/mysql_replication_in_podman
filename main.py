@@ -80,7 +80,7 @@ podman volume inspect {{ pod.volume }}
 {{ status() }}
 
 {% for pod in manifest['pods'] %}
-until podman exec --tty --interactive {{ pod.containers[0].name }} mysql --host={{ pod.name }} --user=user --password=pass --execute "SHOW DATABASES;"; do sleep 5; done;
+until podman exec --tty --interactive {{ pod.containers[0].name }} mysql --host={{ pod.name }} --user={{ manifest['global']['user_non_root'] }} --password={{ manifest['global']['user_non_root_pass'] }} --execute "SHOW DATABASES;"; do sleep 5; done;
 {%- endfor %}
 
 {% for pod in manifest['pods'] %}{% set ip='ip' ~ loop.index %}
@@ -90,12 +90,12 @@ echo ${{ip}}
 {%- endfor %}
 
 {% for pod in manifest['pods'] %}{% set ip='ip' ~ loop.index %}
-# mysqladmin --port={{ manifest['global']['internal_port'] }} --host=${{ip}} --user=user --password=pass password ''
+# mysqladmin --port={{ manifest['global']['internal_port'] }} --host=${{ip}} --user={{ manifest['global']['user_non_root'] }} --password={{ manifest['global']['user_non_root_pass'] }} password ''
 {%- endfor %}
 
 # ip test
 {% for pod in manifest['pods'] %}{% set ip='ip' ~ loop.index %}
-mysql --port={{ manifest['global']['internal_port'] }} --host=${{ip}} --user=user --password=pass --execute "SHOW DATABASES;"
+mysql --port={{ manifest['global']['internal_port'] }} --host=${{ip}} --user={{ manifest['global']['user_non_root'] }} --password={{ manifest['global']['user_non_root_pass'] }} --execute "SHOW DATABASES;"
 {%- endfor %}
 
 # FIXME: {% set containers = [] %}{% for pod in manifest['pods'] %}{{ containers.append( pod.containers[0].name ) }}{% endfor %}
