@@ -80,7 +80,7 @@ podman volume inspect {{ pod.volume }}
 {{ status() }}
 
 {% for pod in manifest['pods'] %}
-for i in {1..10}; do podman exec --tty --interactive {{ pod.containers[0].name }} mysql --host={{ pod.name }} --user={{ manifest['global']['user_non_root'] }} --password={{ manifest['global']['user_non_root_pass'] }} --execute "SHOW DATABASES;"; if [[ $? -eq 0 ]]; then break; fi; sleep 5; done
+until podman exec --tty --interactive {{ pod.containers[0].name }} mysql --host={{ pod.name }} --user={{ manifest['global']['user_non_root'] }} --password={{ manifest['global']['user_non_root_pass'] }} --execute "SHOW DATABASES;"; do sleep 5; done;
 {%- endfor %}
 
 {% for pod in manifest['pods'] %}{% set ip='ip' ~ loop.index %}
