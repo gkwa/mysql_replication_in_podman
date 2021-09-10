@@ -58,7 +58,7 @@ __eot__
 {% for pod in manifest['pods'] %}
 # bridge mode networking
 podman pod create --name {{ pod.name }} -p {{ manifest['global']['internal_port'] }}{{loop.index}}:{{ manifest['global']['internal_port'] }} --network {{ manifest['global']['network'] }}
-podman container create --name {{ pod.containers[0].name }} --rm --health-start-period=80s --log-driver journald --pod={{ pod.name }} -v $PWD/reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf -v {{ pod.volume }}:/var/lib/mysql/data:Z -e MYSQL_ROOT_PASSWORD=demo -e MYSQL_USER=user -e MYSQL_PASSWORD=pass -e MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name {{ pod.containers[0].name }} --rm --health-start-period=80s --log-driver journald --pod={{ pod.name }} -v ./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf -v {{ pod.volume }}:/var/lib/mysql/data:Z -e MYSQL_ROOT_PASSWORD=demo -e MYSQL_USER=user -e MYSQL_PASSWORD=pass -e MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 podman pod ls
 {% endfor %}
 
@@ -95,26 +95,13 @@ echo ${{ip}}
 mysql --port={{ manifest['global']['internal_port'] }} --host=${{ip}} --user=user --password=pass --execute "SHOW DATABASES;"
 {%- endfor %}
 
+# FIXME: {% set containers = [] %}{% for pod in manifest['pods'] %}{{ containers.append( pod.containers[0].name ) }}{% endfor %}
 # dns test
-podman exec -ti my1c mysql --user=root --password=demo --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-podman exec -ti my1c mysql --user=root --password=demo --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-podman exec -ti my1c mysql --user=root --password=demo --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-podman exec -ti my1c mysql --user=root --password=demo --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-
-podman exec -ti my2c mysql --user=root --password=demo --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-podman exec -ti my2c mysql --user=root --password=demo --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-podman exec -ti my2c mysql --user=root --password=demo --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-podman exec -ti my2c mysql --user=root --password=demo --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-
-podman exec -ti my3c mysql --user=root --password=demo --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-podman exec -ti my3c mysql --user=root --password=demo --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-podman exec -ti my3c mysql --user=root --password=demo --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-podman exec -ti my3c mysql --user=root --password=demo --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-
-podman exec -ti my4c mysql --user=root --password=demo --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-podman exec -ti my4c mysql --user=root --password=demo --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-podman exec -ti my4c mysql --user=root --password=demo --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-podman exec -ti my4c mysql --user=root --password=demo --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+{% for container in containers %}
+{% for pod in manifest['pods'] %}
+time podman exec -ti {{ container }} mysql --user=root --password=demo --host={{ pod.name }}.dns.podman --execute 'SHOW DATABASES;' </dev/null
+{%- endfor %}
+{%- endfor %}
 
 {{ status() }}
 """
