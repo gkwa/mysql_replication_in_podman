@@ -61,7 +61,7 @@ __eot__
 {% for pod in manifest['pods'] %}
 # bridge mode networking
 podman pod create --name={{ pod.name }} --publish={{ manifest['global']['internal_port'] }}{{loop.index}}:{{ manifest['global']['internal_port'] }} --network={{ manifest['global']['network'] }}
-podman container create --name={{ pod.containers[0].name }} --rm --health-start-period=80s --log-driver=journald --pod={{ pod.name }} --volume=./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=demo --env=MYSQL_USER=user --env=MYSQL_PASSWORD=pass --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name={{ pod.containers[0].name }} --rm --health-start-period=80s --log-driver=journald --pod={{ pod.name }} --volume=./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ manifest['global']['user_root_pass'] }} --env=MYSQL_USER={{ manifest['global']['user_non_root'] }} --env=MYSQL_PASSWORD={{ manifest['global']['user_non_root_pass'] }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 podman pod ls
 {% endfor %}
 
@@ -103,7 +103,7 @@ mysql --port={{ manifest['global']['internal_port'] }} --host=${{ip}} --user=use
 # dns test
 {% for container in containers %}
 {% for pod in manifest['pods'] %}
-time podman exec --tty --interactive {{ container }} mysql --user=root --password=demo --host={{ pod.name }}.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive {{ container }} mysql --user={{ manifest['global']['user_root'] }} --password={{ manifest['global']['user_root_pass'] }} --host={{ pod.name }}.dns.podman --execute 'SHOW DATABASES;' </dev/null
 {%- endfor %}
 {%- endfor %}
 

@@ -92,22 +92,22 @@ __eot__
 
 # bridge mode networking
 podman pod create --name=my1p --publish=33061:3306 --network=replication
-podman container create --name=my1c --rm --health-start-period=80s --log-driver=journald --pod=my1p --volume=./reptest/my1c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my1dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=demo --env=MYSQL_USER=user --env=MYSQL_PASSWORD=pass --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my1c --rm --health-start-period=80s --log-driver=journald --pod=my1p --volume=./reptest/my1c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my1dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 podman pod ls
 
 # bridge mode networking
 podman pod create --name=my2p --publish=33062:3306 --network=replication
-podman container create --name=my2c --rm --health-start-period=80s --log-driver=journald --pod=my2p --volume=./reptest/my2c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my2dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=demo --env=MYSQL_USER=user --env=MYSQL_PASSWORD=pass --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my2c --rm --health-start-period=80s --log-driver=journald --pod=my2p --volume=./reptest/my2c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my2dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 podman pod ls
 
 # bridge mode networking
 podman pod create --name=my3p --publish=33063:3306 --network=replication
-podman container create --name=my3c --rm --health-start-period=80s --log-driver=journald --pod=my3p --volume=./reptest/my3c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my3dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=demo --env=MYSQL_USER=user --env=MYSQL_PASSWORD=pass --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my3c --rm --health-start-period=80s --log-driver=journald --pod=my3p --volume=./reptest/my3c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my3dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 podman pod ls
 
 # bridge mode networking
 podman pod create --name=my4p --publish=33064:3306 --network=replication
-podman container create --name=my4c --rm --health-start-period=80s --log-driver=journald --pod=my4p --volume=./reptest/my4c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my4dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=demo --env=MYSQL_USER=user --env=MYSQL_PASSWORD=pass --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my4c --rm --health-start-period=80s --log-driver=journald --pod=my4p --volume=./reptest/my4c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my4dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 podman pod ls
 
 
@@ -175,25 +175,25 @@ mysql --port=3306 --host=$ip4 --user=user --password=pass --execute "SHOW DATABA
 # dns test
 
 
-time podman exec --tty --interactive my1c mysql --user=root --password=demo --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec --tty --interactive my1c mysql --user=root --password=demo --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec --tty --interactive my1c mysql --user=root --password=demo --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec --tty --interactive my1c mysql --user=root --password=demo --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my1c mysql --user=root --password=root --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my1c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my1c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
 
-time podman exec --tty --interactive my2c mysql --user=root --password=demo --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec --tty --interactive my2c mysql --user=root --password=demo --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec --tty --interactive my2c mysql --user=root --password=demo --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec --tty --interactive my2c mysql --user=root --password=demo --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my2c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my2c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my2c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
 
-time podman exec --tty --interactive my3c mysql --user=root --password=demo --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec --tty --interactive my3c mysql --user=root --password=demo --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec --tty --interactive my3c mysql --user=root --password=demo --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec --tty --interactive my3c mysql --user=root --password=demo --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my3c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my3c mysql --user=root --password=root --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my3c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
 
-time podman exec --tty --interactive my4c mysql --user=root --password=demo --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec --tty --interactive my4c mysql --user=root --password=demo --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec --tty --interactive my4c mysql --user=root --password=demo --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
-time podman exec --tty --interactive my4c mysql --user=root --password=demo --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my4c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my4c mysql --user=root --password=root --host=my2p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my4c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
+time podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
 
 # podman ps -a --pod
 podman ps --pod
