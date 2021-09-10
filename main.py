@@ -45,7 +45,7 @@ podman network create {{ manifest['global']['network'] }}
 podman volume create {{ pod.volume }}
 {%- endfor %}
 
-rm -rf ./reptest/
+rm -rf reptest/
 
 {% for pod in manifest['pods'] %}
 mkdir -p reptest/{{ pod.containers[0].name }}
