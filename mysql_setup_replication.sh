@@ -138,10 +138,10 @@ podman pod ls
 
 
 
-until podman exec --tty --interactive my1c mysql --host=my1p --user=joe --password=joe --execute "SHOW DATABASES;"; do sleep 5; done;
-until podman exec --tty --interactive my2c mysql --host=my2p --user=joe --password=joe --execute "SHOW DATABASES;"; do sleep 5; done;
-until podman exec --tty --interactive my3c mysql --host=my3p --user=joe --password=joe --execute "SHOW DATABASES;"; do sleep 5; done;
-until podman exec --tty --interactive my4c mysql --host=my4p --user=joe --password=joe --execute "SHOW DATABASES;"; do sleep 5; done;
+for i in {1..10}; do podman exec --tty --interactive my1c mysql --host=my1p --user=joe --password=joe --execute "SHOW DATABASES;"; if [[ $? -eq 0 ]]; then break; fi; sleep 5; done
+for i in {1..10}; do podman exec --tty --interactive my2c mysql --host=my2p --user=joe --password=joe --execute "SHOW DATABASES;"; if [[ $? -eq 0 ]]; then break; fi; sleep 5; done
+for i in {1..10}; do podman exec --tty --interactive my3c mysql --host=my3p --user=joe --password=joe --execute "SHOW DATABASES;"; if [[ $? -eq 0 ]]; then break; fi; sleep 5; done
+for i in {1..10}; do podman exec --tty --interactive my4c mysql --host=my4p --user=joe --password=joe --execute "SHOW DATABASES;"; if [[ $? -eq 0 ]]; then break; fi; sleep 5; done
 
 
 podman inspect my1c | grep -i ipaddr
