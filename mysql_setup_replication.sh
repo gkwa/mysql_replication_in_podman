@@ -2,7 +2,7 @@
 
 set -o errexit
 
-podman info --debug
+podman --version
 
 # podman login --username mtmonacelli registry.redhat.io $REGISTRY_REDHAT_IO_PASSWORD
 
