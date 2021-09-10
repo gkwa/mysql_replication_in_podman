@@ -145,16 +145,16 @@ until podman exec --tty --interactive my4c mysql --host=my4p --user=joe --passwo
 
 
 podman inspect my1c | grep -i ipaddr
-ip1=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}') 
+ip1=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 echo $ip1
 podman inspect my2c | grep -i ipaddr
-ip2=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}') 
+ip2=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 echo $ip2
 podman inspect my3c | grep -i ipaddr
-ip3=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}') 
+ip3=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 echo $ip3
 podman inspect my4c | grep -i ipaddr
-ip4=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}') 
+ip4=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 echo $ip4
 
 

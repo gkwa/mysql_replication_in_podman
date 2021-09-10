@@ -85,7 +85,7 @@ until podman exec --tty --interactive {{ pod.containers[0].name }} mysql --host=
 
 {% for pod in manifest['pods'] %}{% set ip='ip' ~ loop.index %}
 podman inspect {{ pod.containers[0].name }} | grep -i ipaddr
-{{ip}}=$(podman inspect {{ pod.containers[0].name }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ manifest['global']['network'] }}.IPAddress{%- raw -%} }} {%- endraw -%}') 
+{{ip}}=$(podman inspect {{ pod.containers[0].name }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ manifest['global']['network'] }}.IPAddress{%- raw -%} }} {%- endraw -%}')
 echo ${{ip}}
 {%- endfor %}
 
