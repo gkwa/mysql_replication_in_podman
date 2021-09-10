@@ -54,7 +54,7 @@ cat <<'__eot__' >reptest/{{ pod.containers[0].name }}/my.cnf
 bind-address             = {{ pod.name }}.dns.podman
 server_id                = {{ loop.index }}
 #log_bin                 = /var/log/mysql/mysql-bin.log
-#binlog_do_db            = mytestdb
+binlog_do_db             = db
 __eot__
 {% endfor %}
 
