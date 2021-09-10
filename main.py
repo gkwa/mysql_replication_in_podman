@@ -132,6 +132,9 @@ __eot__
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ manifest['global']['user_root'] }} --password={{ manifest['global']['user_root_pass'] }} --host={{ pod.name }}.dns.podman --execute 'SOURCE /tmp/extra/add_user.sql;'
 {%- endfor %}
 
+{%- for pod in manifest['pods'] %}
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ manifest['global']['user_root'] }} --password={{ manifest['global']['user_root_pass'] }} --host={{ pod.name }}.dns.podman --execute 'SELECT User, Host, Password FROM mysql.user;'
+{%- endfor %}
 """
 
 template = jinja2.Template(tmpl_str)
