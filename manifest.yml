@@ -5,8 +5,8 @@ global:
   user_non_root_pass: joe
   user_root: root
   user_root_pass: root
-  user_replication: replica_user
-  user_replication_pass: replica_user
+  user_replication: repl
+  user_replication_pass: repl
 pods:
 - name: my1p
   volume: my1dbdata
