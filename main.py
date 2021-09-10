@@ -55,7 +55,6 @@ bind-address             = {{ pod.name }}.dns.podman
 server_id                = {{ loop.index }}
 #log_bin                 = /var/log/mysql/mysql-bin.log
 binlog_do_db             = db
-binlog_do_db             = db1
 __eot__
 {% endfor %}
 
