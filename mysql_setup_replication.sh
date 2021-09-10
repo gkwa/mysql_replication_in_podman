@@ -202,8 +202,8 @@ podman network ls
 podman volume ls
 podman pod ls
 
-replica_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 mkdir -p reptest/my1c/extra
+replica_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<__eot__ >reptest/my1c/extra/user.sql
 CREATE USER 'repl'@'my2p.dns.podname' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my2p.dns.podname';
@@ -231,8 +231,8 @@ FLUSH PRIVILEGES;
 __eot__
 cat reptest/my1c/extra/user.sql
 
-replica_ip=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 mkdir -p reptest/my2c/extra
+replica_ip=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<__eot__ >reptest/my2c/extra/user.sql
 CREATE USER 'repl'@'my3p.dns.podname' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my3p.dns.podname';
@@ -260,8 +260,8 @@ FLUSH PRIVILEGES;
 __eot__
 cat reptest/my2c/extra/user.sql
 
-replica_ip=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 mkdir -p reptest/my3c/extra
+replica_ip=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<__eot__ >reptest/my3c/extra/user.sql
 CREATE USER 'repl'@'my4p.dns.podname' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my4p.dns.podname';
@@ -289,8 +289,8 @@ FLUSH PRIVILEGES;
 __eot__
 cat reptest/my3c/extra/user.sql
 
-replica_ip=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 mkdir -p reptest/my4c/extra
+replica_ip=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<__eot__ >reptest/my4c/extra/user.sql
 CREATE USER 'repl'@'my1p.dns.podname' IDENTIFIED WITH mysql_native_password BY 'repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my1p.dns.podname';
