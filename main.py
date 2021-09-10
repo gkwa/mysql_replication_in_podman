@@ -60,20 +60,6 @@ binlog_do_db             = db
 __eot__
 {% endfor %}
 
-{% for pod in manifest['pods'] %}
-replica_ip{{ pod.replica.number }}=$(podman inspect {{ pod.replica.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ manifest['global']['network'] }}.IPAddress{%- raw -%} }} {%- endraw -%}')
-mkdir -p reptest/{{ pod.containers[0].name }}/extra
-cat <<__eot__ >reptest/{{ pod.containers[0].name }}/extra/repl.sql
-CREATE USER '{{ manifest['global']['user_replication'] }}'@'$replica_ip{{ pod.replica.number }}' IDENTIFIED WITH mysql_native_password BY '{{ manifest['global']['user_replication_pass'] }}';
-GRANT REPLICATION SLAVE ON *.* TO '{{ manifest['global']['user_replication'] }}'@'$replica_ip{{ pod.replica.number }}';
-FLUSH PRIVILEGES;
-__eot__
-{% endfor %}
-
-{%- for pod in manifest['pods'] %}
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ manifest['global']['user_root'] }} --password={{ manifest['global']['user_root_pass'] }} --host={{ pod.name }}.dns.podman --execute 'SOURCE reptest/{{ pod.containers[0].name }}/extra/repl.sql;'
-{%- endfor %}
-
 # pods with bridge mode networking
 {%- for pod in manifest['pods'] %}
 podman pod create --name={{ pod.name }} --publish={{ manifest['global']['internal_port'] }}{{loop.index}}:{{ manifest['global']['internal_port'] }} --network={{ manifest['global']['network'] }}
@@ -94,6 +80,20 @@ podman wait {{ pod.containers[0].name }} --condition=running
 
 {% for pod in manifest['pods'] %}
 podman volume inspect {{ pod.volume }}
+{%- endfor %}
+
+{% for pod in manifest['pods'] %}
+replica_ip{{ pod.replica.number }}=$(podman inspect {{ pod.replica.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ manifest['global']['network'] }}.IPAddress{%- raw -%} }} {%- endraw -%}')
+mkdir -p reptest/{{ pod.containers[0].name }}/extra
+cat <<__eot__ >reptest/{{ pod.containers[0].name }}/extra/repl.sql
+CREATE USER '{{ manifest['global']['user_replication'] }}'@'$replica_ip{{ pod.replica.number }}' IDENTIFIED WITH mysql_native_password BY '{{ manifest['global']['user_replication_pass'] }}';
+GRANT REPLICATION SLAVE ON *.* TO '{{ manifest['global']['user_replication'] }}'@'$replica_ip{{ pod.replica.number }}';
+FLUSH PRIVILEGES;
+__eot__
+{% endfor %}
+
+{%- for pod in manifest['pods'] %}
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ manifest['global']['user_root'] }} --password={{ manifest['global']['user_root_pass'] }} --host={{ pod.name }}.dns.podman --execute 'SOURCE reptest/{{ pod.containers[0].name }}/extra/repl.sql;'
 {%- endfor %}
 
 {{ status() }}
