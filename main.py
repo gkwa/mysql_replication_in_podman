@@ -24,9 +24,11 @@ podman pod ls
 
 set -o errexit
 
-podman --version
+podman info --debug
 
 # podman login --username mtmonacelli registry.redhat.io $REGISTRY_REDHAT_IO_PASSWORD
+
+podman pull docker.io/perconalab/percona-toolkit:latest
 
 {{ status() }}
 
@@ -58,12 +60,15 @@ binlog_do_db             = db
 __eot__
 {% endfor %}
 
-{% for pod in manifest['pods'] %}
-# bridge mode networking
+# pods with bridge mode networking
+{%- for pod in manifest['pods'] %}
 podman pod create --name={{ pod.name }} --publish={{ manifest['global']['internal_port'] }}{{loop.index}}:{{ manifest['global']['internal_port'] }} --network={{ manifest['global']['network'] }}
-podman container create --name={{ pod.containers[0].name }} --rm --health-start-period=80s --log-driver=journald --pod={{ pod.name }} --volume=./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ manifest['global']['user_root_pass'] }} --env=MYSQL_USER={{ manifest['global']['user_non_root'] }} --env=MYSQL_PASSWORD={{ manifest['global']['user_non_root_pass'] }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-podman pod ls
-{% endfor %}
+{%- endfor %}
+
+# mysqld containers
+{%- for pod in manifest['pods'] %}
+podman container create --name={{ pod.containers[0].name }} --pod={{ pod.name }} --rm --health-start-period=80s --log-driver=journald --volume=./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ manifest['global']['user_root_pass'] }} --env=MYSQL_USER={{ manifest['global']['user_non_root'] }} --env=MYSQL_PASSWORD={{ manifest['global']['user_non_root_pass'] }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+{%- endfor %}
 
 {% for pod in manifest['pods'] %}
 podman pod start {{ pod.name }}

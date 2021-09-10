@@ -2,15 +2,17 @@
 
 set -o errexit
 
-podman --version
+podman info --debug
 
 # podman login --username mtmonacelli registry.redhat.io $REGISTRY_REDHAT_IO_PASSWORD
 
-# podman ps -a --pod
+podman pull docker.io/perconalab/percona-toolkit:latest
+
+podman ps
 podman ps --pod
+podman ps -a --pod
 podman network ls
 podman volume ls
-podman ps
 podman pod ls
 
 
@@ -34,11 +36,11 @@ podman volume exists my4dbdata && podman volume rm --force my4dbdata
 
 podman network exists replication && podman network rm --force replication
 
-# podman ps -a --pod
+podman ps
 podman ps --pod
+podman ps -a --pod
 podman network ls
 podman volume ls
-podman ps
 podman pod ls
 
 
@@ -49,7 +51,7 @@ podman volume create my2dbdata
 podman volume create my3dbdata
 podman volume create my4dbdata
 
-rm -rf ./reptest/
+rm -rf reptest/
 
 
 mkdir -p reptest/my1c
@@ -89,27 +91,17 @@ binlog_do_db             = db
 __eot__
 
 
-
-# bridge mode networking
+# pods with bridge mode networking
 podman pod create --name=my1p --publish=33061:3306 --network=replication
-podman container create --name=my1c --rm --health-start-period=80s --log-driver=journald --pod=my1p --volume=./reptest/my1c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my1dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-podman pod ls
-
-# bridge mode networking
 podman pod create --name=my2p --publish=33062:3306 --network=replication
-podman container create --name=my2c --rm --health-start-period=80s --log-driver=journald --pod=my2p --volume=./reptest/my2c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my2dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-podman pod ls
-
-# bridge mode networking
 podman pod create --name=my3p --publish=33063:3306 --network=replication
-podman container create --name=my3c --rm --health-start-period=80s --log-driver=journald --pod=my3p --volume=./reptest/my3c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my3dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-podman pod ls
-
-# bridge mode networking
 podman pod create --name=my4p --publish=33064:3306 --network=replication
-podman container create --name=my4c --rm --health-start-period=80s --log-driver=journald --pod=my4p --volume=./reptest/my4c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my4dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-podman pod ls
 
+# mysqld containers
+podman container create --name=my1c --pod=my1p --rm --health-start-period=80s --log-driver=journald --volume=./reptest/my1c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my1dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my2c --pod=my2p --rm --health-start-period=80s --log-driver=journald --volume=./reptest/my2c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my2dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my3c --pod=my3p --rm --health-start-period=80s --log-driver=journald --volume=./reptest/my3c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my3dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my4c --pod=my4p --rm --health-start-period=80s --log-driver=journald --volume=./reptest/my4c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my4dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 
 
 podman pod start my1p
@@ -129,11 +121,11 @@ podman volume inspect my2dbdata
 podman volume inspect my3dbdata
 podman volume inspect my4dbdata
 
-# podman ps -a --pod
+podman ps
 podman ps --pod
+podman ps -a --pod
 podman network ls
 podman volume ls
-podman ps
 podman pod ls
 
 
@@ -195,10 +187,10 @@ time podman exec --tty --interactive my4c mysql --user=root --password=root --ho
 time podman exec --tty --interactive my4c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SHOW DATABASES;' </dev/null
 time podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SHOW DATABASES;' </dev/null
 
-# podman ps -a --pod
+podman ps
 podman ps --pod
+podman ps -a --pod
 podman network ls
 podman volume ls
-podman ps
 podman pod ls
 
