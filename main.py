@@ -60,6 +60,20 @@ binlog_do_db             = db
 __eot__
 {% endfor %}
 
+{% for pod in manifest['pods'] %}
+replica_ip{{ pod.replica.number }}=$(podman inspect {{ pod.replica.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ manifest['global']['network'] }}.IPAddress{%- raw -%} }} {%- endraw -%}')
+mkdir -p reptest/{{ pod.containers[0].name }}/extra
+cat <<__eot__ >reptest/{{ pod.containers[0].name }}/extra/repl.sql
+CREATE USER '{{ manifest['global']['user_replication'] }}'@'$replica_ip{{ pod.replica.number }}' IDENTIFIED WITH mysql_native_password BY '{{ manifest['global']['user_replication_pass'] }}';
+GRANT REPLICATION SLAVE ON *.* TO '{{ manifest['global']['user_replication'] }}'@'$replica_ip{{ pod.replica.number }}';
+FLUSH PRIVILEGES;
+__eot__
+{% endfor %}
+
+{%- for pod in manifest['pods'] %}
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ manifest['global']['user_root'] }} --password={{ manifest['global']['user_root_pass'] }} --host={{ pod.name }}.dns.podman --execute 'SOURCE reptest/{{ pod.containers[0].name }}/extra/repl.sql;'
+{%- endfor %}
+
 # pods with bridge mode networking
 {%- for pod in manifest['pods'] %}
 podman pod create --name={{ pod.name }} --publish={{ manifest['global']['internal_port'] }}{{loop.index}}:{{ manifest['global']['internal_port'] }} --network={{ manifest['global']['network'] }}
@@ -67,7 +81,7 @@ podman pod create --name={{ pod.name }} --publish={{ manifest['global']['interna
 
 # mysqld containers
 {%- for pod in manifest['pods'] %}
-podman container create --name={{ pod.containers[0].name }} --pod={{ pod.name }} --rm --health-start-period=80s --log-driver=journald --volume=./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ manifest['global']['user_root_pass'] }} --env=MYSQL_USER={{ manifest['global']['user_non_root'] }} --env=MYSQL_PASSWORD={{ manifest['global']['user_non_root_pass'] }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name={{ pod.containers[0].name }} --pod={{ pod.name }} --rm --health-start-period=80s --log-driver=journald --volume=./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/{{ pod.containers[0].name }}/extra:/tmp/extra:Z --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ manifest['global']['user_root_pass'] }} --env=MYSQL_USER={{ manifest['global']['user_non_root'] }} --env=MYSQL_PASSWORD={{ manifest['global']['user_non_root_pass'] }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 {%- endfor %}
 
 {% for pod in manifest['pods'] %}
@@ -118,3 +132,4 @@ time podman exec --tty --interactive {{ container }} mysql --user={{ manifest['g
 template = jinja2.Template(tmpl_str)
 result = template.render(manifest=manifest)
 print(result)
+

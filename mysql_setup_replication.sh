@@ -91,6 +91,44 @@ binlog_do_db             = db
 __eot__
 
 
+
+replica_ip2=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
+mkdir -p reptest/my1c/extra
+cat <<__eot__ >reptest/my1c/extra/repl.sql
+CREATE USER 'replica_user'@'$replica_ip2' IDENTIFIED WITH mysql_native_password BY 'replica_user';
+GRANT REPLICATION SLAVE ON *.* TO 'replica_user'@'$replica_ip2';
+FLUSH PRIVILEGES;
+__eot__
+
+replica_ip3=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
+mkdir -p reptest/my2c/extra
+cat <<__eot__ >reptest/my2c/extra/repl.sql
+CREATE USER 'replica_user'@'$replica_ip3' IDENTIFIED WITH mysql_native_password BY 'replica_user';
+GRANT REPLICATION SLAVE ON *.* TO 'replica_user'@'$replica_ip3';
+FLUSH PRIVILEGES;
+__eot__
+
+replica_ip4=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
+mkdir -p reptest/my3c/extra
+cat <<__eot__ >reptest/my3c/extra/repl.sql
+CREATE USER 'replica_user'@'$replica_ip4' IDENTIFIED WITH mysql_native_password BY 'replica_user';
+GRANT REPLICATION SLAVE ON *.* TO 'replica_user'@'$replica_ip4';
+FLUSH PRIVILEGES;
+__eot__
+
+replica_ip1=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
+mkdir -p reptest/my4c/extra
+cat <<__eot__ >reptest/my4c/extra/repl.sql
+CREATE USER 'replica_user'@'$replica_ip1' IDENTIFIED WITH mysql_native_password BY 'replica_user';
+GRANT REPLICATION SLAVE ON *.* TO 'replica_user'@'$replica_ip1';
+FLUSH PRIVILEGES;
+__eot__
+
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SOURCE reptest/my1c/extra/repl.sql;'
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'SOURCE reptest/my2c/extra/repl.sql;'
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SOURCE reptest/my3c/extra/repl.sql;'
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SOURCE reptest/my4c/extra/repl.sql;'
+
 # pods with bridge mode networking
 podman pod create --name=my1p --publish=33061:3306 --network=replication
 podman pod create --name=my2p --publish=33062:3306 --network=replication
@@ -98,10 +136,10 @@ podman pod create --name=my3p --publish=33063:3306 --network=replication
 podman pod create --name=my4p --publish=33064:3306 --network=replication
 
 # mysqld containers
-podman container create --name=my1c --pod=my1p --rm --health-start-period=80s --log-driver=journald --volume=./reptest/my1c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my1dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-podman container create --name=my2c --pod=my2p --rm --health-start-period=80s --log-driver=journald --volume=./reptest/my2c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my2dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-podman container create --name=my3c --pod=my3p --rm --health-start-period=80s --log-driver=journald --volume=./reptest/my3c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my3dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-podman container create --name=my4c --pod=my4p --rm --health-start-period=80s --log-driver=journald --volume=./reptest/my4c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=my4dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my1c --pod=my1p --rm --health-start-period=80s --log-driver=journald --volume=./reptest/my1c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my1c/extra:/tmp/extra:Z --volume=my1dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my2c --pod=my2p --rm --health-start-period=80s --log-driver=journald --volume=./reptest/my2c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my2c/extra:/tmp/extra:Z --volume=my2dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my3c --pod=my3p --rm --health-start-period=80s --log-driver=journald --volume=./reptest/my3c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my3c/extra:/tmp/extra:Z --volume=my3dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my4c --pod=my4p --rm --health-start-period=80s --log-driver=journald --volume=./reptest/my4c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my4c/extra:/tmp/extra:Z --volume=my4dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 
 
 podman pod start my1p
