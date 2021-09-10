@@ -121,22 +121,30 @@ time podman exec --tty --interactive {{ container }} mysql --user={{ global.user
 {%- endfor %}
 
 {{ status() }}
-{% for pod in pods %}
+
+{%- for pod in pods %}
 replica_ip{{ pod.replica.number }}=$(podman inspect {{ pod.replica.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ manifest['global']['network'] }}.IPAddress{%- raw -%} }} {%- endraw -%}')
 mkdir -p reptest/{{ pod.containers[0].name }}/extra
 cat <<__eot__ >reptest/{{ pod.containers[0].name }}/extra/user.sql
 CREATE USER '{{ global.user_replication }}'@'{{ pod.replica.fqdn }}' IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}';
 GRANT REPLICATION SLAVE ON *.* TO '{{ global.user_replication }}'@'{{ pod.replica.fqdn }}';
+-- DROP USER '{{ global.user_replication }}'@'{{ pod.replica.fqdn }}';
+-- podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "DROP USER 'repl'@'{{ pod.replica.fqdn }}';"
 
 CREATE USER '{{ global.user_replication }}'@'$replica_ip{{ pod.replica.number }}' IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}';
 GRANT REPLICATION SLAVE ON *.* TO '{{ global.user_replication }}'@'$replica_ip{{ pod.replica.number }}';
+-- DROP USER '{{ global.user_replication }}'@'$replica_ip{{ pod.replica.number }}';
+-- podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "DROP USER 'repl'@'$replica_ip{{ pod.replica.number }}';"
 
 -- fixme: sanity check
 CREATE USER '{{ global.user_replication }}'@'%' IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}';
 GRANT REPLICATION SLAVE ON *.* TO '{{ global.user_replication }}'@'%';
+-- DROP USER '{{ global.user_replication }}'@'%';
+-- podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "DROP USER 'repl'@'%';"
 
 FLUSH PRIVILEGES;
 __eot__
+cat reptest/{{ pod.containers[0].name }}/extra/user.sql
 {% endfor %}
 
 {%- for pod in pods %}
