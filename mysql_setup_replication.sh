@@ -207,6 +207,8 @@ replica_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replicati
 mkdir -p reptest/my1c/extra
 cat <<__eot__ >reptest/my1c/extra/user.sql
 CREATE USER 'repl'@'my2p.dns.podname' IDENTIFIED WITH mysql_native_password BY 'repl';
+CREATE USER 'repl'@'$replica_ip' IDENTIFIED WITH mysql_native_password BY 'repl';
+
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my2p.dns.podname';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'$replica_ip';
 FLUSH PRIVILEGES;
@@ -216,6 +218,8 @@ replica_ip=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replicati
 mkdir -p reptest/my2c/extra
 cat <<__eot__ >reptest/my2c/extra/user.sql
 CREATE USER 'repl'@'my3p.dns.podname' IDENTIFIED WITH mysql_native_password BY 'repl';
+CREATE USER 'repl'@'$replica_ip' IDENTIFIED WITH mysql_native_password BY 'repl';
+
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my3p.dns.podname';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'$replica_ip';
 FLUSH PRIVILEGES;
@@ -225,6 +229,8 @@ replica_ip=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replicati
 mkdir -p reptest/my3c/extra
 cat <<__eot__ >reptest/my3c/extra/user.sql
 CREATE USER 'repl'@'my4p.dns.podname' IDENTIFIED WITH mysql_native_password BY 'repl';
+CREATE USER 'repl'@'$replica_ip' IDENTIFIED WITH mysql_native_password BY 'repl';
+
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my4p.dns.podname';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'$replica_ip';
 FLUSH PRIVILEGES;
@@ -234,6 +240,8 @@ replica_ip=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replicati
 mkdir -p reptest/my4c/extra
 cat <<__eot__ >reptest/my4c/extra/user.sql
 CREATE USER 'repl'@'my1p.dns.podname' IDENTIFIED WITH mysql_native_password BY 'repl';
+CREATE USER 'repl'@'$replica_ip' IDENTIFIED WITH mysql_native_password BY 'repl';
+
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'my1p.dns.podname';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'$replica_ip';
 FLUSH PRIVILEGES;
