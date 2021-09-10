@@ -51,7 +51,10 @@ rm -rf ./reptest/
 mkdir -p reptest/{{ pod.containers[0].name }}
 cat <<'__eot__' >reptest/{{ pod.containers[0].name }}/my.cnf
 [mysqld]
-bind-address = {{ pod.name }}.dns.podman
+bind-address             = {{ pod.name }}.dns.podman
+server_id                = {{ loop.index }}
+#log_bin                 = /var/log/mysql/mysql-bin.log
+#binlog_do_db            = mytestdb
 __eot__
 {% endfor %}
 
