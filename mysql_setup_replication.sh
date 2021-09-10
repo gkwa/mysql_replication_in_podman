@@ -140,10 +140,10 @@ podman pod ls
 
 
 
-until podman exec --tty --interactive my1c mysql --host=my1p.dns.podman --user=joe --password=joe --execute "SHOW DATABASES;"; do sleep 5; done;
-until podman exec --tty --interactive my2c mysql --host=my2p.dns.podman --user=joe --password=joe --execute "SHOW DATABASES;"; do sleep 5; done;
-until podman exec --tty --interactive my3c mysql --host=my3p.dns.podman --user=joe --password=joe --execute "SHOW DATABASES;"; do sleep 5; done;
-until podman exec --tty --interactive my4c mysql --host=my4p.dns.podman --user=joe --password=joe --execute "SHOW DATABASES;"; do sleep 5; done;
+until podman exec --tty --interactive my1c mysql --host=my1p --user=joe --password=joe --execute "SHOW DATABASES;"; do sleep 5; done;
+until podman exec --tty --interactive my2c mysql --host=my2p --user=joe --password=joe --execute "SHOW DATABASES;"; do sleep 5; done;
+until podman exec --tty --interactive my3c mysql --host=my3p --user=joe --password=joe --execute "SHOW DATABASES;"; do sleep 5; done;
+until podman exec --tty --interactive my4c mysql --host=my4p --user=joe --password=joe --execute "SHOW DATABASES;"; do sleep 5; done;
 
 
 podman inspect my1c | grep -i ipaddr
