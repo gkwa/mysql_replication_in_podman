@@ -14,8 +14,9 @@ with open(in_file, "r") as stream:
 tmpl_str = """#!/bin/bash
 
 {% macro status() -%}
-# podman ps -a --pod
+podman ps
 podman ps --pod
+podman ps -a --pod
 podman network ls
 podman volume ls
 podman ps
