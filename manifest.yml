@@ -11,28 +11,28 @@ pods:
 - name: my1p
   volume: my1dbdata
   replica:
-    number: 2
     container: my2c
+    fqdn: my2p.dns.podname
   containers:
   - name: my1c
 - name: my2p
   volume: my2dbdata
   replica:
-    number: 3
     container: my3c
+    fqdn: my3p.dns.podname
   containers:
   - name: my2c
 - name: my3p
   volume: my3dbdata
   replica:
-    number: 4
+    fqdn: my4p.dns.podname
     container: my4c
   containers:
   - name: my3c
 - name: my4p
   volume: my4dbdata
   replica:
-    number: 1
+    fqdn: my1p.dns.podname
     container: my1c
   containers:
   - name: my4c
