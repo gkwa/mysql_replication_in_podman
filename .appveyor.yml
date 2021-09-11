@@ -3,9 +3,9 @@ environment:
 image: Ubuntu2004
 install:
 - |
-  git clone --depth 1 https://github.com/sstephenson/bats.git /usr/local/src/bats
+  sudo git clone --depth 1 https://github.com/sstephenson/bats.git /usr/local/src/bats
   cd /usr/local/src/bats
-  ./install.sh /usr/local
+  sudo ./install.sh /usr/local
 - bash -x secure_file_setup.sh
 - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 - sh: ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret $my_secret -salt $my_salt -out /tmp/auth.json.decrypted
