@@ -326,6 +326,21 @@ podman exec --tty --interactive my5c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';" </dev/null
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "FLUSH PRIVILEGES;" </dev/null
 
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "FLUSH TABLES WITH READ LOCK;" </dev/null
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "FLUSH TABLES WITH READ LOCK;" </dev/null
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "FLUSH TABLES WITH READ LOCK;" </dev/null
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "FLUSH TABLES WITH READ LOCK;" </dev/null
+podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "FLUSH TABLES WITH READ LOCK;" </dev/null
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "SHOW MASTER STATUS;" </dev/null
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "SHOW MASTER STATUS;" </dev/null
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "SHOW MASTER STATUS;" </dev/null
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "SHOW MASTER STATUS;" </dev/null
+podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "SHOW MASTER STATUS;" </dev/null
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "UNLOCK TABLES;" </dev/null
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "UNLOCK TABLES;" </dev/null
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "UNLOCK TABLES;" </dev/null
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "UNLOCK TABLES;" </dev/null
+podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "UNLOCK TABLES;" </dev/null
 
 : <<'END_COMMENT'
 replica_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')

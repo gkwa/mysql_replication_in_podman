@@ -149,6 +149,18 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "FLUSH PRIVILEGES;" </dev/null
 {% endfor %}
 
+{%- for pod in pods %}
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "FLUSH TABLES WITH READ LOCK;" </dev/null
+{%- endfor %}
+
+{%- for pod in pods %}
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "SHOW MASTER STATUS;" </dev/null
+{%- endfor %}
+
+{%- for pod in pods %}
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "UNLOCK TABLES;" </dev/null
+{%- endfor %}
+
 : <<'END_COMMENT'
 {%- for pod in pods %}
 replica_ip{{ pod.replica.number }}=$(podman inspect {{ pod.replica.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network}}.IPAddress{%- raw -%} }} {%- endraw -%}')
