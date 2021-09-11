@@ -3,6 +3,7 @@
 set -o errexit
 
 podman info --debug
+mysql --version
 
 # podman login --username mtmonacelli registry.redhat.io $REGISTRY_REDHAT_IO_PASSWORD
 
@@ -57,8 +58,6 @@ podman volume create my4dbdata
 podman volume create my5dbdata
 
 rm -rf reptest/
-
-
 mkdir -p reptest/my1c/extra
 mkdir -p reptest/my2c/extra
 mkdir -p reptest/my3c/extra
@@ -80,6 +79,7 @@ binlog_do_db                   = db
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
+cat reptest/my1c/my.cnf
 
 mkdir -p reptest/my2c
 cat <<'__eot__' >reptest/my2c/my.cnf
@@ -95,6 +95,7 @@ binlog_do_db                   = db
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
+cat reptest/my2c/my.cnf
 
 mkdir -p reptest/my3c
 cat <<'__eot__' >reptest/my3c/my.cnf
@@ -110,6 +111,7 @@ binlog_do_db                   = db
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
+cat reptest/my3c/my.cnf
 
 mkdir -p reptest/my4c
 cat <<'__eot__' >reptest/my4c/my.cnf
@@ -125,6 +127,7 @@ binlog_do_db                   = db
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
+cat reptest/my4c/my.cnf
 
 mkdir -p reptest/my5c
 cat <<'__eot__' >reptest/my5c/my.cnf
@@ -140,6 +143,7 @@ binlog_do_db                   = db
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
+cat reptest/my5c/my.cnf
 
 
 # pods with bridge mode networking
@@ -414,31 +418,31 @@ END_COMMENT
 mkdir -p reptest/my1c/extra
 replica_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<__eot__ >reptest/my1c/extra/extra.sql
--- add stuff here if yawanna
+-- placeholder in case we need it
 __eot__
 # cat reptest/my1c/extra/extra.sql
 mkdir -p reptest/my2c/extra
 replica_ip=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<__eot__ >reptest/my2c/extra/extra.sql
--- add stuff here if yawanna
+-- placeholder in case we need it
 __eot__
 # cat reptest/my2c/extra/extra.sql
 mkdir -p reptest/my3c/extra
 replica_ip=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<__eot__ >reptest/my3c/extra/extra.sql
--- add stuff here if yawanna
+-- placeholder in case we need it
 __eot__
 # cat reptest/my3c/extra/extra.sql
 mkdir -p reptest/my4c/extra
 replica_ip=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<__eot__ >reptest/my4c/extra/extra.sql
--- add stuff here if yawanna
+-- placeholder in case we need it
 __eot__
 # cat reptest/my4c/extra/extra.sql
 mkdir -p reptest/my5c/extra
 replica_ip=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<__eot__ >reptest/my5c/extra/extra.sql
--- add stuff here if yawanna
+-- placeholder in case we need it
 __eot__
 # cat reptest/my5c/extra/extra.sql
 

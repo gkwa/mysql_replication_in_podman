@@ -30,6 +30,7 @@ podman pod ls
 set -o errexit
 
 podman info --debug
+mysql --version
 
 # podman login --username mtmonacelli registry.redhat.io $REGISTRY_REDHAT_IO_PASSWORD
 
@@ -72,6 +73,7 @@ binlog_do_db                   = db
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
+cat reptest/{{ pod.containers[0].name }}/my.cnf
 {% endfor %}
 
 # pods with bridge mode networking
@@ -185,7 +187,7 @@ END_COMMENT
 mkdir -p reptest/{{ pod.containers[0].name }}/extra
 replica_ip{{ pod.replica.number }}=$(podman inspect {{ pod.replica.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network }}.IPAddress{%- raw -%} }} {%- endraw -%}')
 cat <<__eot__ >reptest/{{ pod.containers[0].name }}/extra/extra.sql
--- add stuff here if yawanna
+-- placeholder in case we need it
 __eot__
 # cat reptest/{{ pod.containers[0].name }}/extra/extra.sql
 {%- endfor %}
