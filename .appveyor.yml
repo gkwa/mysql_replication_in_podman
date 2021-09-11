@@ -2,9 +2,6 @@ environment:
   APPVEYOR_SSH_KEY: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFp48yQviDu3U2mGdwv7CO3O84IAj4LJUXzyGbs6mT0q taylor.monacelli@streambox.com
 image: Ubuntu2004
 install:
-- |
-  sudo git clone --depth 1 https://github.com/sstephenson/bats.git /tmp/bats
-  pushd /tmp/bats; sudo ./install.sh /usr/local; popd
 - bash -x secure_file_setup.sh
 - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 - sh: ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret $my_secret -salt $my_salt -out /tmp/auth.json.decrypted
@@ -12,6 +9,9 @@ install:
 - sudo bash ./containers.sh 
 - sudo bash -x setup_debian.sh
 - sudo bash -x create_test.sh
+- |
+  sudo git clone --depth 1 https://github.com/sstephenson/bats.git /tmp/bats
+  pushd /tmp/bats; sudo ./install.sh /usr/local; popd
 test_script:
 - sudo time bash -x test.sh
 - sudo bats test_replication_is_running.bats
