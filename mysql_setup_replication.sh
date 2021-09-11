@@ -465,8 +465,6 @@ podman exec --tty --interactive my2c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user' </dev/null
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user' </dev/null
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user' </dev/null
-
-# FIXME: check: does using dns work with podman here?
 position=$(podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
 echo target:my1c source:my5c position:$position
 podman exec --tty --interactive my1c mysql --host=my1p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='my5p.dns.podman',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
@@ -567,6 +565,7 @@ cat <<'__eot__' >test_replication_is_running.bats
   [ "$status" -eq 1 ]
 }
 __eot__
+sudo bats test_replication_is_running.bats
 
 cat <<'__eot__' >test_replication_is_stopped.bats
 @test "stop replication and ensure its not running" {
@@ -595,3 +594,16 @@ cat <<'__eot__' >test_replication_is_stopped.bats
   podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'START SLAVE' </dev/null
 }
 __eot__
+sudo bats test_replication_is_stopped.bats
+
+# i guess positions have increased, yes?
+position=$(podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
+echo target:my1c source:my5c position:$position
+position=$(podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
+echo target:my2c source:my1c position:$position
+position=$(podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
+echo target:my3c source:my2c position:$position
+position=$(podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
+echo target:my4c source:my3c position:$position
+position=$(podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
+echo target:my5c source:my4c position:$position
