@@ -373,15 +373,15 @@ podman exec --tty --interactive my4c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "FLUSH TABLES WITH READ LOCK" </dev/null
 
 
-position=$(podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g')
+position=$(podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
 echo $position
-position=$(podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g')
+position=$(podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
 echo $position
-position=$(podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g')
+position=$(podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
 echo $position
-position=$(podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g')
+position=$(podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
 echo $position
-position=$(podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g')
+position=$(podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
 echo $position
 
 

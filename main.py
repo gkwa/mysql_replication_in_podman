@@ -165,7 +165,7 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 {%- endfor %}
 
 {% for pod in pods %}
-position=$(podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g')
+position=$(podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
 echo $position
 {%- endfor %}
 
