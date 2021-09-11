@@ -192,9 +192,15 @@ END_COMMENT
 mkdir -p reptest/{{ pod.containers[0].name }}/extra
 replica_ip{{ pod.replica.number }}=$(podman inspect {{ pod.replica.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network }}.IPAddress{%- raw -%} }} {%- endraw -%}')
 cat <<__eot__ >reptest/{{ pod.containers[0].name }}/extra/extra.sql
--- placeholder in case we need it
+CREATE DATABASE IF NOT EXISTS `myflixdb`;
+CREATE TABLE IF NOT EXISTS `myflixdb`.`members` ( `membership_number` INT autoincrement , `full_names` VARCHAR(150) NOT NULL , `gender` VARCHAR(6) , `date_of_birth` date , PRIMARY KEY (`membership_number`) ) engine = innodb;
+INSERT INTO myflixdb.members VALUES (`tom hillbilly`, `male`);
 __eot__
 # cat reptest/{{ pod.containers[0].name }}/extra/extra.sql
+{%- endfor %}
+
+{% for pod in pods %}
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
 {%- endfor %}
 
 {% for pod in pods %}
