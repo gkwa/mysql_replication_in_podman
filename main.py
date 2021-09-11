@@ -246,6 +246,41 @@ podman exec --tty --interactive {{ block.source.container }} mysql --user={{ glo
 podman exec --tty --interactive {{ block.instance.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.instance.pod }} --execute 'SHOW DATABASES' </dev/null
 {% endfor %}
 END_COMMENT
+
+cat <<'__eot__' >test_replication_is_running.bats
+@test "delete db from my4c and ensure its been removed from all" {
+  podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'START SLAVE' </dev/null
+  podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'START SLAVE' </dev/null
+  podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'START SLAVE' </dev/null
+  podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'START SLAVE' </dev/null
+  podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'START SLAVE' </dev/null
+    
+  podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "CREATE DATABASE IF NOT EXISTS dummy" </dev/null
+  podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'USE dummy' </dev/null
+  podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'DROP DATABASE IF EXISTS dummy' </dev/null
+  run podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'USE dummy' </dev/null
+  [ "$status" -eq 1 ]
+}
+__eot__
+bats test_replication_is_running.bats
+
+cat <<'__eot__' >test_replication_is_stopped.bats
+@test "delete db from my4c and ensure its been removed from all" {
+  podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "CREATE DATABASE IF NOT EXISTS dummy" </dev/null
+
+  podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'STOP SLAVE' </dev/null
+  podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'STOP SLAVE' </dev/null
+  podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'STOP SLAVE' </dev/null
+  podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'STOP SLAVE' </dev/null
+  podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'STOP SLAVE' </dev/null
+
+  podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'USE dummy' </dev/null
+  podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'DROP DATABASE IF EXISTS dummy' </dev/null
+  run podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'USE dummy' </dev/null
+  [ "$status" -eq 0 ]
+}
+__eot__
+bats test_replication_is_stopped.bats
 """
 
 template = jinja2.Template(tmpl_str)
