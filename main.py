@@ -224,7 +224,7 @@ podman exec --tty --interactive {{ block.instance.container }} mysql --host={{ b
 MASTER_USER='{{ global.user_replication }}',\
 MASTER_PASSWORD='{{ global.user_replication_pass }}',\
 MASTER_LOG_FILE='mysql-bin.000003',\
-MASTER_LOG_POS=$position"
+MASTER_LOG_POS="$position'"'
 {%- endfor %}
 END_COMMENT
 
