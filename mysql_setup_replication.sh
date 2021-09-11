@@ -341,6 +341,11 @@ podman exec --tty --interactive my2c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "UNLOCK TABLES;" </dev/null
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "UNLOCK TABLES;" </dev/null
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "UNLOCK TABLES;" </dev/null
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "CREATE DATABASE IF NOT EXIST db;" </dev/null
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "CREATE DATABASE IF NOT EXIST db;" </dev/null
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "CREATE DATABASE IF NOT EXIST db;" </dev/null
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "CREATE DATABASE IF NOT EXIST db;" </dev/null
+podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "CREATE DATABASE IF NOT EXIST db;" </dev/null
 
 : <<'END_COMMENT'
 replica_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
@@ -379,31 +384,26 @@ replica_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replicati
 cat <<__eot__ >reptest/my1c/extra/user.sql
 __eot__
 cat reptest/my1c/extra/user.sql
-
 mkdir -p reptest/my2c/extra
 replica_ip=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<__eot__ >reptest/my2c/extra/user.sql
 __eot__
 cat reptest/my2c/extra/user.sql
-
 mkdir -p reptest/my3c/extra
 replica_ip=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<__eot__ >reptest/my3c/extra/user.sql
 __eot__
 cat reptest/my3c/extra/user.sql
-
 mkdir -p reptest/my4c/extra
 replica_ip=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<__eot__ >reptest/my4c/extra/user.sql
 __eot__
 cat reptest/my4c/extra/user.sql
-
 mkdir -p reptest/my5c/extra
 replica_ip=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<__eot__ >reptest/my5c/extra/user.sql
 __eot__
 cat reptest/my5c/extra/user.sql
-
 podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra/user.sql;'
 podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'SOURCE /tmp/extra/user.sql;'
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SOURCE /tmp/extra/user.sql;'
@@ -416,3 +416,8 @@ podman exec --tty --interactive my2c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user;'
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user;'
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user;'
+replica_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute "CHANGE REPLICATION SOURCE TO SOURCE_HOST='"$replica_ip"', SOURCE_USER='repl@"$replica_ip"', SOURCE_PASSWORD='repl', SOURCE_LOG_FILE='mysql-bin.000001', SOURCE_LOG_POS=899;"
+replica_ip=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute "CHANGE REPLICATION SOURCE TO SOURCE_HOST='"$replica_ip"', SOURCE_USER='repl@"$replica_ip"', SOURCE_PASSWORD='repl', SOURCE_LOG_FILE='mysql-bin.000001', SOURCE_LOG_POS=899;"
+replica_ip=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute "CHANGE REPLICATION SOURCE TO SOURCE_HOST='"$replica_ip"', SOURCE_USER='repl@"$replica_ip"', SOURCE_PASSWORD='repl', SOURCE_LOG_FILE='mysql-bin.000001', SOURCE_LOG_POS=899;"
+replica_ip=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute "CHANGE REPLICATION SOURCE TO SOURCE_HOST='"$replica_ip"', SOURCE_USER='repl@"$replica_ip"', SOURCE_PASSWORD='repl', SOURCE_LOG_FILE='mysql-bin.000001', SOURCE_LOG_POS=899;"
+replica_ip=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute "CHANGE REPLICATION SOURCE TO SOURCE_HOST='"$replica_ip"', SOURCE_USER='repl@"$replica_ip"', SOURCE_PASSWORD='repl', SOURCE_LOG_FILE='mysql-bin.000001', SOURCE_LOG_POS=899;"

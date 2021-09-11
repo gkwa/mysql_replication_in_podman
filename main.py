@@ -161,6 +161,10 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "UNLOCK TABLES;" </dev/null
 {%- endfor %}
 
+{%- for pod in pods %}
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "CREATE DATABASE IF NOT EXIST db;" </dev/null
+{%- endfor %}
+
 : <<'END_COMMENT'
 {%- for pod in pods %}
 replica_ip{{ pod.replica.number }}=$(podman inspect {{ pod.replica.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network}}.IPAddress{%- raw -%} }} {%- endraw -%}')
@@ -177,7 +181,7 @@ replica_ip{{ pod.replica.number }}=$(podman inspect {{ pod.replica.container }} 
 cat <<__eot__ >reptest/{{ pod.containers[0].name }}/extra/user.sql
 __eot__
 cat reptest/{{ pod.containers[0].name }}/extra/user.sql
-{% endfor %}
+{%- endfor %}
 
 {%- for pod in pods %}
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SOURCE /tmp/extra/user.sql;'
@@ -186,6 +190,11 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 # desc mysql.user;
 {%- for pod in pods %}
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user;'
+{%- endfor %}
+
+{%- for pod in pods %}
+{%- set user = global.user_replication ~ "@" ~ "$replica_ip"  %}
+replica_ip=$(podman inspect {{ pod.replica.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network}}.IPAddress{%- raw -%} }} {%- endraw -%}'); podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute "CHANGE REPLICATION SOURCE TO SOURCE_HOST='"$replica_ip"', SOURCE_USER='{{ global.user_replication }}@"$replica_ip"', SOURCE_PASSWORD='{{ global.user_replication_pass }}', SOURCE_LOG_FILE='mysql-bin.000001', SOURCE_LOG_POS=899;"
 {%- endfor %}
 """
 
