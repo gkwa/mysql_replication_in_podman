@@ -164,11 +164,12 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "FLUSH TABLES WITH READ LOCK" </dev/null
 {%- endfor %}
 
-{%- for pod in pods %}
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "SHOW MASTER STATUS" </dev/null
+{% for pod in pods %}
+position=$(podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute 'SHOW MASTER STATUS\G' | sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g') </dev/null
+echo $position
 {%- endfor %}
 
-{%- for pod in pods %}
+{% for pod in pods %}
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "UNLOCK TABLES" </dev/null
 {%- endfor %}
 
