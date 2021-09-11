@@ -7,22 +7,37 @@ global:
   user_root_pass: root
   user_replication: repl
   user_replication_pass: repl
-replication_source:
-- name: my1c
-  get_ip: my5c
-  pod: my1p
-- name: my2c
-  get_ip: my1c
-  pod: my2p
-- name: my3c
-  get_ip: my2c
-  pod: my3p
-- name: my4c
-  get_ip: my3c
-  pod: my4p
-- name: my5c
-  get_ip: my4c
-  pod: my5p
+replication:
+- instance:
+    container: my1c
+    pod: my1p
+  source:
+    container: my5c
+    pod: my5p
+- instance:
+    container: my2c
+    pod: my2p
+  source:
+    container: my1c
+    pod: my1p
+- instance:
+    container: my3c
+    pod: my3p
+  source:
+    container: my2c
+    pod: my2p
+- instance:
+    container: my4c
+    pod: my4p
+  source:
+    container: my3c
+    pod: my3p
+- instance:
+    container: my5c
+    pod: my5p
+  source:
+    container: my4c
+    pod: my4p
 pods:
 - name: my1p
   volume: my1dbdata
