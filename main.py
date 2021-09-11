@@ -262,7 +262,6 @@ cat <<'__eot__' >test_replication_is_running.bats
   [ "$status" -eq 1 ]
 }
 __eot__
-bats test_replication_is_running.bats
 
 cat <<'__eot__' >test_replication_is_stopped.bats
 @test "stop replication and ensure its not running" {
@@ -280,7 +279,6 @@ cat <<'__eot__' >test_replication_is_stopped.bats
   [ "$status" -eq 0 ]
 }
 __eot__
-bats test_replication_is_stopped.bats
 """
 
 template = jinja2.Template(tmpl_str)
