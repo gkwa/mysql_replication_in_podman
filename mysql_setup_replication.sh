@@ -387,79 +387,37 @@ podman exec --tty --interactive my3c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "CREATE DATABASE IF NOT EXISTS dummy" </dev/null
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "CREATE DATABASE IF NOT EXISTS dummy" </dev/null
 
-: <<'END_COMMENT'
 # workaround for mysql 5.6: GRANT USAGE ON *.* TO...
 replica_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-
 podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "GRANT USAGE ON *.* TO 'repl'@'$replica_ip'" </dev/null
 podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "DROP USER 'repl'@'$replica_ip'" </dev/null
-
-podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "GRANT USAGE ON *.* TO 'repl'@'my2p.dns.podname'" </dev/null
-podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "DROP USER 'repl'@'my2p.dns.podname'" </dev/null
-
-podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "GRANT USAGE ON *.* TO 'repl'@'my2p'" </dev/null
-podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "DROP USER 'repl'@'my2p'" </dev/null
-
 podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "GRANT USAGE ON *.* TO 'repl'@'%'" </dev/null
 podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "DROP USER 'repl'@'%'" </dev/null
 
 replica_ip=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-
 podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "GRANT USAGE ON *.* TO 'repl'@'$replica_ip'" </dev/null
 podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "DROP USER 'repl'@'$replica_ip'" </dev/null
-
-podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "GRANT USAGE ON *.* TO 'repl'@'my3p.dns.podname'" </dev/null
-podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "DROP USER 'repl'@'my3p.dns.podname'" </dev/null
-
-podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "GRANT USAGE ON *.* TO 'repl'@'my3p'" </dev/null
-podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "DROP USER 'repl'@'my3p'" </dev/null
-
 podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "GRANT USAGE ON *.* TO 'repl'@'%'" </dev/null
 podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "DROP USER 'repl'@'%'" </dev/null
 
 replica_ip=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "GRANT USAGE ON *.* TO 'repl'@'$replica_ip'" </dev/null
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "DROP USER 'repl'@'$replica_ip'" </dev/null
-
-podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "GRANT USAGE ON *.* TO 'repl'@'my4p.dns.podname'" </dev/null
-podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "DROP USER 'repl'@'my4p.dns.podname'" </dev/null
-
-podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "GRANT USAGE ON *.* TO 'repl'@'my4p'" </dev/null
-podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "DROP USER 'repl'@'my4p'" </dev/null
-
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "GRANT USAGE ON *.* TO 'repl'@'%'" </dev/null
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "DROP USER 'repl'@'%'" </dev/null
 
 replica_ip=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "GRANT USAGE ON *.* TO 'repl'@'$replica_ip'" </dev/null
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "DROP USER 'repl'@'$replica_ip'" </dev/null
-
-podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "GRANT USAGE ON *.* TO 'repl'@'my5p.dns.podname'" </dev/null
-podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "DROP USER 'repl'@'my5p.dns.podname'" </dev/null
-
-podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "GRANT USAGE ON *.* TO 'repl'@'my5p'" </dev/null
-podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "DROP USER 'repl'@'my5p'" </dev/null
-
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "GRANT USAGE ON *.* TO 'repl'@'%'" </dev/null
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "DROP USER 'repl'@'%'" </dev/null
 
 replica_ip=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "GRANT USAGE ON *.* TO 'repl'@'$replica_ip'" </dev/null
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "DROP USER 'repl'@'$replica_ip'" </dev/null
-
-podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "GRANT USAGE ON *.* TO 'repl'@'my1p.dns.podname'" </dev/null
-podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "DROP USER 'repl'@'my1p.dns.podname'" </dev/null
-
-podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "GRANT USAGE ON *.* TO 'repl'@'my1p'" </dev/null
-podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "DROP USER 'repl'@'my1p'" </dev/null
-
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "GRANT USAGE ON *.* TO 'repl'@'%'" </dev/null
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "DROP USER 'repl'@'%'" </dev/null
 
-END_COMMENT
 
 
 mkdir -p reptest/my1c/extra
