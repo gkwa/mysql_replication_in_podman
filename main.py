@@ -32,6 +32,7 @@ set -o errexit
 podman info --debug
 mysql --version
 
+# FIXME: reminder: i'm using appveyor secrets to decrypt this from ./auth.json.enc, thats obscure
 # podman login --username mtmonacelli registry.redhat.io $REGISTRY_REDHAT_IO_PASSWORD
 
 podman pull docker.io/perconalab/percona-toolkit:latest
@@ -204,12 +205,13 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 {% for block in replication %}
 source_ip=$(podman inspect {{ block.source.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network}}.IPAddress{%- raw -%} }} {%- endraw -%}')
 position=$(podman exec --tty --interactive {{ block.source.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.source.pod }} --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
+echo $source_ip $position
 podman exec --tty --interactive {{ block.instance.container }} mysql --host={{ block.instance.pod }} --user={{ global.user_root }} --password={{ global.user_root_pass }} \
 --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',\
 MASTER_USER='{{ global.user_replication }}',\
 MASTER_PASSWORD='{{ global.user_replication_pass }}',\
 MASTER_LOG_FILE='mysql-bin.000001',\
-MASTER_LOG_POS='"$position"'"
+MASTER_LOG_POS=$position"
 {%- endfor %}
 
 # FIXME: it would be really nice to be able to use dns here
