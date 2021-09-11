@@ -210,7 +210,7 @@ MASTER_USER='{{ global.user_replication }}',\
 MASTER_PASSWORD='{{ global.user_replication_pass }}',\
 MASTER_LOG_FILE='mysql-bin.000001',\
 MASTER_LOG_POS='"$position"'"
-s{%- endfor %}
+{%- endfor %}
 
 # FIXME: it would be really nice to be able to use dns here
 : <<'END_COMMENT'
