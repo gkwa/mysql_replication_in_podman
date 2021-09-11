@@ -14,6 +14,4 @@ install:
   pushd /tmp/bats; sudo ./install.sh /usr/local; popd
 test_script:
 - sudo time bash -x test.sh
-- sudo bats test_replication_is_running.bats
-- sudo bats test_replication_is_stopped.bats
 build: off
