@@ -15,6 +15,7 @@ with open(in_file, "r") as stream:
 
 tmpl_str = """#!/bin/bash
 {%- set global=manifest['global'] %}
+{%- set rep=manifest['rep'] %}
 {%- set pods=manifest['pods'] %}
 
 {% macro status() -%}
@@ -192,9 +193,9 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user;'
 {%- endfor %}
 
-{% for pod in pods %}
-source_ip=$(podman inspect {{ pod.containers[0].name }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network}}.IPAddress{%- raw -%} }} {%- endraw -%}'); 
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.replica.fqdn.split('.')[0] }} --execute \
+{% for container in rep %}
+source_ip=$(podman inspect {{ container.source }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network}}.IPAddress{%- raw -%} }} {%- endraw -%}'); 
+podman exec --tty --interactive {{ container.name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ container.source }} --execute \
 "CHANGE MASTER TO MASTER_HOST='"$source_ip"',\
 MASTER_USER='{{ global.user_replication }}',\
 MASTER_PASSWORD='{{ global.user_replication_pass }}',\

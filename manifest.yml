@@ -7,6 +7,17 @@ global:
   user_root_pass: root
   user_replication: repl
   user_replication_pass: repl
+rep:
+- name: my1c
+  source: my5p
+- name: my2c
+  source: my1p
+- name: my3c
+  source: my2p
+- name: my4c
+  source: my3p
+- name: my5c
+  source: my4p
 pods:
 - name: my1p
   volume: my1dbdata
