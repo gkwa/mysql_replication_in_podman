@@ -495,7 +495,7 @@ position=$(podman exec --tty --interactive my4c mysql --user=root --password=roo
 echo target:$target_ip source:$source_ip position:$position
 podman exec --tty --interactive my5c mysql --host=my5p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=$position"
 
-# dns version -- if i can ever get there...
+# FIXME: dns version -- if i can ever get there...
 : <<'END_COMMENT'
 position=$(podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
 echo target:my1c source:my5c position:$position

@@ -215,7 +215,7 @@ MASTER_LOG_FILE='mysql-bin.000001',\
 MASTER_LOG_POS=$position"
 {%- endfor %}
 
-# dns version -- if i can ever get there...
+# FIXME: dns version -- if i can ever get there...
 : <<'END_COMMENT'
 {%- for block in replication %}
 position=$(podman exec --tty --interactive {{ block.source.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.source.pod }} --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
