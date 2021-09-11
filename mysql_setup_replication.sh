@@ -519,3 +519,22 @@ podman exec --tty --interactive my2c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'START SLAVE'
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'START SLAVE'
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'START SLAVE'
+
+# testing replication
+: <<'END_COMMENT'
+podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'DROP DATABASE simple' </dev/null
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'SHOW DATABASES' </dev/null
+
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'DROP DATABASE simple' </dev/null
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute 'SHOW DATABASES' </dev/null
+
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute 'DROP DATABASE simple' </dev/null
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute 'SHOW DATABASES' </dev/null
+
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute 'DROP DATABASE simple' </dev/null
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'SHOW DATABASES' </dev/null
+
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'DROP DATABASE simple' </dev/null
+podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'SHOW DATABASES' </dev/null
+
+END_COMMENT

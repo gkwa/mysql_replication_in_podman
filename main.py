@@ -231,6 +231,14 @@ END_COMMENT
 {% for pod in pods %}
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE'
 {%- endfor %}
+
+# testing replication
+: <<'END_COMMENT'
+{%- for block in replication %}
+podman exec --tty --interactive {{ block.source.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.source.pod }} --execute 'DROP DATABASE simple' </dev/null
+podman exec --tty --interactive {{ block.instance.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.instance.pod }} --execute 'SHOW DATABASES' </dev/null
+{% endfor %}
+END_COMMENT
 """
 
 template = jinja2.Template(tmpl_str)
