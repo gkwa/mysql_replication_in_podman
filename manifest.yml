@@ -9,15 +9,20 @@ global:
   user_replication_pass: repl
 replication_source:
 - name: my1c
-  source: my5p
+  get_ip: my5c
+  pod: my1p
 - name: my2c
-  source: my1p
+  get_ip: my1c
+  pod: my2p
 - name: my3c
-  source: my2p
+  get_ip: my2c
+  pod: my3p
 - name: my4c
-  source: my3p
+  get_ip: my3c
+  pod: my4p
 - name: my5c
-  source: my4p
+  get_ip: my4c
+  pod: my5p
 pods:
 - name: my1p
   volume: my1dbdata

@@ -418,13 +418,13 @@ podman exec --tty --interactive my4c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user;'
 
 
-source_ip=$(podman inspect my5p --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); 
-podman exec --tty --interactive my1c mysql --user=root --password=root --host=my5p --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856;"
-source_ip=$(podman inspect my1p --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); 
-podman exec --tty --interactive my2c mysql --user=root --password=root --host=my1p --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856;"
-source_ip=$(podman inspect my2p --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); 
-podman exec --tty --interactive my3c mysql --user=root --password=root --host=my2p --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856;"
-source_ip=$(podman inspect my3p --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); 
-podman exec --tty --interactive my4c mysql --user=root --password=root --host=my3p --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856;"
-source_ip=$(podman inspect my4p --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); 
-podman exec --tty --interactive my5c mysql --user=root --password=root --host=my4p --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856;"
+source_ip=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}');
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856;"
+source_ip=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}');
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856;"
+source_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}');
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856;"
+source_ip=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}');
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856;"
+source_ip=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}');
+podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856;"
