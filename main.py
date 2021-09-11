@@ -232,6 +232,10 @@ END_COMMENT
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE' </dev/null
 {%- endfor %}
 
+{% for pod in pods %}
+# podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'STOP SLAVE' </dev/null
+{%- endfor %}
+
 # testing replication
 : <<'END_COMMENT'
 {%- for block in replication %}
