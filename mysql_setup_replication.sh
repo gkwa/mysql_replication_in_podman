@@ -69,46 +69,76 @@ mkdir -p reptest/my5c/extra
 mkdir -p reptest/my1c
 cat <<'__eot__' >reptest/my1c/my.cnf
 [mysqld]
-bind-address             = my1p.dns.podman
-server_id                = 1
-log_bin                  = /var/log/mysql/mysql-bin.log
-binlog_do_db             = db
+bind-address                   = my1p.dns.podman
+server_id                      = 1
+# log_bin                      = /var/log/mysql/mysql-bin.log
+log_bin                        = mysql-bin.log
+datadir                        = /var/log/mysql
+binlog_do_db                   = db
+
+; https://www.clusterdb.com/mysql-cluster/get-mysql-replication-up-and-running-in-5-minutes
+innodb_flush_log_at_trx_commit = 1
+sync_binlog                    = 1
 __eot__
 
 mkdir -p reptest/my2c
 cat <<'__eot__' >reptest/my2c/my.cnf
 [mysqld]
-bind-address             = my2p.dns.podman
-server_id                = 2
-log_bin                  = /var/log/mysql/mysql-bin.log
-binlog_do_db             = db
+bind-address                   = my2p.dns.podman
+server_id                      = 2
+# log_bin                      = /var/log/mysql/mysql-bin.log
+log_bin                        = mysql-bin.log
+datadir                        = /var/log/mysql
+binlog_do_db                   = db
+
+; https://www.clusterdb.com/mysql-cluster/get-mysql-replication-up-and-running-in-5-minutes
+innodb_flush_log_at_trx_commit = 1
+sync_binlog                    = 1
 __eot__
 
 mkdir -p reptest/my3c
 cat <<'__eot__' >reptest/my3c/my.cnf
 [mysqld]
-bind-address             = my3p.dns.podman
-server_id                = 3
-log_bin                  = /var/log/mysql/mysql-bin.log
-binlog_do_db             = db
+bind-address                   = my3p.dns.podman
+server_id                      = 3
+# log_bin                      = /var/log/mysql/mysql-bin.log
+log_bin                        = mysql-bin.log
+datadir                        = /var/log/mysql
+binlog_do_db                   = db
+
+; https://www.clusterdb.com/mysql-cluster/get-mysql-replication-up-and-running-in-5-minutes
+innodb_flush_log_at_trx_commit = 1
+sync_binlog                    = 1
 __eot__
 
 mkdir -p reptest/my4c
 cat <<'__eot__' >reptest/my4c/my.cnf
 [mysqld]
-bind-address             = my4p.dns.podman
-server_id                = 4
-log_bin                  = /var/log/mysql/mysql-bin.log
-binlog_do_db             = db
+bind-address                   = my4p.dns.podman
+server_id                      = 4
+# log_bin                      = /var/log/mysql/mysql-bin.log
+log_bin                        = mysql-bin.log
+datadir                        = /var/log/mysql
+binlog_do_db                   = db
+
+; https://www.clusterdb.com/mysql-cluster/get-mysql-replication-up-and-running-in-5-minutes
+innodb_flush_log_at_trx_commit = 1
+sync_binlog                    = 1
 __eot__
 
 mkdir -p reptest/my5c
 cat <<'__eot__' >reptest/my5c/my.cnf
 [mysqld]
-bind-address             = my5p.dns.podman
-server_id                = 5
-log_bin                  = /var/log/mysql/mysql-bin.log
-binlog_do_db             = db
+bind-address                   = my5p.dns.podman
+server_id                      = 5
+# log_bin                      = /var/log/mysql/mysql-bin.log
+log_bin                        = mysql-bin.log
+datadir                        = /var/log/mysql
+binlog_do_db                   = db
+
+; https://www.clusterdb.com/mysql-cluster/get-mysql-replication-up-and-running-in-5-minutes
+innodb_flush_log_at_trx_commit = 1
+sync_binlog                    = 1
 __eot__
 
 
@@ -426,6 +456,7 @@ podman exec --tty --interactive my3c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user;'
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user;'
 
+# FIXME: MASTER_LOG_POS=2856 is bad, you should fetch it
 
 source_ip=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}');
 podman exec --tty --interactive my1c mysql --host=my1p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856;"
@@ -438,7 +469,7 @@ podman exec --tty --interactive my4c mysql --host=my4p --user=root --password=ro
 source_ip=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}');
 podman exec --tty --interactive my5c mysql --host=my5p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856;"
 
-# FIXME: it would be really nice to be able to use dns here:
+# FIXME: it would be really nice to be able to use dns here
 : <<'END_COMMENT'
 podman exec --tty --interactive my1c mysql --host=my1p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my5p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856;"
 podman exec --tty --interactive my2c mysql --host=my2p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my1p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856;"

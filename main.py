@@ -62,10 +62,16 @@ mkdir -p reptest/{{ pod.containers[0].name }}/extra
 mkdir -p reptest/{{ pod.containers[0].name }}
 cat <<'__eot__' >reptest/{{ pod.containers[0].name }}/my.cnf
 [mysqld]
-bind-address             = {{ pod.name }}.dns.podman
-server_id                = {{ loop.index }}
-log_bin                  = /var/log/mysql/mysql-bin.log
-binlog_do_db             = db
+bind-address                   = {{ pod.name }}.dns.podman
+server_id                      = {{ loop.index }}
+# log_bin                      = /var/log/mysql/mysql-bin.log
+log_bin                        = mysql-bin.log
+datadir                        = /var/log/mysql
+binlog_do_db                   = db
+
+; https://www.clusterdb.com/mysql-cluster/get-mysql-replication-up-and-running-in-5-minutes
+innodb_flush_log_at_trx_commit = 1
+sync_binlog                    = 1
 __eot__
 {% endfor %}
 
@@ -194,6 +200,7 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user;'
 {%- endfor %}
 
+# FIXME: MASTER_LOG_POS=2856 is bad, you should fetch it
 {% for block in replication %}
 source_ip=$(podman inspect {{ block.source.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network}}.IPAddress{%- raw -%} }} {%- endraw -%}');
 podman exec --tty --interactive {{ block.instance.container }} mysql --host={{ block.instance.pod }} --user={{ global.user_root }} --password={{ global.user_root_pass }} \
@@ -204,7 +211,7 @@ MASTER_LOG_FILE='mysql-bin.000003',\
 MASTER_LOG_POS=2856;"
 {%- endfor %}
 
-# FIXME: it would be really nice to be able to use dns here:
+# FIXME: it would be really nice to be able to use dns here
 : <<'END_COMMENT'
 {%- for block in replication %}
 podman exec --tty --interactive {{ block.instance.container }} mysql --host={{ block.instance.pod }} --user={{ global.user_root }} --password={{ global.user_root_pass }} \
