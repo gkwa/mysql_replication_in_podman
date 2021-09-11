@@ -32,7 +32,14 @@ pods:
 - name: my4p
   volume: my4dbdata
   replica:
+    fqdn: my5p.dns.podname
+    container: my5c
+  containers:
+  - name: my4c
+- name: my5p
+  volume: my5dbdata
+  replica:
     fqdn: my1p.dns.podname
     container: my1c
   containers:
-  - name: my4c
+  - name: my5c
