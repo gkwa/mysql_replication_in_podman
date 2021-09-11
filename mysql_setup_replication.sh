@@ -373,18 +373,6 @@ podman exec --tty --interactive my4c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "FLUSH TABLES WITH READ LOCK" </dev/null
 
 
-position=$(podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
-echo $position
-position=$(podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
-echo $position
-position=$(podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
-echo $position
-position=$(podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
-echo $position
-position=$(podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
-echo $position
-
-
 podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "UNLOCK TABLES" </dev/null
 podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "UNLOCK TABLES" </dev/null
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "UNLOCK TABLES" </dev/null
@@ -480,23 +468,27 @@ podman exec --tty --interactive my3c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
 
-# FIXME: MASTER_LOG_POS=2856 is bad, you should fetch it
 
 source_ip=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 position=$(podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
-podman exec --tty --interactive my1c mysql --host=my1p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=$position"
+podman exec --tty --interactive my1c mysql --host=my1p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS='"$position"'"
+s
 source_ip=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 position=$(podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
-podman exec --tty --interactive my2c mysql --host=my2p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=$position"
+podman exec --tty --interactive my2c mysql --host=my2p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS='"$position"'"
+s
 source_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 position=$(podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
-podman exec --tty --interactive my3c mysql --host=my3p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=$position"
+podman exec --tty --interactive my3c mysql --host=my3p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS='"$position"'"
+s
 source_ip=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 position=$(podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
-podman exec --tty --interactive my4c mysql --host=my4p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=$position"
+podman exec --tty --interactive my4c mysql --host=my4p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS='"$position"'"
+s
 source_ip=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 position=$(podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
-podman exec --tty --interactive my5c mysql --host=my5p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=$position"
+podman exec --tty --interactive my5c mysql --host=my5p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS='"$position"'"
+s
 
 # FIXME: it would be really nice to be able to use dns here
 : <<'END_COMMENT'
