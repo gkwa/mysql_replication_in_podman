@@ -275,6 +275,10 @@ cat <<'__eot__' >test_replication_is_stopped.bats
 
   podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'USE dummy' </dev/null
   podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'DROP DATABASE IF EXISTS dummy' </dev/null
+
+  run podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'USE dummy' </dev/null
+  [ "$status" -eq 1 ]
+
   run podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'USE dummy' </dev/null
   [ "$status" -eq 0 ]
 }
