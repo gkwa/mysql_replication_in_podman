@@ -16,6 +16,6 @@ install:
 - sudo bash -x create_test.sh
 test_script:
 - sudo time bash -x test.sh
-- bats test_replication_is_running.bats
-- bats test_replication_is_stopped.bats
+- sudo bats test_replication_is_running.bats
+- sudo bats test_replication_is_stopped.bats
 build: off
