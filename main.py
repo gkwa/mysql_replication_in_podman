@@ -225,6 +225,10 @@ MASTER_LOG_FILE='mysql-bin.000001',\
 MASTER_LOG_POS=2856"
 {%- endfor %}
 END_COMMENT
+
+{% for pod in pods %}
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE'
+{%- endfor %}
 """
 
 template = jinja2.Template(tmpl_str)

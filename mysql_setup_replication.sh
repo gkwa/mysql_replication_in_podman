@@ -502,3 +502,10 @@ podman exec --tty --interactive my3c mysql --host=my3p --user=root --password=ro
 podman exec --tty --interactive my4c mysql --host=my4p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my3p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
 podman exec --tty --interactive my5c mysql --host=my5p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my4p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
 END_COMMENT
+
+
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'START SLAVE'
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'START SLAVE'
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'START SLAVE'
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'START SLAVE'
+podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'START SLAVE'
