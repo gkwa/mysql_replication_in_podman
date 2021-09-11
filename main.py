@@ -211,7 +211,7 @@ podman exec --tty --interactive {{ block.instance.container }} mysql --host={{ b
 --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',\
 MASTER_USER='{{ global.user_replication }}',\
 MASTER_PASSWORD='{{ global.user_replication_pass }}',\
-MASTER_LOG_FILE='mysql-bin.000001',\
+MASTER_LOG_FILE='mysql-bin.000003',\
 MASTER_LOG_POS=$position"
 {%- endfor %}
 
@@ -224,7 +224,7 @@ podman exec --tty --interactive {{ block.instance.container }} mysql --host={{ b
 --execute "CHANGE MASTER TO MASTER_HOST='{{ block.source.container }}.dns.podman',\
 MASTER_USER='{{ global.user_replication }}',\
 MASTER_PASSWORD='{{ global.user_replication_pass }}',\
-MASTER_LOG_FILE='mysql-bin.000001',\
+MASTER_LOG_FILE='mysql-bin.000003',\
 MASTER_LOG_POS=$position"
 {%- endfor %}
 END_COMMENT
@@ -236,7 +236,7 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 # testing replication
 : <<'END_COMMENT'
 {%- for block in replication %}
-podman exec --tty --interactive {{ block.source.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.source.pod }} --execute 'DROP DATABASE simple' </dev/null
+podman exec --tty --interactive {{ block.source.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.source.pod }} --execute 'DROP DATABASE IF EXISTS simple' </dev/null
 podman exec --tty --interactive {{ block.instance.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.instance.pod }} --execute 'SHOW DATABASES' </dev/null
 {% endfor %}
 END_COMMENT
