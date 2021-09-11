@@ -197,11 +197,11 @@ podman pod ls
 
 
 
-until podman exec --tty --interactive my1c mysql --host=my1p --user=joe --password=joe --execute "SHOW DATABASES"; do sleep 5; done;
-until podman exec --tty --interactive my2c mysql --host=my2p --user=joe --password=joe --execute "SHOW DATABASES"; do sleep 5; done;
-until podman exec --tty --interactive my3c mysql --host=my3p --user=joe --password=joe --execute "SHOW DATABASES"; do sleep 5; done;
-until podman exec --tty --interactive my4c mysql --host=my4p --user=joe --password=joe --execute "SHOW DATABASES"; do sleep 5; done;
-until podman exec --tty --interactive my5c mysql --host=my5p --user=joe --password=joe --execute "SHOW DATABASES"; do sleep 5; done;
+until podman exec --tty --interactive my1c mysql --host=my1p --user=joe --password=joe --execute "SHOW DATABASES" </dev/null; do sleep 5; done;
+until podman exec --tty --interactive my2c mysql --host=my2p --user=joe --password=joe --execute "SHOW DATABASES" </dev/null; do sleep 5; done;
+until podman exec --tty --interactive my3c mysql --host=my3p --user=joe --password=joe --execute "SHOW DATABASES" </dev/null; do sleep 5; done;
+until podman exec --tty --interactive my4c mysql --host=my4p --user=joe --password=joe --execute "SHOW DATABASES" </dev/null; do sleep 5; done;
+until podman exec --tty --interactive my5c mysql --host=my5p --user=joe --password=joe --execute "SHOW DATABASES" </dev/null; do sleep 5; done;
 
 
 podman inspect my1c |grep -i ipaddr
@@ -229,11 +229,11 @@ echo $ip5
 
 # ip test
 
-mysql --port=3306 --host=$ip1 --user=joe --password=joe --execute "SHOW DATABASES"
-mysql --port=3306 --host=$ip2 --user=joe --password=joe --execute "SHOW DATABASES"
-mysql --port=3306 --host=$ip3 --user=joe --password=joe --execute "SHOW DATABASES"
-mysql --port=3306 --host=$ip4 --user=joe --password=joe --execute "SHOW DATABASES"
-mysql --port=3306 --host=$ip5 --user=joe --password=joe --execute "SHOW DATABASES"
+mysql --port=3306 --host=$ip1 --user=joe --password=joe --execute "SHOW DATABASES" </dev/null
+mysql --port=3306 --host=$ip2 --user=joe --password=joe --execute "SHOW DATABASES" </dev/null
+mysql --port=3306 --host=$ip3 --user=joe --password=joe --execute "SHOW DATABASES" </dev/null
+mysql --port=3306 --host=$ip4 --user=joe --password=joe --execute "SHOW DATABASES" </dev/null
+mysql --port=3306 --host=$ip5 --user=joe --password=joe --execute "SHOW DATABASES" </dev/null
 
 # FIXME: NoneNoneNoneNoneNone
 
@@ -453,18 +453,18 @@ __eot__
 # cat reptest/my5c/extra/extra.sql
 
 
-podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
-podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
-podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
-podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
-podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
+podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
 
 
-podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
-podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
-podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
-podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
-podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user' </dev/null
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user' </dev/null
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user' </dev/null
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user' </dev/null
+podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user' </dev/null
 
 # FIXME: check: does using dns work with podman here?
 position=$(podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
@@ -513,11 +513,11 @@ podman exec --tty --interactive my5c mysql --host=my5p --user=root --password=ro
 END_COMMENT
 
 
-podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'START SLAVE'
-podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'START SLAVE'
-podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'START SLAVE'
-podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'START SLAVE'
-podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'START SLAVE'
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'START SLAVE' </dev/null
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'START SLAVE' </dev/null
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'START SLAVE' </dev/null
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'START SLAVE' </dev/null
+podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'START SLAVE' </dev/null
 
 # testing replication
 : <<'END_COMMENT'

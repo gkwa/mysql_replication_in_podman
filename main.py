@@ -105,7 +105,7 @@ podman volume inspect {{ pod.volume }}
 {{ status() }}
 
 {% for pod in pods %}
-until podman exec --tty --interactive {{ pod.containers[0].name }} mysql --host={{ pod.name }} --user={{ global.user_non_root }} --password={{ global.user_non_root_pass }} --execute "SHOW DATABASES"; do sleep 5; done;
+until podman exec --tty --interactive {{ pod.containers[0].name }} mysql --host={{ pod.name }} --user={{ global.user_non_root }} --password={{ global.user_non_root_pass }} --execute "SHOW DATABASES" </dev/null; do sleep 5; done;
 {%- endfor %}
 
 {% for pod in pods %}{% set ip='ip' ~ loop.index %}
@@ -120,7 +120,7 @@ echo ${{ip}}
 
 # ip test
 {% for pod in pods %}{% set ip='ip' ~ loop.index %}
-mysql --port={{ global.internal_port }} --host=${{ip}} --user={{ global.user_non_root }} --password={{ global.user_non_root_pass }} --execute "SHOW DATABASES"
+mysql --port={{ global.internal_port }} --host=${{ip}} --user={{ global.user_non_root }} --password={{ global.user_non_root_pass }} --execute "SHOW DATABASES" </dev/null
 {%- endfor %}
 
 # FIXME: {% set containers = [] %}{% for pod in pods %}{{ containers.append( pod.containers[0].name ) }}{% endfor %}
@@ -193,11 +193,11 @@ __eot__
 {%- endfor %}
 
 {% for pod in pods %}
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
 {%- endfor %}
 
 {% for pod in pods %}
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user' </dev/null
 {%- endfor %}
 
 # FIXME: check: does using dns work with podman here?
@@ -229,7 +229,7 @@ MASTER_LOG_POS=$position"
 END_COMMENT
 
 {% for pod in pods %}
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE'
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE' </dev/null
 {%- endfor %}
 
 # testing replication
