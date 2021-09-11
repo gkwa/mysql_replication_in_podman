@@ -200,7 +200,7 @@ __eot__
 {%- endfor %}
 
 {% for pod in pods %}
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
+# podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
 {%- endfor %}
 
 {% for pod in pods %}
