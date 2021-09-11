@@ -108,7 +108,7 @@ until podman exec --tty --interactive {{ pod.containers[0].name }} mysql --host=
 {%- endfor %}
 
 {% for pod in pods %}{% set ip='ip' ~ loop.index %}
-podman inspect {{ pod.containers[0].name }} | grep -i ipaddr
+podman inspect {{ pod.containers[0].name }} |grep -i ipaddr
 {{ip}}=$(podman inspect {{ pod.containers[0].name }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network }}.IPAddress{%- raw -%} }} {%- endraw -%}')
 echo ${{ip}}
 {%- endfor %}
@@ -165,7 +165,7 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 {%- endfor %}
 
 {% for pod in pods %}
-position=$(podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute 'SHOW MASTER STATUS\G' | sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g') </dev/null
+position=$(podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g')
 echo $position
 {%- endfor %}
 

@@ -203,19 +203,19 @@ until podman exec --tty --interactive my4c mysql --host=my4p --user=joe --passwo
 until podman exec --tty --interactive my5c mysql --host=my5p --user=joe --password=joe --execute "SHOW DATABASES"; do sleep 5; done;
 
 
-podman inspect my1c | grep -i ipaddr
+podman inspect my1c |grep -i ipaddr
 ip1=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 echo $ip1
-podman inspect my2c | grep -i ipaddr
+podman inspect my2c |grep -i ipaddr
 ip2=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 echo $ip2
-podman inspect my3c | grep -i ipaddr
+podman inspect my3c |grep -i ipaddr
 ip3=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 echo $ip3
-podman inspect my4c | grep -i ipaddr
+podman inspect my4c |grep -i ipaddr
 ip4=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 echo $ip4
-podman inspect my5c | grep -i ipaddr
+podman inspect my5c |grep -i ipaddr
 ip5=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 echo $ip5
 
@@ -373,15 +373,15 @@ podman exec --tty --interactive my4c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "FLUSH TABLES WITH READ LOCK" </dev/null
 
 
-position=$(podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'SHOW MASTER STATUS\G' | sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g') </dev/null
+position=$(podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g')
 echo $position
-position=$(podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute 'SHOW MASTER STATUS\G' | sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g') </dev/null
+position=$(podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g')
 echo $position
-position=$(podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute 'SHOW MASTER STATUS\G' | sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g') </dev/null
+position=$(podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g')
 echo $position
-position=$(podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'SHOW MASTER STATUS\G' | sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g') </dev/null
+position=$(podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g')
 echo $position
-position=$(podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'SHOW MASTER STATUS\G' | sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g') </dev/null
+position=$(podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/Position://' -e 's/ //g')
 echo $position
 
 
