@@ -162,7 +162,7 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 {%- endfor %}
 
 {%- for pod in pods %}
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "CREATE DATABASE IF NOT EXIST db;" </dev/null
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "CREATE DATABASE IF NOT EXISTS db;" </dev/null
 {%- endfor %}
 
 : <<'END_COMMENT'

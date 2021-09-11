@@ -341,11 +341,11 @@ podman exec --tty --interactive my2c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "UNLOCK TABLES;" </dev/null
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "UNLOCK TABLES;" </dev/null
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "UNLOCK TABLES;" </dev/null
-podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "CREATE DATABASE IF NOT EXIST db;" </dev/null
-podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "CREATE DATABASE IF NOT EXIST db;" </dev/null
-podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "CREATE DATABASE IF NOT EXIST db;" </dev/null
-podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "CREATE DATABASE IF NOT EXIST db;" </dev/null
-podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "CREATE DATABASE IF NOT EXIST db;" </dev/null
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "CREATE DATABASE IF NOT EXISTS db;" </dev/null
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "CREATE DATABASE IF NOT EXISTS db;" </dev/null
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "CREATE DATABASE IF NOT EXISTS db;" </dev/null
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "CREATE DATABASE IF NOT EXISTS db;" </dev/null
+podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "CREATE DATABASE IF NOT EXISTS db;" </dev/null
 
 : <<'END_COMMENT'
 replica_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
