@@ -201,27 +201,27 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
 {%- endfor %}
 
-# FIXME: it would be really nice to be able to use dns here
-{% for block in replication %}
-source_ip=$(podman inspect {{ block.source.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network}}.IPAddress{%- raw -%} }} {%- endraw -%}')
-target_ip=$(podman inspect {{ block.instance.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network}}.IPAddress{%- raw -%} }} {%- endraw -%}')
+# FIXME: check: does using dns work with podman here?
+{%- for block in replication %}
 position=$(podman exec --tty --interactive {{ block.source.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.source.pod }} --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
-echo target:$target_ip source:$source_ip position:$position
+echo target:{{ block.instance.container }} source:{{ block.source.container }} position:$position
 podman exec --tty --interactive {{ block.instance.container }} mysql --host={{ block.instance.pod }} --user={{ global.user_root }} --password={{ global.user_root_pass }} \
---execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',\
+--execute "CHANGE MASTER TO MASTER_HOST='{{ block.source.container }}.dns.podman',\
 MASTER_USER='{{ global.user_replication }}',\
 MASTER_PASSWORD='{{ global.user_replication_pass }}',\
 MASTER_LOG_FILE='mysql-bin.000003',\
 MASTER_LOG_POS=$position"
 {%- endfor %}
 
-# FIXME: dns version -- if i can ever get there...
 : <<'END_COMMENT'
+# FIXME: it would be really nice to be able to use dns here
 {%- for block in replication %}
+source_ip=$(podman inspect {{ block.source.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network}}.IPAddress{%- raw -%} }} {%- endraw -%}')
+target_ip=$(podman inspect {{ block.instance.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network}}.IPAddress{%- raw -%} }} {%- endraw -%}')
 position=$(podman exec --tty --interactive {{ block.source.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.source.pod }} --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
-echo target:{{ block.instance.container }} source:{{ block.source.container }} position:$position
+echo target:$target_ip source:$source_ip position:$position
 podman exec --tty --interactive {{ block.instance.container }} mysql --host={{ block.instance.pod }} --user={{ global.user_root }} --password={{ global.user_root_pass }} \
---execute "CHANGE MASTER TO MASTER_HOST='{{ block.source.container }}.dns.podman',\
+--execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',\
 MASTER_USER='{{ global.user_replication }}',\
 MASTER_PASSWORD='{{ global.user_replication_pass }}',\
 MASTER_LOG_FILE='mysql-bin.000003',\
@@ -236,6 +236,7 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 # testing replication
 : <<'END_COMMENT'
 {%- for block in replication %}
+podman exec --tty --interactive {{ block.instance.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.instance.pod }} --execute 'SHOW DATABASES' </dev/null
 podman exec --tty --interactive {{ block.source.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.source.pod }} --execute 'DROP DATABASE IF EXISTS simple' </dev/null
 podman exec --tty --interactive {{ block.instance.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.instance.pod }} --execute 'SHOW DATABASES' </dev/null
 {% endfor %}
