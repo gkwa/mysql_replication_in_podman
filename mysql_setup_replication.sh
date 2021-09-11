@@ -552,7 +552,7 @@ podman exec --tty --interactive my5c mysql --user=root --password=root --host=my
 END_COMMENT
 
 cat <<'__eot__' >test_replication_is_running.bats
-@test "delete db from my4c and ensure its been removed from all" {
+@test "ensure replication is running" {
   podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'START SLAVE' </dev/null
   podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'START SLAVE' </dev/null
   podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'START SLAVE' </dev/null
@@ -569,7 +569,7 @@ __eot__
 bats test_replication_is_running.bats
 
 cat <<'__eot__' >test_replication_is_stopped.bats
-@test "delete db from my4c and ensure its been removed from all" {
+@test "stop replication and ensure its not running" {
   podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "CREATE DATABASE IF NOT EXISTS dummy" </dev/null
 
   podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'STOP SLAVE' </dev/null
