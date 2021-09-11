@@ -7,7 +7,7 @@ global:
   user_root_pass: root
   user_replication: repl
   user_replication_pass: repl
-rep:
+replication_source:
 - name: my1c
   source: my5p
 - name: my2c
