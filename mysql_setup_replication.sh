@@ -496,11 +496,22 @@ podman exec --tty --interactive my5c mysql --host=my5p --user=root --password=ro
 
 # FIXME: it would be really nice to be able to use dns here
 : <<'END_COMMENT'
-podman exec --tty --interactive my1c mysql --host=my1p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my5p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
-podman exec --tty --interactive my2c mysql --host=my2p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my1p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
-podman exec --tty --interactive my3c mysql --host=my3p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my2p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
-podman exec --tty --interactive my4c mysql --host=my4p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my3p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
-podman exec --tty --interactive my5c mysql --host=my5p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my4p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
+
+position=$(podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
+echo target:my1c source:my5c position:$position
+podman exec --tty --interactive my1c mysql --host=my1p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='my5c.dns.podman',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=$position"
+position=$(podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
+echo target:my2c source:my1c position:$position
+podman exec --tty --interactive my2c mysql --host=my2p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='my1c.dns.podman',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=$position"
+position=$(podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
+echo target:my3c source:my2c position:$position
+podman exec --tty --interactive my3c mysql --host=my3p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='my2c.dns.podman',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=$position"
+position=$(podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
+echo target:my4c source:my3c position:$position
+podman exec --tty --interactive my4c mysql --host=my4p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='my3c.dns.podman',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=$position"
+position=$(podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
+echo target:my5c source:my4c position:$position
+podman exec --tty --interactive my5c mysql --host=my5p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='my4c.dns.podman',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=$position"
 END_COMMENT
 
 

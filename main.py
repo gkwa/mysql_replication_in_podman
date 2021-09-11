@@ -216,13 +216,15 @@ MASTER_LOG_POS=$position"
 
 # FIXME: it would be really nice to be able to use dns here
 : <<'END_COMMENT'
-{%- for block in replication %}
+{% for block in replication %}
+position=$(podman exec --tty --interactive {{ block.source.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.source.pod }} --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/Position:/!d' -e 's/[^0-9]*//g')
+echo target:{{ block.instance.container }} source:{{ block.source.container }} position:$position
 podman exec --tty --interactive {{ block.instance.container }} mysql --host={{ block.instance.pod }} --user={{ global.user_root }} --password={{ global.user_root_pass }} \
---execute "CHANGE MASTER TO MASTER_HOST='"{{ block.source.pod }}.dns.podman"',\
+--execute "CHANGE MASTER TO MASTER_HOST='{{ block.source.container }}.dns.podman',\
 MASTER_USER='{{ global.user_replication }}',\
 MASTER_PASSWORD='{{ global.user_replication_pass }}',\
 MASTER_LOG_FILE='mysql-bin.000001',\
-MASTER_LOG_POS=2856"
+MASTER_LOG_POS=$position"
 {%- endfor %}
 END_COMMENT
 
