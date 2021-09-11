@@ -71,7 +71,7 @@ server_id                      = {{ loop.index }}
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 binlog_do_db                   = db
-binlog_do_db                   = simple
+binlog_do_db                   = dummy
 
 ; https://www.clusterdb.com/mysql-cluster/get-mysql-replication-up-and-running-in-5-minutes
 innodb_flush_log_at_trx_commit = 1
@@ -170,8 +170,7 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 {%- endfor %}
 
 {%- for pod in pods %}
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "CREATE DATABASE IF NOT EXISTS db" </dev/null
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "CREATE DATABASE IF NOT EXISTS simple" </dev/null
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "CREATE DATABASE IF NOT EXISTS dummy" </dev/null
 {%- endfor %}
 
 : <<'END_COMMENT'
@@ -197,7 +196,7 @@ __eot__
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
 {%- endfor %}
 
-{%- for pod in pods %}
+{% for pod in pods %}
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
 {%- endfor %}
 
@@ -237,7 +236,7 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 : <<'END_COMMENT'
 {%- for block in replication %}
 podman exec --tty --interactive {{ block.instance.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.instance.pod }} --execute 'SHOW DATABASES' </dev/null
-podman exec --tty --interactive {{ block.source.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.source.pod }} --execute 'DROP DATABASE IF EXISTS simple' </dev/null
+podman exec --tty --interactive {{ block.source.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.source.pod }} --execute 'DROP DATABASE IF EXISTS dummy' </dev/null
 podman exec --tty --interactive {{ block.instance.container }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ block.instance.pod }} --execute 'SHOW DATABASES' </dev/null
 {% endfor %}
 END_COMMENT

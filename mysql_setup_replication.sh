@@ -76,7 +76,7 @@ server_id                      = 1
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 binlog_do_db                   = db
-binlog_do_db                   = simple
+binlog_do_db                   = dummy
 
 ; https://www.clusterdb.com/mysql-cluster/get-mysql-replication-up-and-running-in-5-minutes
 innodb_flush_log_at_trx_commit = 1
@@ -93,7 +93,7 @@ server_id                      = 2
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 binlog_do_db                   = db
-binlog_do_db                   = simple
+binlog_do_db                   = dummy
 
 ; https://www.clusterdb.com/mysql-cluster/get-mysql-replication-up-and-running-in-5-minutes
 innodb_flush_log_at_trx_commit = 1
@@ -110,7 +110,7 @@ server_id                      = 3
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 binlog_do_db                   = db
-binlog_do_db                   = simple
+binlog_do_db                   = dummy
 
 ; https://www.clusterdb.com/mysql-cluster/get-mysql-replication-up-and-running-in-5-minutes
 innodb_flush_log_at_trx_commit = 1
@@ -127,7 +127,7 @@ server_id                      = 4
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 binlog_do_db                   = db
-binlog_do_db                   = simple
+binlog_do_db                   = dummy
 
 ; https://www.clusterdb.com/mysql-cluster/get-mysql-replication-up-and-running-in-5-minutes
 innodb_flush_log_at_trx_commit = 1
@@ -144,7 +144,7 @@ server_id                      = 5
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 binlog_do_db                   = db
-binlog_do_db                   = simple
+binlog_do_db                   = dummy
 
 ; https://www.clusterdb.com/mysql-cluster/get-mysql-replication-up-and-running-in-5-minutes
 innodb_flush_log_at_trx_commit = 1
@@ -379,16 +379,11 @@ podman exec --tty --interactive my2c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "UNLOCK TABLES" </dev/null
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "UNLOCK TABLES" </dev/null
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "UNLOCK TABLES" </dev/null
-podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "CREATE DATABASE IF NOT EXISTS db" </dev/null
-podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "CREATE DATABASE IF NOT EXISTS simple" </dev/null
-podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "CREATE DATABASE IF NOT EXISTS db" </dev/null
-podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "CREATE DATABASE IF NOT EXISTS simple" </dev/null
-podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "CREATE DATABASE IF NOT EXISTS db" </dev/null
-podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "CREATE DATABASE IF NOT EXISTS simple" </dev/null
-podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "CREATE DATABASE IF NOT EXISTS db" </dev/null
-podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "CREATE DATABASE IF NOT EXISTS simple" </dev/null
-podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "CREATE DATABASE IF NOT EXISTS db" </dev/null
-podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "CREATE DATABASE IF NOT EXISTS simple" </dev/null
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute "CREATE DATABASE IF NOT EXISTS dummy" </dev/null
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute "CREATE DATABASE IF NOT EXISTS dummy" </dev/null
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute "CREATE DATABASE IF NOT EXISTS dummy" </dev/null
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "CREATE DATABASE IF NOT EXISTS dummy" </dev/null
+podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute "CREATE DATABASE IF NOT EXISTS dummy" </dev/null
 
 : <<'END_COMMENT'
 replica_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
@@ -461,6 +456,8 @@ podman exec --tty --interactive my2c mysql --user=root --password=root --host=my
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
+
+
 podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
 podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
@@ -523,23 +520,23 @@ podman exec --tty --interactive my5c mysql --user=root --password=root --host=my
 # testing replication
 : <<'END_COMMENT'
 podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'SHOW DATABASES' </dev/null
-podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'DROP DATABASE IF EXISTS simple' </dev/null
+podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'DROP DATABASE IF EXISTS dummy' </dev/null
 podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'SHOW DATABASES' </dev/null
 
 podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute 'SHOW DATABASES' </dev/null
-podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'DROP DATABASE IF EXISTS simple' </dev/null
+podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'DROP DATABASE IF EXISTS dummy' </dev/null
 podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute 'SHOW DATABASES' </dev/null
 
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute 'SHOW DATABASES' </dev/null
-podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute 'DROP DATABASE IF EXISTS simple' </dev/null
+podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p --execute 'DROP DATABASE IF EXISTS dummy' </dev/null
 podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute 'SHOW DATABASES' </dev/null
 
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'SHOW DATABASES' </dev/null
-podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute 'DROP DATABASE IF EXISTS simple' </dev/null
+podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p --execute 'DROP DATABASE IF EXISTS dummy' </dev/null
 podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'SHOW DATABASES' </dev/null
 
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'SHOW DATABASES' </dev/null
-podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'DROP DATABASE IF EXISTS simple' </dev/null
+podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'DROP DATABASE IF EXISTS dummy' </dev/null
 podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p --execute 'SHOW DATABASES' </dev/null
 
 END_COMMENT
