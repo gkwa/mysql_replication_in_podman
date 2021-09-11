@@ -194,7 +194,7 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 
 {% for pod in pods %}
 source_ip=$(podman inspect {{ pod.containers[0].name }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network}}.IPAddress{%- raw -%} }} {%- endraw -%}'); 
-podman exec --tty --interactive {{ pod.name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.replica.fqdn.split('.')[0] }} --execute \
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.replica.fqdn.split('.')[0] }} --execute \
 "CHANGE MASTER TO MASTER_HOST='"$source_ip"',\
 MASTER_USER='{{ global.user_replication }}',\
 MASTER_PASSWORD='{{ global.user_replication_pass }}',\
