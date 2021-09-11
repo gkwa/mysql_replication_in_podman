@@ -474,21 +474,21 @@ podman exec --tty --interactive my5c mysql --user=root --password=root --host=my
 # FIXME: MASTER_LOG_POS=2856 is bad, you should fetch it
 
 source_ip=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}');
-podman exec --tty --interactive my1c mysql --host=my1p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856"
+podman exec --tty --interactive my1c mysql --host=my1p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
 source_ip=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}');
-podman exec --tty --interactive my2c mysql --host=my2p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856"
+podman exec --tty --interactive my2c mysql --host=my2p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
 source_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}');
-podman exec --tty --interactive my3c mysql --host=my3p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856"
+podman exec --tty --interactive my3c mysql --host=my3p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
 source_ip=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}');
-podman exec --tty --interactive my4c mysql --host=my4p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856"
+podman exec --tty --interactive my4c mysql --host=my4p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
 source_ip=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}');
-podman exec --tty --interactive my5c mysql --host=my5p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856"
+podman exec --tty --interactive my5c mysql --host=my5p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
 
 # FIXME: it would be really nice to be able to use dns here
 : <<'END_COMMENT'
-podman exec --tty --interactive my1c mysql --host=my1p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my5p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856"
-podman exec --tty --interactive my2c mysql --host=my2p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my1p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856"
-podman exec --tty --interactive my3c mysql --host=my3p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my2p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856"
-podman exec --tty --interactive my4c mysql --host=my4p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my3p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856"
-podman exec --tty --interactive my5c mysql --host=my5p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my4p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=2856"
+podman exec --tty --interactive my1c mysql --host=my1p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my5p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
+podman exec --tty --interactive my2c mysql --host=my2p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my1p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
+podman exec --tty --interactive my3c mysql --host=my3p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my2p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
+podman exec --tty --interactive my4c mysql --host=my4p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my3p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
+podman exec --tty --interactive my5c mysql --host=my5p --user=root --password=root --execute "CHANGE MASTER TO MASTER_HOST='"my4p.dns.podman"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=2856"
 END_COMMENT

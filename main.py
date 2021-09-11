@@ -212,7 +212,7 @@ podman exec --tty --interactive {{ block.instance.container }} mysql --host={{ b
 --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',\
 MASTER_USER='{{ global.user_replication }}',\
 MASTER_PASSWORD='{{ global.user_replication_pass }}',\
-MASTER_LOG_FILE='mysql-bin.000003',\
+MASTER_LOG_FILE='mysql-bin.000001',\
 MASTER_LOG_POS=2856"
 {%- endfor %}
 
@@ -223,7 +223,7 @@ podman exec --tty --interactive {{ block.instance.container }} mysql --host={{ b
 --execute "CHANGE MASTER TO MASTER_HOST='"{{ block.source.pod }}.dns.podman"',\
 MASTER_USER='{{ global.user_replication }}',\
 MASTER_PASSWORD='{{ global.user_replication_pass }}',\
-MASTER_LOG_FILE='mysql-bin.000003',\
+MASTER_LOG_FILE='mysql-bin.000001',\
 MASTER_LOG_POS=2856"
 {%- endfor %}
 END_COMMENT
