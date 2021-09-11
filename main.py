@@ -53,8 +53,7 @@ podman volume create {{ pod.volume }}
 {%- endfor %}
 
 rm -rf reptest/
-
-{% for pod in pods %}
+{%- for pod in pods %}
 mkdir -p reptest/{{ pod.containers[0].name }}/extra
 {%- endfor %}
 
