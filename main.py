@@ -192,9 +192,14 @@ podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ glo
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }}.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user;'
 {%- endfor %}
 
-{%- for pod in pods %}
+{% for pod in pods %}
 source_ip=$(podman inspect {{ pod.containers[0].name }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network}}.IPAddress{%- raw -%} }} {%- endraw -%}'); 
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.replica.fqdn.split('.')[0] }} --execute "CHANGE REPLICATION SOURCE TO SOURCE_HOST='"$source_ip"', SOURCE_USER='{{ global.user_replication }}', SOURCE_PASSWORD='{{ global.user_replication_pass }}', SOURCE_LOG_FILE='mysql-bin.000003', SOURCE_LOG_POS=2856;"
+podman exec --tty --interactive {{ pod.name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.replica.fqdn.split('.')[0] }} --execute \
+"CHANGE MASTER TO MASTER_HOST='"$source_ip"',\
+MASTER_USER='{{ global.user_replication }}',\
+MASTER_PASSWORD='{{ global.user_replication_pass }}',\
+MASTER_LOG_FILE='mysql-bin.000003',\
+MASTER_LOG_POS=2856;"
 {%- endfor %}
 """
 
