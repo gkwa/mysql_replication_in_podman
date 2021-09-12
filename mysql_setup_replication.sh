@@ -452,11 +452,12 @@ cat <<'__eot__' >reptest/extra2/extra2.sql
 CREATE DATABASE IF NOT EXISTS sales;
 CREATE TABLE IF NOT EXISTS sales.DemoTable
    (
-   CustomerId int,
-   CustomerName varchar(30),
-   CustomerAge int
+   user_id int,
+   fn varchar(30),
+   ln varchar(30),
+   age int
    );
--- INSERT INTO sales.DemoTable VALUES (`tom hillbilly`, `male`);
+-- INSERT INTO sales.DemoTable (fn, ln, age) VALUES ('tom', 'mccormick', 40);
 __eot__
 
 
