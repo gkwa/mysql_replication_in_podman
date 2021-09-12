@@ -740,7 +740,7 @@ cat <<'__eot__' >test_replication_stop_start.bats
   podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE' </dev/null
   podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql' </dev/null
   result1="$(podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick || true)"
-  [ "$result1" -eq 1 ] 
+  [ "$result1" -eq 0 ] 
 
   result2="$(podman exec --env=MYSQL_PWD=root --tty --interactive my2c mysql --user=root --host=my2p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick || true)"
   [ "$result2" -eq 0 ] 
