@@ -60,6 +60,11 @@ podman volume create my5dbdata
 
 # start clean
 [[ -d 'reptest' ]] && mv reptest reptest.$(date +%s)
+mkdir -p reptest/my1c/extra
+mkdir -p reptest/my2c/extra
+mkdir -p reptest/my3c/extra
+mkdir -p reptest/my4c/extra
+mkdir -p reptest/my5c/extra
 
 
 mkdir -p reptest/my1c

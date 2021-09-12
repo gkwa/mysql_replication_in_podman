@@ -57,6 +57,10 @@ podman volume create {{ pod.volume }}
 # start clean
 [[ -d 'reptest' ]] && mv reptest reptest.$(date +%s)
 
+{%- for pod in pods %}
+mkdir -p reptest/{{ pod.containers[0].name }}/extra
+{%- endfor %}
+
 {% for pod in pods %}
 mkdir -p reptest/{{ pod.containers[0].name }}
 cat <<'__eot__' >reptest/{{ pod.containers[0].name }}/my.cnf
