@@ -445,41 +445,76 @@ END_COMMENT
 mkdir -p reptest/my1c/extra
 replica_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<'__eot__' >reptest/my1c/extra/extra.sql
-CREATE DATABASE IF NOT EXISTS `myflixdb`;
-CREATE TABLE IF NOT EXISTS `myflixdb`.`members` ( `membership_number` INT autoincrement , `full_names` VARCHAR(150) NOT NULL , `gender` VARCHAR(6) , `date_of_birth` date , PRIMARY KEY (`membership_number`) ) engine = innodb;
-INSERT INTO myflixdb.members VALUES (`tom hillbilly`, `male`);
+CREATE DATABASE IF NOT EXISTS `myflixdb2`;
+CREATE TABLE IF NOT EXISTS `myflixdb2`.`sale_details`
+  (
+     `id`               INT auto_increment,
+     `sale_person_name` VARCHAR(255),
+     `no_products_sold` INT,
+     `sales_department` VARCHAR(255),
+     PRIMARY KEY (id)
+  ); 
+-- INSERT INTO myflixdb.members VALUES (`tom hillbilly`, `male`);
 __eot__
 # cat reptest/my1c/extra/extra.sql
 mkdir -p reptest/my2c/extra
 replica_ip=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<'__eot__' >reptest/my2c/extra/extra.sql
-CREATE DATABASE IF NOT EXISTS `myflixdb`;
-CREATE TABLE IF NOT EXISTS `myflixdb`.`members` ( `membership_number` INT autoincrement , `full_names` VARCHAR(150) NOT NULL , `gender` VARCHAR(6) , `date_of_birth` date , PRIMARY KEY (`membership_number`) ) engine = innodb;
-INSERT INTO myflixdb.members VALUES (`tom hillbilly`, `male`);
+CREATE DATABASE IF NOT EXISTS `myflixdb2`;
+CREATE TABLE IF NOT EXISTS `myflixdb2`.`sale_details`
+  (
+     `id`               INT auto_increment,
+     `sale_person_name` VARCHAR(255),
+     `no_products_sold` INT,
+     `sales_department` VARCHAR(255),
+     PRIMARY KEY (id)
+  ); 
+-- INSERT INTO myflixdb.members VALUES (`tom hillbilly`, `male`);
 __eot__
 # cat reptest/my2c/extra/extra.sql
 mkdir -p reptest/my3c/extra
 replica_ip=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<'__eot__' >reptest/my3c/extra/extra.sql
-CREATE DATABASE IF NOT EXISTS `myflixdb`;
-CREATE TABLE IF NOT EXISTS `myflixdb`.`members` ( `membership_number` INT autoincrement , `full_names` VARCHAR(150) NOT NULL , `gender` VARCHAR(6) , `date_of_birth` date , PRIMARY KEY (`membership_number`) ) engine = innodb;
-INSERT INTO myflixdb.members VALUES (`tom hillbilly`, `male`);
+CREATE DATABASE IF NOT EXISTS `myflixdb2`;
+CREATE TABLE IF NOT EXISTS `myflixdb2`.`sale_details`
+  (
+     `id`               INT auto_increment,
+     `sale_person_name` VARCHAR(255),
+     `no_products_sold` INT,
+     `sales_department` VARCHAR(255),
+     PRIMARY KEY (id)
+  ); 
+-- INSERT INTO myflixdb.members VALUES (`tom hillbilly`, `male`);
 __eot__
 # cat reptest/my3c/extra/extra.sql
 mkdir -p reptest/my4c/extra
 replica_ip=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<'__eot__' >reptest/my4c/extra/extra.sql
-CREATE DATABASE IF NOT EXISTS `myflixdb`;
-CREATE TABLE IF NOT EXISTS `myflixdb`.`members` ( `membership_number` INT autoincrement , `full_names` VARCHAR(150) NOT NULL , `gender` VARCHAR(6) , `date_of_birth` date , PRIMARY KEY (`membership_number`) ) engine = innodb;
-INSERT INTO myflixdb.members VALUES (`tom hillbilly`, `male`);
+CREATE DATABASE IF NOT EXISTS `myflixdb2`;
+CREATE TABLE IF NOT EXISTS `myflixdb2`.`sale_details`
+  (
+     `id`               INT auto_increment,
+     `sale_person_name` VARCHAR(255),
+     `no_products_sold` INT,
+     `sales_department` VARCHAR(255),
+     PRIMARY KEY (id)
+  ); 
+-- INSERT INTO myflixdb.members VALUES (`tom hillbilly`, `male`);
 __eot__
 # cat reptest/my4c/extra/extra.sql
 mkdir -p reptest/my5c/extra
 replica_ip=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<'__eot__' >reptest/my5c/extra/extra.sql
-CREATE DATABASE IF NOT EXISTS `myflixdb`;
-CREATE TABLE IF NOT EXISTS `myflixdb`.`members` ( `membership_number` INT auto_increment , `full_names` VARCHAR(150) NOT NULL , `gender` VARCHAR(6) , `date_of_birth` date , PRIMARY KEY (`membership_number`) ) engine = innodb;
-INSERT INTO myflixdb.members VALUES (`tom hillbilly`, `male`);
+CREATE DATABASE IF NOT EXISTS `myflixdb2`;
+CREATE TABLE IF NOT EXISTS `myflixdb2`.`sale_details`
+  (
+     `id`               INT auto_increment,
+     `sale_person_name` VARCHAR(255),
+     `no_products_sold` INT,
+     `sales_department` VARCHAR(255),
+     PRIMARY KEY (id)
+  ); 
+-- INSERT INTO myflixdb.members VALUES (`tom hillbilly`, `male`);
 __eot__
 # cat reptest/my5c/extra/extra.sql
 
