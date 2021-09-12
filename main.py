@@ -55,7 +55,7 @@ podman volume create {{ pod.volume }}
 {%- endfor %}
 
 # start clean
-[[ -d "reptest" ]] && mv reptest reptest.$(date +%s)
+[[ -d 'reptest' ]] && mv reptest reptest.$(date +%s)
 
 {%- for pod in pods %}
 mkdir -p reptest/{{ pod.containers[0].name }}/extra
@@ -105,7 +105,7 @@ podman volume inspect {{ pod.volume }}
 {{ status() }}
 
 {% for pod in pods %}
-until podman exec --tty --interactive {{ pod.containers[0].name }} mysql --host={{ pod.name }} --user={{ global.user_non_root }} --password={{ global.user_non_root_pass }} --execute "SHOW DATABASES" </dev/null; do sleep 5; done;
+until podman exec --tty --interactive {{ pod.containers[0].name }} mysql --host={{ pod.name }} --user={{ global.user_non_root }} --password={{ global.user_non_root_pass }} --execute 'SHOW DATABASES' </dev/null; do sleep 5; done;
 {%- endfor %}
 
 {% for pod in pods %}{% set ip='ip' ~ loop.index %}
@@ -120,7 +120,7 @@ echo ${{ip}}
 
 # ip test
 {% for pod in pods %}{% set ip='ip' ~ loop.index %}
-mysql --port={{ global.internal_port }} --host=${{ip}} --user={{ global.user_non_root }} --password={{ global.user_non_root_pass }} --execute "SHOW DATABASES" </dev/null
+mysql --port={{ global.internal_port }} --host=${{ip}} --user={{ global.user_non_root }} --password={{ global.user_non_root_pass }} --execute 'SHOW DATABASES' </dev/null
 {%- endfor %}
 
 # FIXME: {% set containers = [] %}{% for pod in pods %}{{ containers.append( pod.containers[0].name ) }}{% endfor %}
@@ -140,37 +140,37 @@ replica_ip{{ pod.replica.number }}=$(podman inspect {{ pod.replica.container }} 
 # {{ user }} on {{ pod.containers[0].name }}:
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "CREATE USER {{ user }} IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}'" </dev/null
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "GRANT REPLICATION SLAVE ON *.* TO {{ user }}" </dev/null
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "FLUSH PRIVILEGES" </dev/null
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute 'FLUSH PRIVILEGES' </dev/null
 
 {%- set user = "'" ~ global.user_replication ~ "'@'" ~ pod.replica.fqdn ~ "'" %}
 # {{ user }} on {{ pod.containers[0].name }}:
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "CREATE USER {{ user }} IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}'" </dev/null
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "GRANT REPLICATION SLAVE ON *.* TO '{{ global.user_replication }}'@'{{ pod.replica.fqdn }}'" </dev/null
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "FLUSH PRIVILEGES" </dev/null
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute 'FLUSH PRIVILEGES' </dev/null
 
 {%- set user = "'" ~ global.user_replication ~ "'@'" ~ pod.replica.fqdn.split('.')[0] ~ "'" %}
 # {{ user }} on {{ pod.containers[0].name }}:
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "CREATE USER {{ user }} IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}'" </dev/null
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "GRANT REPLICATION SLAVE ON *.* TO {{ user }}" </dev/null
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "FLUSH PRIVILEGES" </dev/null
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute 'FLUSH PRIVILEGES' </dev/null
 
 {%- set user = "'" ~ global.user_replication ~ "'@'" ~ '%' ~ "'" %}
 # {{ user }} on {{ pod.containers[0].name }}:
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "CREATE USER {{ user }} IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}'" </dev/null
 podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "GRANT REPLICATION SLAVE ON *.* TO {{ user }}" </dev/null
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "FLUSH PRIVILEGES" </dev/null
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute 'FLUSH PRIVILEGES' </dev/null
 {% endfor %}
 
 {%- for pod in pods %}
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "FLUSH TABLES WITH READ LOCK" </dev/null
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute 'FLUSH TABLES WITH READ LOCK' </dev/null
 {%- endfor %}
 
 {% for pod in pods %}
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "UNLOCK TABLES" </dev/null
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute 'UNLOCK TABLES' </dev/null
 {%- endfor %}
 
 {% for pod in pods %}
-podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "CREATE DATABASE IF NOT EXISTS dummy" </dev/null
+podman exec --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute 'CREATE DATABASE IF NOT EXISTS dummy' </dev/null
 {%- endfor %}
 
 : <<'END_COMMENT'
@@ -258,7 +258,7 @@ podman exec --tty --interactive {{ block.instance.container }} mysql --user={{ g
 END_COMMENT
 
 cat <<'__eot__' >test_replication_is_running.bats
-@test "ensure replication is running" {
+@test 'ensure replication is running' {
   podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'START SLAVE' </dev/null
   podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'START SLAVE' </dev/null
   podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'START SLAVE' </dev/null
@@ -266,7 +266,7 @@ cat <<'__eot__' >test_replication_is_running.bats
   podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'START SLAVE' </dev/null
 
   sleep 1
-  podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "CREATE DATABASE IF NOT EXISTS dummy" </dev/null
+  podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'CREATE DATABASE IF NOT EXISTS dummy' </dev/null
   podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'USE dummy' </dev/null
   podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'USE dummy' </dev/null
   podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'DROP DATABASE IF EXISTS dummy' </dev/null
@@ -278,8 +278,8 @@ __eot__
 sudo bats test_replication_is_running.bats
 
 cat <<'__eot__' >test_replication_is_stopped.bats
-@test "stop replication and ensure its not running" {
-  podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute "CREATE DATABASE IF NOT EXISTS dummy" </dev/null
+@test 'stop replication and ensure its not running' {
+  podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'CREATE DATABASE IF NOT EXISTS dummy' </dev/null
 
   podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'STOP SLAVE' </dev/null
   podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'STOP SLAVE' </dev/null
