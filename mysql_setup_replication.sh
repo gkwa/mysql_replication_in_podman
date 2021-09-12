@@ -166,11 +166,11 @@ podman pod create --name=my4p --publish=33064:3306 --network=replication
 podman pod create --name=my5p --publish=33065:3306 --network=replication
 
 # mysqld containers
-podman container create --name=my1c --pod=my1p --health-start-period=80s --log-driver=journald --volume=./reptest/my1c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my1c/extra:/tmp/extra:Z --volume=my1dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-podman container create --name=my2c --pod=my2p --health-start-period=80s --log-driver=journald --volume=./reptest/my2c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my2c/extra:/tmp/extra:Z --volume=my2dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-podman container create --name=my3c --pod=my3p --health-start-period=80s --log-driver=journald --volume=./reptest/my3c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my3c/extra:/tmp/extra:Z --volume=my3dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-podman container create --name=my4c --pod=my4p --health-start-period=80s --log-driver=journald --volume=./reptest/my4c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my4c/extra:/tmp/extra:Z --volume=my4dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-podman container create --name=my5c --pod=my5p --health-start-period=80s --log-driver=journald --volume=./reptest/my5c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my5c/extra:/tmp/extra:Z --volume=my5dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my1c --pod=my1p --health-start-period=80s --log-driver=journald --volume=./reptest/my1c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my1c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my1dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my2c --pod=my2p --health-start-period=80s --log-driver=journald --volume=./reptest/my2c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my2c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my2dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my3c --pod=my3p --health-start-period=80s --log-driver=journald --volume=./reptest/my3c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my3c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my3dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my4c --pod=my4p --health-start-period=80s --log-driver=journald --volume=./reptest/my4c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my4c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my4dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my5c --pod=my5p --health-start-period=80s --log-driver=journald --volume=./reptest/my5c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my5c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my5dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 
 
 podman pod start my1p
@@ -446,10 +446,8 @@ podman exec --env=MYSQL_PWD=root --tty --interactive my5c mysql --user=root --ho
 
 END_COMMENT
 
-
-mkdir -p reptest/my1c/extra
-replica_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-cat <<'__eot__' >reptest/my1c/extra/extra.sql
+mkdir -p reptest/extra2
+cat <<'__eot__' >reptest/extra2/extra2.sql
 CREATE DATABASE IF NOT EXISTS sales;
 CREATE TABLE IF NOT EXISTS sales.DemoTable
    (
@@ -458,67 +456,53 @@ CREATE TABLE IF NOT EXISTS sales.DemoTable
    CustomerAge int
    );
 -- INSERT INTO sales.DemoTable VALUES (`tom hillbilly`, `male`);
+__eot__
+
+
+# podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql' </dev/null
+# podman exec --env=MYSQL_PWD=root --tty --interactive my2c mysql --user=root --host=my2p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql' </dev/null
+# podman exec --env=MYSQL_PWD=root --tty --interactive my3c mysql --user=root --host=my3p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql' </dev/null
+# podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql' </dev/null
+# podman exec --env=MYSQL_PWD=root --tty --interactive my5c mysql --user=root --host=my5p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql' </dev/null
+
+
+mkdir -p reptest/my1c/extra
+replica_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
+cat <<'__eot__' >reptest/extra2/extra.sql
+-- placeholder
 __eot__
 # cat reptest/my1c/extra/extra.sql
 mkdir -p reptest/my2c/extra
 replica_ip=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-cat <<'__eot__' >reptest/my2c/extra/extra.sql
-CREATE DATABASE IF NOT EXISTS sales;
-CREATE TABLE IF NOT EXISTS sales.DemoTable
-   (
-   CustomerId int,
-   CustomerName varchar(30),
-   CustomerAge int
-   );
--- INSERT INTO sales.DemoTable VALUES (`tom hillbilly`, `male`);
+cat <<'__eot__' >reptest/extra2/extra.sql
+-- placeholder
 __eot__
 # cat reptest/my2c/extra/extra.sql
 mkdir -p reptest/my3c/extra
 replica_ip=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-cat <<'__eot__' >reptest/my3c/extra/extra.sql
-CREATE DATABASE IF NOT EXISTS sales;
-CREATE TABLE IF NOT EXISTS sales.DemoTable
-   (
-   CustomerId int,
-   CustomerName varchar(30),
-   CustomerAge int
-   );
--- INSERT INTO sales.DemoTable VALUES (`tom hillbilly`, `male`);
+cat <<'__eot__' >reptest/extra2/extra.sql
+-- placeholder
 __eot__
 # cat reptest/my3c/extra/extra.sql
 mkdir -p reptest/my4c/extra
 replica_ip=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-cat <<'__eot__' >reptest/my4c/extra/extra.sql
-CREATE DATABASE IF NOT EXISTS sales;
-CREATE TABLE IF NOT EXISTS sales.DemoTable
-   (
-   CustomerId int,
-   CustomerName varchar(30),
-   CustomerAge int
-   );
--- INSERT INTO sales.DemoTable VALUES (`tom hillbilly`, `male`);
+cat <<'__eot__' >reptest/extra2/extra.sql
+-- placeholder
 __eot__
 # cat reptest/my4c/extra/extra.sql
 mkdir -p reptest/my5c/extra
 replica_ip=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-cat <<'__eot__' >reptest/my5c/extra/extra.sql
-CREATE DATABASE IF NOT EXISTS sales;
-CREATE TABLE IF NOT EXISTS sales.DemoTable
-   (
-   CustomerId int,
-   CustomerName varchar(30),
-   CustomerAge int
-   );
--- INSERT INTO sales.DemoTable VALUES (`tom hillbilly`, `male`);
+cat <<'__eot__' >reptest/extra2/extra.sql
+-- placeholder
 __eot__
 # cat reptest/my5c/extra/extra.sql
 
 
-# podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
-# podman exec --env=MYSQL_PWD=root --tty --interactive my2c mysql --user=root --host=my2p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
-# podman exec --env=MYSQL_PWD=root --tty --interactive my3c mysql --user=root --host=my3p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
-# podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
-# podman exec --env=MYSQL_PWD=root --tty --interactive my5c mysql --user=root --host=my5p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
+podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
+podman exec --env=MYSQL_PWD=root --tty --interactive my2c mysql --user=root --host=my2p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
+podman exec --env=MYSQL_PWD=root --tty --interactive my3c mysql --user=root --host=my3p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
+podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
+podman exec --env=MYSQL_PWD=root --tty --interactive my5c mysql --user=root --host=my5p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
 
 
 # podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null

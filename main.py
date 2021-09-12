@@ -88,7 +88,7 @@ podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{lo
 
 # mysqld containers
 {%- for pod in pods %}
-podman container create --name={{ pod.containers[0].name }} --pod={{ pod.name }} --health-start-period=80s --log-driver=journald --volume=./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/{{ pod.containers[0].name }}/extra:/tmp/extra:Z --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} --env=MYSQL_USER={{ global.user_non_root }} --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name={{ pod.containers[0].name }} --pod={{ pod.name }} --health-start-period=80s --log-driver=journald --volume=./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/{{ pod.containers[0].name }}/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} --env=MYSQL_USER={{ global.user_non_root }} --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 {%- endfor %}
 
 {% for pod in pods %}
@@ -189,10 +189,8 @@ podman exec --env=MYSQL_PWD={{ global.user_root_pass }} --tty --interactive {{ p
 {% endfor %}
 END_COMMENT
 
-{% for pod in pods %}
-mkdir -p reptest/{{ pod.containers[0].name }}/extra
-replica_ip{{ pod.replica.number }}=$(podman inspect {{ pod.replica.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network }}.IPAddress{%- raw -%} }} {%- endraw -%}')
-cat <<'__eot__' >reptest/{{ pod.containers[0].name }}/extra/extra.sql
+mkdir -p reptest/extra2
+cat <<'__eot__' >reptest/extra2/extra2.sql
 CREATE DATABASE IF NOT EXISTS sales;
 CREATE TABLE IF NOT EXISTS sales.DemoTable
    (
@@ -202,11 +200,22 @@ CREATE TABLE IF NOT EXISTS sales.DemoTable
    );
 -- INSERT INTO sales.DemoTable VALUES (`tom hillbilly`, `male`);
 __eot__
+
+{% for pod in pods %}
+# podman exec --env=MYSQL_PWD={{ global.user_root_pass }} --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql' </dev/null
+{%- endfor %}
+
+{% for pod in pods %}
+mkdir -p reptest/{{ pod.containers[0].name }}/extra
+replica_ip{{ pod.replica.number }}=$(podman inspect {{ pod.replica.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network }}.IPAddress{%- raw -%} }} {%- endraw -%}')
+cat <<'__eot__' >reptest/extra2/extra.sql
+-- placeholder
+__eot__
 # cat reptest/{{ pod.containers[0].name }}/extra/extra.sql
 {%- endfor %}
 
 {% for pod in pods %}
-# podman exec --env=MYSQL_PWD={{ global.user_root_pass }} --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
+podman exec --env=MYSQL_PWD={{ global.user_root_pass }} --tty --interactive {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'SOURCE /tmp/extra/extra.sql' </dev/null
 {%- endfor %}
 
 {% for pod in pods %}
