@@ -620,13 +620,13 @@ cat <<'__eot__' >test_replication_is_running.bats
   podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'START SLAVE' </dev/null
   podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'START SLAVE' </dev/null
 
-  sleep 1
+  sleep 5
   podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'CREATE DATABASE IF NOT EXISTS dummy' </dev/null
   podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'USE dummy' </dev/null
   podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'USE dummy' </dev/null
   podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'DROP DATABASE IF EXISTS dummy' </dev/null
   run podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'USE dummy' </dev/null
-  sleep 1
+  sleep 5
   [ "$status" -eq 1 ]
 }
 __eot__
@@ -642,15 +642,15 @@ cat <<'__eot__' >test_replication_is_stopped.bats
   podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'STOP SLAVE' </dev/null
   podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'STOP SLAVE' </dev/null
 
-  sleep 1
+  sleep 5
   podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'USE dummy' </dev/null
   podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'DROP DATABASE IF EXISTS dummy' </dev/null
 
-  sleep 1
+  sleep 5
   run podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'USE dummy' </dev/null
   [ "$status" -eq 1 ]
 
-  sleep 1
+  sleep 5
   run podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'USE dummy' </dev/null
   [ "$status" -eq 0 ]
 
@@ -660,7 +660,7 @@ cat <<'__eot__' >test_replication_is_stopped.bats
   podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'START SLAVE' </dev/null
   podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'START SLAVE' </dev/null
   podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'START SLAVE' </dev/null
-  sleep 1
+  sleep 5
 }
 __eot__
 sudo bats test_replication_is_stopped.bats
