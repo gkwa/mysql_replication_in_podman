@@ -265,6 +265,7 @@ END_COMMENT
 
 cat <<'__eot__' >test_replication_is_running.bats
 @test 'ensure replication is running' {
+  sleep 5
   podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE' </dev/null
   podman exec --env=MYSQL_PWD=root --tty --interactive my2c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE' </dev/null
   podman exec --env=MYSQL_PWD=root --tty --interactive my3c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE' </dev/null
@@ -285,8 +286,9 @@ sudo bats test_replication_is_running.bats
 
 cat <<'__eot__' >test_replication_is_stopped.bats
 @test 'stop replication and ensure its not running' {
-  podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p --execute 'CREATE DATABASE IF NOT EXISTS dummy' </dev/null
 
+  sleep 5
+  podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p --execute 'CREATE DATABASE IF NOT EXISTS dummy' </dev/null
   podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE' </dev/null
   podman exec --env=MYSQL_PWD=root --tty --interactive my2c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE' </dev/null
   podman exec --env=MYSQL_PWD=root --tty --interactive my3c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE' </dev/null
