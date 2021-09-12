@@ -324,7 +324,6 @@ cat <<'__eot__' >test_replication_is_stopped.bats
   podman exec --env=MYSQL_PWD=root --tty --interactive my3c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE' </dev/null
   podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE' </dev/null
   podman exec --env=MYSQL_PWD=root --tty --interactive my5c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE' </dev/null
-  sleep 5
 }
 __eot__
 sudo bats test_replication_is_stopped.bats
@@ -337,7 +336,6 @@ echo target:{{ block.instance.container }} source:{{ block.source.container }} p
 
 cat <<'__eot__' >replication_ok.bats
 @test 'user table replicated ok' {
-  sleep 5 
   podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql' </dev/null
 
   result1="$(podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick || true)"
