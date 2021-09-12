@@ -370,6 +370,11 @@ cat <<'__eot__' >replication_ok.bats
   result5="$(podman exec --env=MYSQL_PWD=root --tty --interactive my5c mysql --user=root --host=my5p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick || true)"
   [ "$result5" -eq 0 ] 
 
+  podman exec --env=MYSQL_PWD=root --tty --interactive my2c mysql --user=root --host=my2p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql' </dev/null
+  podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql' </dev/null
+
+  result5="$(podman exec --env=MYSQL_PWD=root --tty --interactive my5c mysql --user=root --host=my5p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick || true)"
+  [ "$result5" -eq 2 ] 
 
 }
 __eot__
