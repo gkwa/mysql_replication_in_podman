@@ -376,6 +376,25 @@ cat <<'__eot__' >replication_ok.bats
   result5="$(podman exec --env=MYSQL_PWD=root --tty --interactive my5c mysql --user=root --host=my5p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick || true)"
   [ "$result5" -eq 2 ] 
 
+  r=$(podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW DATABASES' </dev/null | grep -c sales || true)
+  [ "$r" -eq 1 ] 
+
+  podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p --execute 'DROP DATABASE IF EXISTS sales' </dev/null
+
+  r=$(podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW DATABASES' </dev/null | grep -c sales || true)
+  [ "$r" -eq 0 ] 
+
+  r=$(podman exec --env=MYSQL_PWD=root --tty --interactive my2c mysql --user=root --host=my2p.dns.podman --execute 'SHOW DATABASES' </dev/null | grep -c sales || true)
+  [ "$r" -eq 0 ] 
+
+  r=$(podman exec --env=MYSQL_PWD=root --tty --interactive my3c mysql --user=root --host=my3p.dns.podman --execute 'SHOW DATABASES' </dev/null | grep -c sales || true)
+  [ "$r" -eq 0 ] 
+
+  r=$(podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p.dns.podman --execute 'SHOW DATABASES' </dev/null | grep -c sales || true)
+  [ "$r" -eq 0 ] 
+
+  r=$(podman exec --env=MYSQL_PWD=root --tty --interactive my5c mysql --user=root --host=my5p.dns.podman --execute 'SHOW DATABASES' </dev/null | grep -c sales || true)
+  [ "$r" -eq 0 ] 
 }
 __eot__
 sudo bats replication_ok.bats
