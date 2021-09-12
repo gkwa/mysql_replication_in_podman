@@ -677,10 +677,38 @@ cat <<'__eot__' >replication_ok.bats
   podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql' </dev/null
 
   result1="$(podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick)"
-  [ "$result1" -ne 0 ] 
+  [ "$result1" -eq 1 ] 
 
-  result2="$(podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick)"
-  [ "$result2" -ne 0 ] 
+  result2="$(podman exec --env=MYSQL_PWD=root --tty --interactive my2c mysql --user=root --host=my2p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick)"
+  [ "$result2" -eq 1 ] 
+
+  result3="$(podman exec --env=MYSQL_PWD=root --tty --interactive my3c mysql --user=root --host=my3p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick)"
+  [ "$result3" -eq 1 ] 
+
+  result4="$(podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick)"
+  [ "$result4" -eq 1 ] 
+
+  result5="$(podman exec --env=MYSQL_PWD=root --tty --interactive my5c mysql --user=root --host=my5p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick)"
+  [ "$result5" -eq 1 ] 
+
+  podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p --database=sales --execute 'DELETE FROM user WHERE ln="mccormick"' </dev/null
+
+  result1="$(podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick)"
+  [ "$result1" -eq 0 ] 
+
+  result2="$(podman exec --env=MYSQL_PWD=root --tty --interactive my2c mysql --user=root --host=my2p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick)"
+  [ "$result2" -eq 0 ] 
+
+  result3="$(podman exec --env=MYSQL_PWD=root --tty --interactive my3c mysql --user=root --host=my3p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick)"
+  [ "$result3" -eq 0 ] 
+
+  result4="$(podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick)"
+  [ "$result4" -eq 0 ] 
+
+  result5="$(podman exec --env=MYSQL_PWD=root --tty --interactive my5c mysql --user=root --host=my5p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick)"
+  [ "$result5" -eq 0 ] 
+
+
 }
 __eot__
 sudo bats replication_ok.bats
