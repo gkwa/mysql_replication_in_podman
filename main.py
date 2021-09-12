@@ -208,7 +208,7 @@ __eot__
 {% for pod in pods %}
 mkdir -p reptest/{{ pod.containers[0].name }}/extra
 replica_ip{{ pod.replica.number }}=$(podman inspect {{ pod.replica.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network }}.IPAddress{%- raw -%} }} {%- endraw -%}')
-cat <<'__eot__' >reptest/extra2/extra.sql
+cat <<'__eot__' >reptest/{{ pod.containers[0].name }}/extra/extra.sql
 -- placeholder
 __eot__
 # cat reptest/{{ pod.containers[0].name }}/extra/extra.sql

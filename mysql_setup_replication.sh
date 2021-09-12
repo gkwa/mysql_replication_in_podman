@@ -468,31 +468,31 @@ __eot__
 
 mkdir -p reptest/my1c/extra
 replica_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-cat <<'__eot__' >reptest/extra2/extra.sql
+cat <<'__eot__' >reptest/my1c/extra/extra.sql
 -- placeholder
 __eot__
 # cat reptest/my1c/extra/extra.sql
 mkdir -p reptest/my2c/extra
 replica_ip=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-cat <<'__eot__' >reptest/extra2/extra.sql
+cat <<'__eot__' >reptest/my2c/extra/extra.sql
 -- placeholder
 __eot__
 # cat reptest/my2c/extra/extra.sql
 mkdir -p reptest/my3c/extra
 replica_ip=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-cat <<'__eot__' >reptest/extra2/extra.sql
+cat <<'__eot__' >reptest/my3c/extra/extra.sql
 -- placeholder
 __eot__
 # cat reptest/my3c/extra/extra.sql
 mkdir -p reptest/my4c/extra
 replica_ip=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-cat <<'__eot__' >reptest/extra2/extra.sql
+cat <<'__eot__' >reptest/my4c/extra/extra.sql
 -- placeholder
 __eot__
 # cat reptest/my4c/extra/extra.sql
 mkdir -p reptest/my5c/extra
 replica_ip=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-cat <<'__eot__' >reptest/extra2/extra.sql
+cat <<'__eot__' >reptest/my5c/extra/extra.sql
 -- placeholder
 __eot__
 # cat reptest/my5c/extra/extra.sql
