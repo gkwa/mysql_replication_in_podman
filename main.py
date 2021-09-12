@@ -57,6 +57,7 @@ podman volume create {{ pod.volume }}
 # start clean
 [[ -d 'reptest' ]] && mv reptest reptest.$(date +%s)
 
+mkdir -p reptest/extra2
 {%- for pod in pods %}
 mkdir -p reptest/{{ pod.containers[0].name }}/extra
 {%- endfor %}
