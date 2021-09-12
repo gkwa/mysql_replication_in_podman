@@ -334,6 +334,20 @@ sudo bats test_replication_is_stopped.bats
 position=$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} --tty --interactive {{ block.source.container }} mysql --user={{ global.user_root }} --host={{ block.source.pod }} --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
 echo target:{{ block.instance.container }} source:{{ block.source.container }} position:$position
 {%- endfor %}
+
+cat <<'__eot__' >replication_ok.bats
+@test 'user table replicated ok' {
+  sleep 5 
+  podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql' </dev/null
+
+  result1="$(podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick)"
+  [ "$result1" -eq 1 ] 
+
+  result2="$(podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick)"
+  [ "$result2" -eq 1 ] 
+}
+__eot__
+sudo bats replication_ok.bats
 """
 
 template = jinja2.Template(tmpl_str)
