@@ -398,6 +398,19 @@ cat <<'__eot__' >replication_ok.bats
 }
 __eot__
 sudo bats replication_ok.bats
+
+cat <<'__eot__' >test_replication_stop_start.bats
+@test 'stop replication, observe' {
+  podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE' </dev/null
+  podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql' </dev/null
+  result1="$(podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick || true)"
+  [ "$result1" -eq 1 ] 
+
+  result2="$(podman exec --env=MYSQL_PWD=root --tty --interactive my2c mysql --user=root --host=my2p --database=sales --execute 'SELECT * FROM user' | grep -c mccormick || true)"
+  [ "$result2" -eq 0 ] 
+}
+__eot__
+sudo bats replication_ok.bats
 """
 
 template = jinja2.Template(tmpl_str)
