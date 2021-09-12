@@ -68,6 +68,7 @@ datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 binlog_do_db                   = db
 binlog_do_db                   = dummy
+binlog_do_db                   = sales
 
 ; https://www.clusterdb.com/mysql-cluster/get-mysql-replication-up-and-running-in-5-minutes
 innodb_flush_log_at_trx_commit = 1
