@@ -265,18 +265,18 @@ END_COMMENT
 
 cat <<'__eot__' >test_replication_is_running.bats
 @test 'ensure replication is running' {
-  podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p.dns.podman --execute 'START SLAVE' </dev/null
-  podman exec --tty --interactive my2c mysql --user=root --password=root --host=my2p.dns.podman --execute 'START SLAVE' </dev/null
-  podman exec --tty --interactive my3c mysql --user=root --password=root --host=my3p.dns.podman --execute 'START SLAVE' </dev/null
-  podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p.dns.podman --execute 'START SLAVE' </dev/null
-  podman exec --tty --interactive my5c mysql --user=root --password=root --host=my5p.dns.podman --execute 'START SLAVE' </dev/null
+  podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE' </dev/null
+  podman exec --env=MYSQL_PWD=root --tty --interactive my2c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE' </dev/null
+  podman exec --env=MYSQL_PWD=root --tty --interactive my3c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE' </dev/null
+  podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE' </dev/null
+  podman exec --env=MYSQL_PWD=root --tty --interactive my5c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE' </dev/null
 
   sleep 5
-  podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'CREATE DATABASE IF NOT EXISTS dummy' </dev/null
-  podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'USE dummy' </dev/null
-  podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'USE dummy' </dev/null
-  podman exec --tty --interactive my4c mysql --user=root --password=root --host=my4p --execute 'DROP DATABASE IF EXISTS dummy' </dev/null
-  run podman exec --tty --interactive my1c mysql --user=root --password=root --host=my1p --execute 'USE dummy' </dev/null
+  podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p --execute 'CREATE DATABASE IF NOT EXISTS dummy' </dev/null
+  podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p --execute 'USE dummy' </dev/null
+  podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p --execute 'USE dummy' </dev/null
+  podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p --execute 'DROP DATABASE IF EXISTS dummy' </dev/null
+  run podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --user=root --host=my1p --execute 'USE dummy' </dev/null
   sleep 5
   [ "$status" -eq 1 ]
 }
