@@ -478,7 +478,7 @@ mkdir -p reptest/my5c/extra
 replica_ip=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
 cat <<'__eot__' >reptest/my5c/extra/extra.sql
 CREATE DATABASE IF NOT EXISTS `myflixdb`;
-CREATE TABLE IF NOT EXISTS `myflixdb`.`members` ( `membership_number` INT autoincrement , `full_names` VARCHAR(150) NOT NULL , `gender` VARCHAR(6) , `date_of_birth` date , PRIMARY KEY (`membership_number`) ) engine = innodb;
+CREATE TABLE IF NOT EXISTS `myflixdb`.`members` ( `membership_number` INT auto_increment , `full_names` VARCHAR(150) NOT NULL , `gender` VARCHAR(6) , `date_of_birth` date , PRIMARY KEY (`membership_number`) ) engine = innodb;
 INSERT INTO myflixdb.members VALUES (`tom hillbilly`, `male`);
 __eot__
 # cat reptest/my5c/extra/extra.sql
