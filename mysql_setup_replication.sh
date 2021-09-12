@@ -448,7 +448,6 @@ podman exec --env=MYSQL_PWD=root --tty --interactive my5c mysql --user=root --ho
 
 END_COMMENT
 
-mkdir -p reptest/extra2
 cat <<'__eot__' >reptest/extra2/extra2.sql
 CREATE DATABASE IF NOT EXISTS sales;
 CREATE TABLE IF NOT EXISTS sales.DemoTable

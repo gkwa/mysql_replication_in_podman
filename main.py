@@ -190,7 +190,6 @@ podman exec --env=MYSQL_PWD={{ global.user_root_pass }} --tty --interactive {{ p
 {% endfor %}
 END_COMMENT
 
-mkdir -p reptest/extra2
 cat <<'__eot__' >reptest/extra2/extra2.sql
 CREATE DATABASE IF NOT EXISTS sales;
 CREATE TABLE IF NOT EXISTS sales.DemoTable
