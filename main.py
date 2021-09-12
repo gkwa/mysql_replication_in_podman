@@ -192,16 +192,14 @@ END_COMMENT
 mkdir -p reptest/{{ pod.containers[0].name }}/extra
 replica_ip{{ pod.replica.number }}=$(podman inspect {{ pod.replica.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network }}.IPAddress{%- raw -%} }} {%- endraw -%}')
 cat <<'__eot__' >reptest/{{ pod.containers[0].name }}/extra/extra.sql
-CREATE DATABASE IF NOT EXISTS `myflixdb2`;
-CREATE TABLE IF NOT EXISTS `myflixdb2`.`sale_details`
-  (
-     `id`               INT auto_increment,
-     `sale_person_name` VARCHAR(255),
-     `no_products_sold` INT,
-     `sales_department` VARCHAR(255),
-     PRIMARY KEY (id)
-  ); 
--- INSERT INTO myflixdb.members VALUES (`tom hillbilly`, `male`);
+CREATE DATABASE IF NOT EXISTS sales;
+CREATE TABLE IF NOT EXISTS sales.DemoTable
+   (
+   CustomerId int,
+   CustomerName varchar(30),
+   CustomerAge int
+   );
+-- INSERT INTO sales.DemoTable VALUES (`tom hillbilly`, `male`);
 __eot__
 # cat reptest/{{ pod.containers[0].name }}/extra/extra.sql
 {%- endfor %}
