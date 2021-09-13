@@ -5,10 +5,9 @@ set -o errexit
 podman info --debug
 mysql --version
 
-# destroy all reminder
-
+# destroy everything except for podman network for sanity check
 : <<'END_COMMENT'
-podman system prune --all --force; podman pod rm --all --force; podman container rm --all --force; podman volume rm --all --force; for network in $(podman network ls --format json | jq -r '.[].Name'); do if [[ "$network" !=  "podman" ]]; then podman network exists $network && podman network rm $network; fi; done; podman ps; podman ps --pod; podman ps -a --pod; podman network ls; podman volume ls; podman pod ls; # destroyall
+podman container stop --ignore --all; podman stop --ignore --all; podman system prune --all --force; podman pod rm --all --force; podman container rm --all --force; podman volume rm --all --force; for network in $(podman network ls --format json | jq -r '.[].Name'); do if [[ "$network" !=  "podman" ]]; then podman network exists $network && podman network rm $network; fi; done; podman container stop --ignore --all; podman stop --ignore --all; podman system prune --all --force; podman pod rm --all --force; podman container rm --all --force; podman volume rm --all --force; for network in $(podman network ls --format json | jq -r '.[].Name'); do if [[ "$network" !=  "podman" ]]; then podman network exists $network && podman network rm $network; fi; done; podman ps; podman ps --pod; podman ps -a --pod; podman network ls; podman volume ls; podman pod ls; #destroyall
 END_COMMENT
 
 # FIXME: reminder: i'm using appveyor secrets to decrypt this from ./auth.json.enc, thats obscure
