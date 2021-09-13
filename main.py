@@ -79,12 +79,12 @@ log_bin                        = mysql-bin.log
 #binlog_format                  = ROW
 #binlog_format                  = MIXED
 binlog_format                  = STATEMENT
-binlog_do_db                   = db
-binlog_do_db                   = dummy
-binlog_do_db                   = sales
-binlog_do_db                   = percona
+;binlog_do_db                   = db
+;binlog_do_db                   = dummy
+;binlog_do_db                   = sales
+;binlog_do_db                   = percona
 log_slave_updates              = ON
-slave-skip-errors              = 1062
+;slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
@@ -98,7 +98,7 @@ podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{lo
 
 # mysqld containers
 {%- for pod in pods %}
-podman container create --name={{ pod.containers[0].name }} --pod={{ pod.name }} --health-start-period=80s --log-driver=journald --volume=./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/{{ pod.containers[0].name }}/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} --env=MYSQL_USER={{ global.user_non_root }} --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name={{ pod.containers[0].name }} --pod={{ pod.name }} --health-start-period=80s --log-driver=journald --health-interval=30s --health-retries=10 --health-timeout=30s --health-cmd='mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "USE mysql"' --volume=./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/{{ pod.containers[0].name }}/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} --env=MYSQL_USER={{ global.user_non_root }} --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 {%- endfor %}
 
 {% for pod in pods %}
@@ -117,6 +117,10 @@ podman volume inspect {{ pod.volume }}
 
 {% for pod in pods %}
 until podman exec --env=MYSQL_PWD={{ global.user_non_root_pass }} --tty --interactive {{ pod.containers[0].name }} mysql --host={{ pod.name }} --user={{ global.user_non_root }} --execute 'SHOW DATABASES' </dev/null; do sleep 5; done;
+{%- endfor %}
+
+{% for pod in pods %}
+until podman exec --env=MYSQL_PWD={{ global.user_root_pass }} --tty --interactive {{ pod.containers[0].name }} mysql --host={{ pod.name }} --user={{ global.user_root }} --execute 'SHOW DATABASES' </dev/null; do sleep 5; done;
 {%- endfor %}
 
 {% for pod in pods %}{% set ip='ip' ~ loop.index %}
@@ -345,6 +349,11 @@ sudo bats test_replication_is_stopped.bats
 {%- for block in replication %}
 position=$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} --tty --interactive {{ block.source.container }} mysql --user={{ global.user_root }} --host={{ block.source.pod }} --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
 echo target:{{ block.instance.container }} source:{{ block.source.container }} position:$position
+{%- endfor %}
+
+{% for block in replication %}
+until grep --silent 'Slave_IO_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ block.source.container }} mysql --user={{ global.user_root_pass }} --host={{ block.instance.pod }}.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
+until grep --silent 'Slave_SQL_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ block.source.container }} mysql --user={{ global.user_root_pass }} --host={{ block.instance.pod }}.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
 {%- endfor %}
 
 cat <<'__eot__' >replication_ok.bats

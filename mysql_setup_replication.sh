@@ -85,12 +85,12 @@ log_bin                        = mysql-bin.log
 #binlog_format                  = ROW
 #binlog_format                  = MIXED
 binlog_format                  = STATEMENT
-binlog_do_db                   = db
-binlog_do_db                   = dummy
-binlog_do_db                   = sales
-binlog_do_db                   = percona
+;binlog_do_db                   = db
+;binlog_do_db                   = dummy
+;binlog_do_db                   = sales
+;binlog_do_db                   = percona
 log_slave_updates              = ON
-slave-skip-errors              = 1062
+;slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
@@ -107,12 +107,12 @@ log_bin                        = mysql-bin.log
 #binlog_format                  = ROW
 #binlog_format                  = MIXED
 binlog_format                  = STATEMENT
-binlog_do_db                   = db
-binlog_do_db                   = dummy
-binlog_do_db                   = sales
-binlog_do_db                   = percona
+;binlog_do_db                   = db
+;binlog_do_db                   = dummy
+;binlog_do_db                   = sales
+;binlog_do_db                   = percona
 log_slave_updates              = ON
-slave-skip-errors              = 1062
+;slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
@@ -129,12 +129,12 @@ log_bin                        = mysql-bin.log
 #binlog_format                  = ROW
 #binlog_format                  = MIXED
 binlog_format                  = STATEMENT
-binlog_do_db                   = db
-binlog_do_db                   = dummy
-binlog_do_db                   = sales
-binlog_do_db                   = percona
+;binlog_do_db                   = db
+;binlog_do_db                   = dummy
+;binlog_do_db                   = sales
+;binlog_do_db                   = percona
 log_slave_updates              = ON
-slave-skip-errors              = 1062
+;slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
@@ -151,12 +151,12 @@ log_bin                        = mysql-bin.log
 #binlog_format                  = ROW
 #binlog_format                  = MIXED
 binlog_format                  = STATEMENT
-binlog_do_db                   = db
-binlog_do_db                   = dummy
-binlog_do_db                   = sales
-binlog_do_db                   = percona
+;binlog_do_db                   = db
+;binlog_do_db                   = dummy
+;binlog_do_db                   = sales
+;binlog_do_db                   = percona
 log_slave_updates              = ON
-slave-skip-errors              = 1062
+;slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
@@ -173,12 +173,12 @@ log_bin                        = mysql-bin.log
 #binlog_format                  = ROW
 #binlog_format                  = MIXED
 binlog_format                  = STATEMENT
-binlog_do_db                   = db
-binlog_do_db                   = dummy
-binlog_do_db                   = sales
-binlog_do_db                   = percona
+;binlog_do_db                   = db
+;binlog_do_db                   = dummy
+;binlog_do_db                   = sales
+;binlog_do_db                   = percona
 log_slave_updates              = ON
-slave-skip-errors              = 1062
+;slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
@@ -193,11 +193,11 @@ podman pod create --name=my4p --publish=33064:3306 --network=replication
 podman pod create --name=my5p --publish=33065:3306 --network=replication
 
 # mysqld containers
-podman container create --name=my1c --pod=my1p --health-start-period=80s --log-driver=journald --volume=./reptest/my1c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my1c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my1dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-podman container create --name=my2c --pod=my2p --health-start-period=80s --log-driver=journald --volume=./reptest/my2c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my2c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my2dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-podman container create --name=my3c --pod=my3p --health-start-period=80s --log-driver=journald --volume=./reptest/my3c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my3c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my3dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-podman container create --name=my4c --pod=my4p --health-start-period=80s --log-driver=journald --volume=./reptest/my4c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my4c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my4dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-podman container create --name=my5c --pod=my5p --health-start-period=80s --log-driver=journald --volume=./reptest/my5c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my5c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my5dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my1c --pod=my1p --health-start-period=80s --log-driver=journald --health-interval=30s --health-retries=10 --health-timeout=30s --health-cmd='mysql --user=root --password=root --host=my1p --execute "USE mysql"' --volume=./reptest/my1c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my1c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my1dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my2c --pod=my2p --health-start-period=80s --log-driver=journald --health-interval=30s --health-retries=10 --health-timeout=30s --health-cmd='mysql --user=root --password=root --host=my2p --execute "USE mysql"' --volume=./reptest/my2c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my2c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my2dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my3c --pod=my3p --health-start-period=80s --log-driver=journald --health-interval=30s --health-retries=10 --health-timeout=30s --health-cmd='mysql --user=root --password=root --host=my3p --execute "USE mysql"' --volume=./reptest/my3c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my3c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my3dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my4c --pod=my4p --health-start-period=80s --log-driver=journald --health-interval=30s --health-retries=10 --health-timeout=30s --health-cmd='mysql --user=root --password=root --host=my4p --execute "USE mysql"' --volume=./reptest/my4c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my4c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my4dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name=my5c --pod=my5p --health-start-period=80s --log-driver=journald --health-interval=30s --health-retries=10 --health-timeout=30s --health-cmd='mysql --user=root --password=root --host=my5p --execute "USE mysql"' --volume=./reptest/my5c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my5c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my5dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 
 
 podman pod start my1p
@@ -234,6 +234,13 @@ until podman exec --env=MYSQL_PWD=joe --tty --interactive my2c mysql --host=my2p
 until podman exec --env=MYSQL_PWD=joe --tty --interactive my3c mysql --host=my3p --user=joe --execute 'SHOW DATABASES' </dev/null; do sleep 5; done;
 until podman exec --env=MYSQL_PWD=joe --tty --interactive my4c mysql --host=my4p --user=joe --execute 'SHOW DATABASES' </dev/null; do sleep 5; done;
 until podman exec --env=MYSQL_PWD=joe --tty --interactive my5c mysql --host=my5p --user=joe --execute 'SHOW DATABASES' </dev/null; do sleep 5; done;
+
+
+until podman exec --env=MYSQL_PWD=root --tty --interactive my1c mysql --host=my1p --user=root --execute 'SHOW DATABASES' </dev/null; do sleep 5; done;
+until podman exec --env=MYSQL_PWD=root --tty --interactive my2c mysql --host=my2p --user=root --execute 'SHOW DATABASES' </dev/null; do sleep 5; done;
+until podman exec --env=MYSQL_PWD=root --tty --interactive my3c mysql --host=my3p --user=root --execute 'SHOW DATABASES' </dev/null; do sleep 5; done;
+until podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --host=my4p --user=root --execute 'SHOW DATABASES' </dev/null; do sleep 5; done;
+until podman exec --env=MYSQL_PWD=root --tty --interactive my5c mysql --host=my5p --user=root --execute 'SHOW DATABASES' </dev/null; do sleep 5; done;
 
 
 podman inspect my1c |grep -i ipaddr
@@ -701,6 +708,18 @@ position=$(podman exec --env=MYSQL_PWD=root --tty --interactive my3c mysql --use
 echo target:my4c source:my3c position:$position
 position=$(podman exec --env=MYSQL_PWD=root --tty --interactive my4c mysql --user=root --host=my4p --execute 'SHOW MASTER STATUS\G' </dev/null |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
 echo target:my5c source:my4c position:$position
+
+
+until grep --silent 'Slave_IO_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my1p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
+until grep --silent 'Slave_SQL_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my1p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
+until grep --silent 'Slave_IO_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
+until grep --silent 'Slave_SQL_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
+until grep --silent 'Slave_IO_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my3p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
+until grep --silent 'Slave_SQL_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my3p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
+until grep --silent 'Slave_IO_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my4p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
+until grep --silent 'Slave_SQL_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my4p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
+until grep --silent 'Slave_IO_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my5p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
+until grep --silent 'Slave_SQL_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my5p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
 
 cat <<'__eot__' >replication_ok.bats
 @test 'user table replicated ok' {
