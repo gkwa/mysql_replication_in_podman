@@ -39,7 +39,7 @@ podman system prune --all --force; podman pod rm --all --force; podman container
 END_COMMENT
 
 # FIXME: reminder: i'm using appveyor secrets to decrypt this from ./auth.json.enc, thats obscure
-# podman login --username mtmonacelli registry.redhat.io $REGISTRY_REDHAT_IO_PASSWORD
+# podman login --authfile $HOME/.config/containers/auth.json registry.redhat.io
 
 podman pull docker.io/perconalab/percona-toolkit:latest
 
@@ -85,10 +85,7 @@ binlog_do_db                   = dummy
 binlog_do_db                   = sales
 binlog_do_db                   = percona
 log_slave_updates              = ON
-
 slave-skip-errors              = 1062
-
-; https://www.clusterdb.com/mysql-cluster/get-mysql-replication-up-and-running-in-5-minutes
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
