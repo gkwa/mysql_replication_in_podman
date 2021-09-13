@@ -86,6 +86,8 @@ binlog_do_db                   = sales
 binlog_do_db                   = percona
 log_slave_updates              = ON
 
+slave-skip-errors              = 1062
+
 ; https://www.clusterdb.com/mysql-cluster/get-mysql-replication-up-and-running-in-5-minutes
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
