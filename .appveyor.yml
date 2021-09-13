@@ -14,4 +14,5 @@ install:
   pushd /tmp/bats; sudo ./install.sh /usr/local; popd
 test_script:
 - sudo time bash -x test.sh
+- sudo time bash -x test20210913_1.sh
 build: off
