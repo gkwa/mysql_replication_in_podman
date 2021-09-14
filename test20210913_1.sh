@@ -5,7 +5,7 @@ set -o errexit
 source ./common.sh
 
 echo waiting for replication to be ready...
-loop1 repcheck my1c my1p.dns.podman 1 10
+loop1 repcheck my1c my1p.dns.podman1 1 10
 loop1 repcheck my1c my2p.dns.podman 1 10
 loop1 repcheck my1c my3p.dns.podman 1 10
 loop1 repcheck my1c my4p.dns.podman 1 10
