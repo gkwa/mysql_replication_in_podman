@@ -57,7 +57,7 @@ cat <<'__eot__' >reptest/extra2/20210912_1.sql
 DROP DATABASE IF EXISTS ptest;
 CREATE DATABASE IF NOT EXISTS ptest;
 USE ptest;
-CREATE TABLE dummy ( id   INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5) ) engine=innodb;
+CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;
 INSERT INTO dummy VALUES (1, 'a'), (2, 'b');
 SELECT * FROM dummy;
 __eot__
