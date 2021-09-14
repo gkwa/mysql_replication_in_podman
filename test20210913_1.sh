@@ -4,12 +4,19 @@ set -o errexit
 
 source ./common.sh
 
+    func=$1
+    jump_container=$2
+    target_host=$3
+    sleep=$4
+    maxcalls=$5
+
+
 echo waiting for replication to be ready...
-loop1 repcheck my1c 1 10 my1p.dns.podman
-loop1 repcheck my1c 1 10 my2p.dns.podman
-loop1 repcheck my1c 1 10 my3p.dns.podman
-loop1 repcheck my1c 1 10 my4p.dns.podman
-loop1 repcheck my1c 1 10 my5p.dns.podman
+loop1 repcheck my1c my1p.dns.podman 1 10
+loop1 repcheck my1c my2p.dns.podman 1 10
+loop1 repcheck my1c my3p.dns.podman 1 10
+loop1 repcheck my1c my4p.dns.podman 1 10
+loop1 repcheck my1c my5p.dns.podman 1 10
 
 echo ensuring we can reach mysqld
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW DATABASES' | grep --quiet mysql
@@ -40,11 +47,11 @@ podman run --pod=my1p --env=MYSQL_PWD=root percona-toolkit pt-table-sync --sync-
 podman run --pod=my1p --env=MYSQL_PWD=root percona-toolkit pt-table-sync --sync-to-master h=my5p.dns.podman,u=root,p=root,P=3306 --databases=ptest --tables=dummy --verbose --print
 
 echo waiting for replication to be ready...
-loop1 repcheck my1c 1 10 my1p.dns.podman
-loop1 repcheck my1c 1 10 my2p.dns.podman
-loop1 repcheck my1c 1 10 my3p.dns.podman
-loop1 repcheck my1c 1 10 my4p.dns.podman
-loop1 repcheck my1c 1 10 my5p.dns.podman
+loop1 repcheck my1c my1p.dns.podman 1 10
+loop1 repcheck my1c my2p.dns.podman 1 10
+loop1 repcheck my1c my3p.dns.podman 1 10
+loop1 repcheck my1c my4p.dns.podman 1 10
+loop1 repcheck my1c my5p.dns.podman 1 10
 
 cat <<'__eot__' >reptest/extra2/20210912_1.sql
 DROP DATABASE IF EXISTS ptest;
@@ -114,11 +121,11 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE'
 
 echo waiting for replication to be ready...
-loop1 repcheck my1c 1 10 my1p.dns.podman
-loop1 repcheck my1c 1 10 my2p.dns.podman
-loop1 repcheck my1c 1 10 my3p.dns.podman
-loop1 repcheck my1c 1 10 my4p.dns.podman
-loop1 repcheck my1c 1 10 my5p.dns.podman
+loop1 repcheck my1c my1p.dns.podman 1 10
+loop1 repcheck my1c my2p.dns.podman 1 10
+loop1 repcheck my1c my3p.dns.podman 1 10
+loop1 repcheck my1c my4p.dns.podman 1 10
+loop1 repcheck my1c my5p.dns.podman 1 10
 
 set +o errexit
 podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=root percona-toolkit pt-table-checksum --replicate=percona.checksums h=my1p.dns.podman,u=root,p=root,P=3306
