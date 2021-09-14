@@ -86,10 +86,10 @@ binlog_format                  = STATEMENT
 log_slave_updates              = ON
 
 ; ignore duplicate key errors
-slave-skip-errors              = 1062
+;slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
-auto_increment_increment       = {{ loop.index }}
+;auto_increment_increment       = {{ loop.index }}
 __eot__
 cat reptest/{{ pod.containers[0].name }}/my.cnf
 {% endfor %}
