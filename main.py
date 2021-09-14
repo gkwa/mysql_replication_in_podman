@@ -73,8 +73,8 @@ cat <<'__eot__' >reptest/{{ pod.containers[0].name }}/my.cnf
 [mysqld]
 bind-address                   = {{ pod.name }}.dns.podman
 server_id                      = {{ loop.index }}
-auto_increment_increment       = {{ pods|length }}
 auto_increment_offset          = {{ loop.index }}
+auto_increment_increment       = {{ pods|length }}
 # log_bin                      = /var/log/mysql/mysql-bin.log
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
