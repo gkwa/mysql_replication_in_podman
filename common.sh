@@ -24,8 +24,8 @@ function loop1() {
         sleep $sleep
         let count+=1
 
-        if [[ $count -gt $maxcalls ]]; then
-            break
+        if [[ $count -ge $maxcalls ]]; then
+            return false
         fi
     done
 }
