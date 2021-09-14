@@ -93,6 +93,7 @@ log_slave_updates              = ON
 ;slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
+auto_increment_increment       = 1
 __eot__
 cat reptest/my1c/my.cnf
 
@@ -115,6 +116,7 @@ log_slave_updates              = ON
 ;slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
+auto_increment_increment       = 2
 __eot__
 cat reptest/my2c/my.cnf
 
@@ -137,6 +139,7 @@ log_slave_updates              = ON
 ;slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
+auto_increment_increment       = 3
 __eot__
 cat reptest/my3c/my.cnf
 
@@ -159,6 +162,7 @@ log_slave_updates              = ON
 ;slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
+auto_increment_increment       = 4
 __eot__
 cat reptest/my4c/my.cnf
 
@@ -181,6 +185,7 @@ log_slave_updates              = ON
 ;slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
+auto_increment_increment       = 5
 __eot__
 cat reptest/my5c/my.cnf
 
