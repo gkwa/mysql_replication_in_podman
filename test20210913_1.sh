@@ -2,17 +2,14 @@
 
 set -o errexit
 
+. ./common.sh
+
 echo waiting for replication to be ready...
-until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
+loop1 repcheck my1c 1 10 my1p.dns.podman
+loop1 repcheck my1c 1 10 my2p.dns.podman
+loop1 repcheck my1c 1 10 my3p.dns.podman
+loop1 repcheck my1c 1 10 my4p.dns.podman
+loop1 repcheck my1c 1 10 my5p.dns.podman
 
 echo ensuring we can reach mysqld
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW DATABASES' | grep --quiet mysql
@@ -42,16 +39,12 @@ podman run --pod=my1p --env=MYSQL_PWD=root percona-toolkit pt-table-sync --sync-
 podman run --pod=my1p --env=MYSQL_PWD=root percona-toolkit pt-table-sync --sync-to-master h=my4p.dns.podman,u=root,p=root,P=3306 --databases=ptest --tables=dummy --verbose --print
 podman run --pod=my1p --env=MYSQL_PWD=root percona-toolkit pt-table-sync --sync-to-master h=my5p.dns.podman,u=root,p=root,P=3306 --databases=ptest --tables=dummy --verbose --print
 
-until grep --silent 'Slave_IO_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_IO_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_IO_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_IO_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_IO_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
+echo waiting for replication to be ready...
+loop1 repcheck my1c 1 10 my1p.dns.podman
+loop1 repcheck my1c 1 10 my2p.dns.podman
+loop1 repcheck my1c 1 10 my3p.dns.podman
+loop1 repcheck my1c 1 10 my4p.dns.podman
+loop1 repcheck my1c 1 10 my5p.dns.podman
 
 cat <<'__eot__' >reptest/extra2/20210912_1.sql
 DROP DATABASE IF EXISTS ptest;
@@ -120,16 +113,12 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE'
 
-until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
+echo waiting for replication to be ready...
+loop1 repcheck my1c 1 10 my1p.dns.podman
+loop1 repcheck my1c 1 10 my2p.dns.podman
+loop1 repcheck my1c 1 10 my3p.dns.podman
+loop1 repcheck my1c 1 10 my4p.dns.podman
+loop1 repcheck my1c 1 10 my5p.dns.podman
 
 set +o errexit
 podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=root percona-toolkit pt-table-checksum --replicate=percona.checksums h=my1p.dns.podman,u=root,p=root,P=3306
