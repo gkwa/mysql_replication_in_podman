@@ -25,7 +25,7 @@ function loop1() {
         let count+=1
 
         if [[ $count -ge $maxcalls ]]; then
-            return false
+            return 1
         fi
     done
 }
