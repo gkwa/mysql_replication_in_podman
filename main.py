@@ -79,10 +79,6 @@ log_bin                        = mysql-bin.log
 #binlog_format                  = ROW
 #binlog_format                  = MIXED
 binlog_format                  = STATEMENT
-;binlog_do_db                   = db
-;binlog_do_db                   = dummy
-;binlog_do_db                   = sales
-;binlog_do_db                   = percona
 log_slave_updates              = ON
 
 ; ignore duplicate key errors
