@@ -90,7 +90,7 @@ log_slave_updates              = ON
 ; slave-skip-errors                = 1050,1062,1032
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
-auto_increment_increment       = 5
+auto_increment_increment       = {{ pods|length }}
 auto_increment_offset          = {{ loop.index }}
 __eot__
 cat reptest/{{ pod.containers[0].name }}/my.cnf
@@ -103,7 +103,7 @@ podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{lo
 
 # mysqld containers
 {%- for pod in pods %}
-podman container create --name={{ pod.containers[0].name }} --pod={{ pod.name }} --health-start-period=80s --log-driver=journald --health-interval=30s --health-retries=10 --health-timeout=30s --health-cmd='mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "USE mysql"' --volume=./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/{{ pod.containers[0].name }}/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} --env=MYSQL_USER={{ global.user_non_root }} --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name={{ pod.containers[0].name }} --pod={{ pod.name }} --health-start-period=80s --log-driver=journald --health-interval=30s --health-retries=10 --health-timeout=30s --health-cmd='CMD-SHELL mysql --user={{ global.user_root }} --password={{ global.user_root_pass }} --host={{ pod.name }} --execute "USE mysql"' --volume=./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/{{ pod.containers[0].name }}/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} --env=MYSQL_USER={{ global.user_non_root }} --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 {%- endfor %}
 
 {% for pod in pods %}
