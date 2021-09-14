@@ -92,6 +92,7 @@ log_slave_updates              = ON
 ; ignore duplicate key errors
 ; slave-skip-errors              = 1062
 ; slave-skip-errors                = 1050,1062,1032
+sql_mode                       =
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
@@ -115,6 +116,7 @@ log_slave_updates              = ON
 ; ignore duplicate key errors
 ; slave-skip-errors              = 1062
 ; slave-skip-errors                = 1050,1062,1032
+sql_mode                       =
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
@@ -138,6 +140,7 @@ log_slave_updates              = ON
 ; ignore duplicate key errors
 ; slave-skip-errors              = 1062
 ; slave-skip-errors                = 1050,1062,1032
+sql_mode                       =
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
@@ -161,6 +164,7 @@ log_slave_updates              = ON
 ; ignore duplicate key errors
 ; slave-skip-errors              = 1062
 ; slave-skip-errors                = 1050,1062,1032
+sql_mode                       =
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__
@@ -184,6 +188,7 @@ log_slave_updates              = ON
 ; ignore duplicate key errors
 ; slave-skip-errors              = 1062
 ; slave-skip-errors                = 1050,1062,1032
+sql_mode                       =
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 __eot__

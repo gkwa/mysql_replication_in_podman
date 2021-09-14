@@ -97,7 +97,7 @@ SELECT * FROM dummy;
 __eot__
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra2/20210913_10.sql'
 #podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SOURCE /tmp/extra2/20210913_10.sql'
-#podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SOURCE /tmp/extra2/20210913_10.sql'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SOURCE /tmp/extra2/20210913_10.sql'
 #podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SOURCE /tmp/extra2/20210913_10.sql'
 #podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SOURCE /tmp/extra2/20210913_10.sql'
 
