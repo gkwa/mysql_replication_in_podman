@@ -2,7 +2,7 @@
 
 set -o errexit
 
-. ./common.sh
+source ./common.sh
 
 echo waiting for replication to be ready...
 loop1 repcheck my1c 1 10 my1p.dns.podman
