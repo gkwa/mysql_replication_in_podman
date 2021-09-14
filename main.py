@@ -90,7 +90,8 @@ log_slave_updates              = ON
 ; slave-skip-errors                = 1050,1062,1032
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
-auto_increment_increment       = {{ loop.index }}
+auto_increment_increment       = 5
+auto_increment_offset          = {{ loop.index }}
 __eot__
 cat reptest/{{ pod.containers[0].name }}/my.cnf
 {% endfor %}
