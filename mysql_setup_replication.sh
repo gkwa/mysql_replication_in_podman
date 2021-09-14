@@ -573,35 +573,6 @@ position=$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p -
 echo target:my5c source:my4c position:$position
 podman exec --env=MYSQL_PWD=root my5c mysql --host=my5p --user=root --execute "CHANGE MASTER TO MASTER_HOST='my4p.dns.podman',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
 
-: <<'END_COMMENT'
-# FIXME: it would be really nice to be able to use dns here
-source_ip=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-target_ip=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-position=$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p --execute 'SHOW MASTER STATUS\G'|sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
-echo target:$target_ip source:$source_ip position:$position
-podman exec --env=MYSQL_PWD=root my1c mysql --host=my1p --user=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS="$position'"'
-source_ip=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-target_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-position=$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'SHOW MASTER STATUS\G'|sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
-echo target:$target_ip source:$source_ip position:$position
-podman exec --env=MYSQL_PWD=root my2c mysql --host=my2p --user=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS="$position'"'
-source_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-target_ip=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-position=$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p --execute 'SHOW MASTER STATUS\G'|sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
-echo target:$target_ip source:$source_ip position:$position
-podman exec --env=MYSQL_PWD=root my3c mysql --host=my3p --user=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS="$position'"'
-source_ip=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-target_ip=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-position=$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p --execute 'SHOW MASTER STATUS\G'|sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
-echo target:$target_ip source:$source_ip position:$position
-podman exec --env=MYSQL_PWD=root my4c mysql --host=my4p --user=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS="$position'"'
-source_ip=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-target_ip=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-position=$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p --execute 'SHOW MASTER STATUS\G'|sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
-echo target:$target_ip source:$source_ip position:$position
-podman exec --env=MYSQL_PWD=root my5c mysql --host=my5p --user=root --execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS="$position'"'
-END_COMMENT
-
 
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE'
 podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE'

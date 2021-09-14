@@ -253,22 +253,6 @@ MASTER_LOG_FILE='mysql-bin.000003',\
 MASTER_LOG_POS=$position"
 {%- endfor %}
 
-: <<'END_COMMENT'
-# FIXME: it would be really nice to be able to use dns here
-{%- for block in replication %}
-source_ip=$(podman inspect {{ block.source.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network}}.IPAddress{%- raw -%} }} {%- endraw -%}')
-target_ip=$(podman inspect {{ block.instance.container }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network}}.IPAddress{%- raw -%} }} {%- endraw -%}')
-position=$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ block.source.container }} mysql --user={{ global.user_root }} --host={{ block.source.pod }} --execute 'SHOW MASTER STATUS\G'|sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
-echo target:$target_ip source:$source_ip position:$position
-podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ block.instance.container }} mysql --host={{ block.instance.pod }} --user={{ global.user_root }} \
---execute "CHANGE MASTER TO MASTER_HOST='"$source_ip"',\
-MASTER_USER='{{ global.user_replication }}',\
-MASTER_PASSWORD='{{ global.user_replication_pass }}',\
-MASTER_LOG_FILE='mysql-bin.000003',\
-MASTER_LOG_POS="$position'"'
-{%- endfor %}
-END_COMMENT
-
 {% for pod in pods %}
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE'
 {%- endfor %}
