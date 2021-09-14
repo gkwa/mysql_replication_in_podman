@@ -90,7 +90,9 @@ binlog_format                  = STATEMENT
 ;binlog_do_db                   = sales
 ;binlog_do_db                   = percona
 log_slave_updates              = ON
-;slave-skip-errors              = 1062
+
+; ignore duplicate key errors
+slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 auto_increment_increment       = 1
@@ -113,7 +115,9 @@ binlog_format                  = STATEMENT
 ;binlog_do_db                   = sales
 ;binlog_do_db                   = percona
 log_slave_updates              = ON
-;slave-skip-errors              = 1062
+
+; ignore duplicate key errors
+slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 auto_increment_increment       = 2
@@ -136,7 +140,9 @@ binlog_format                  = STATEMENT
 ;binlog_do_db                   = sales
 ;binlog_do_db                   = percona
 log_slave_updates              = ON
-;slave-skip-errors              = 1062
+
+; ignore duplicate key errors
+slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 auto_increment_increment       = 3
@@ -159,7 +165,9 @@ binlog_format                  = STATEMENT
 ;binlog_do_db                   = sales
 ;binlog_do_db                   = percona
 log_slave_updates              = ON
-;slave-skip-errors              = 1062
+
+; ignore duplicate key errors
+slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 auto_increment_increment       = 4
@@ -182,7 +190,9 @@ binlog_format                  = STATEMENT
 ;binlog_do_db                   = sales
 ;binlog_do_db                   = percona
 log_slave_updates              = ON
-;slave-skip-errors              = 1062
+
+; ignore duplicate key errors
+slave-skip-errors              = 1062
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 auto_increment_increment       = 5
