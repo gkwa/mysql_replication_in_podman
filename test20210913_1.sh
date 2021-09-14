@@ -86,7 +86,7 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman -
 
 cat <<'__eot__' >reptest/extra2/20210913_10.sql
 USE ptest;
--- INSERT INTO dummy (id, name) VALUES (11, 'xxxxx');
+INSERT INTO dummy (id, name) VALUES (11, 'xxxxx');
 INSERT INTO dummy (name) VALUES ('xxxxx');
 SELECT * FROM dummy;
 __eot__
