@@ -108,7 +108,7 @@ INSERT INTO dummy VALUES (12, 'yyy');
 SELECT * FROM dummy;
 __eot__
 #podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra2/20210913_20.sql'
-#podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SOURCE /tmp/extra2/20210913_20.sql'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SOURCE /tmp/extra2/20210913_20.sql'
 #podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SOURCE /tmp/extra2/20210913_20.sql'
 #podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SOURCE /tmp/extra2/20210913_20.sql'
 #podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SOURCE /tmp/extra2/20210913_20.sql'
@@ -134,3 +134,11 @@ until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=r
 set +o errexit
 podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=root percona-toolkit pt-table-checksum --replicate=percona.checksums h=my1p.dns.podman,u=root,p=root,P=3306
 set -o errexit
+
+podman run --pod=my1p --env=MYSQL_PWD=root percona-toolkit pt-table-sync --sync-to-master h=my1p.dns.podman,u=root,p=root,P=3306 --databases=ptest --tables=dummy --verbose --print
+
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --database=ptest --execute 'SELECT * FROM dummy'
+podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --database=ptest --execute 'SELECT * FROM dummy'
+podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --database=ptest --execute 'SELECT * FROM dummy'
+podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --database=ptest --execute 'SELECT * FROM dummy'
+podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --database=ptest --execute 'SELECT * FROM dummy'
