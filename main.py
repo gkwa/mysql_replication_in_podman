@@ -125,9 +125,7 @@ until podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[
 {%- endfor %}
 
 {% for pod in pods %}{% set ip='ip' ~ loop.index %}
-podman inspect {{ pod.containers[0].name }} |grep -i ipaddr
-{{ip}}=$(podman inspect {{ pod.containers[0].name }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network }}.IPAddress{%- raw -%} }} {%- endraw -%}')
-echo ${{ip}}
+{{ip}}=$(podman inspect {{ pod.containers[0].name }} --format '{%- raw -%} {{ {%- endraw -%}.NetworkSettings.Networks.{{ global.network }}.IPAddress{%- raw -%} }} {%- endraw -%}'); echo ${{ip}}
 {%- endfor %}
 
 {% for pod in pods %}{% set ip='ip' ~ loop.index %}

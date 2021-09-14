@@ -248,21 +248,11 @@ until podman exec --env=MYSQL_PWD=root my4c mysql --host=my4p --user=root --exec
 until podman exec --env=MYSQL_PWD=root my5c mysql --host=my5p --user=root --execute 'SHOW DATABASES'; do sleep 5; done;
 
 
-podman inspect my1c |grep -i ipaddr
-ip1=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-echo $ip1
-podman inspect my2c |grep -i ipaddr
-ip2=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-echo $ip2
-podman inspect my3c |grep -i ipaddr
-ip3=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-echo $ip3
-podman inspect my4c |grep -i ipaddr
-ip4=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-echo $ip4
-podman inspect my5c |grep -i ipaddr
-ip5=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
-echo $ip5
+ip1=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); echo $ip1
+ip2=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); echo $ip2
+ip3=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); echo $ip3
+ip4=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); echo $ip4
+ip5=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); echo $ip5
 
 
 # mysqladmin --port=3306 --host=$ip1 --user=joe --password=joe password ''
