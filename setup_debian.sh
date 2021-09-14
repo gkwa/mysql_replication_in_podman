@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo apt-get -y install conmon containernetworking-plugins
+
 sudo apt-get update
 sudo apt-get -qy install \
      unzip \
