@@ -4,13 +4,6 @@ set -o errexit
 
 source ./common.sh
 
-    func=$1
-    jump_container=$2
-    target_host=$3
-    sleep=$4
-    maxcalls=$5
-
-
 echo waiting for replication to be ready...
 loop1 repcheck my1c my1p.dns.podman 1 10
 loop1 repcheck my1c my2p.dns.podman 1 10
