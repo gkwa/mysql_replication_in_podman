@@ -79,6 +79,8 @@ cat <<'__eot__' >reptest/my1c/my.cnf
 [mysqld]
 bind-address                   = my1p.dns.podman
 server_id                      = 1
+auto_increment_increment       = 5
+auto_increment_offset          = 1
 # log_bin                      = /var/log/mysql/mysql-bin.log
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
@@ -92,8 +94,6 @@ log_slave_updates              = ON
 ; slave-skip-errors                = 1050,1062,1032
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
-auto_increment_increment       = 5
-auto_increment_offset          = 1
 __eot__
 cat reptest/my1c/my.cnf
 
@@ -102,6 +102,8 @@ cat <<'__eot__' >reptest/my2c/my.cnf
 [mysqld]
 bind-address                   = my2p.dns.podman
 server_id                      = 2
+auto_increment_increment       = 5
+auto_increment_offset          = 2
 # log_bin                      = /var/log/mysql/mysql-bin.log
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
@@ -115,8 +117,6 @@ log_slave_updates              = ON
 ; slave-skip-errors                = 1050,1062,1032
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
-auto_increment_increment       = 5
-auto_increment_offset          = 2
 __eot__
 cat reptest/my2c/my.cnf
 
@@ -125,6 +125,8 @@ cat <<'__eot__' >reptest/my3c/my.cnf
 [mysqld]
 bind-address                   = my3p.dns.podman
 server_id                      = 3
+auto_increment_increment       = 5
+auto_increment_offset          = 3
 # log_bin                      = /var/log/mysql/mysql-bin.log
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
@@ -138,8 +140,6 @@ log_slave_updates              = ON
 ; slave-skip-errors                = 1050,1062,1032
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
-auto_increment_increment       = 5
-auto_increment_offset          = 3
 __eot__
 cat reptest/my3c/my.cnf
 
@@ -148,6 +148,8 @@ cat <<'__eot__' >reptest/my4c/my.cnf
 [mysqld]
 bind-address                   = my4p.dns.podman
 server_id                      = 4
+auto_increment_increment       = 5
+auto_increment_offset          = 4
 # log_bin                      = /var/log/mysql/mysql-bin.log
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
@@ -161,8 +163,6 @@ log_slave_updates              = ON
 ; slave-skip-errors                = 1050,1062,1032
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
-auto_increment_increment       = 5
-auto_increment_offset          = 4
 __eot__
 cat reptest/my4c/my.cnf
 
@@ -171,6 +171,8 @@ cat <<'__eot__' >reptest/my5c/my.cnf
 [mysqld]
 bind-address                   = my5p.dns.podman
 server_id                      = 5
+auto_increment_increment       = 5
+auto_increment_offset          = 5
 # log_bin                      = /var/log/mysql/mysql-bin.log
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
@@ -184,8 +186,6 @@ log_slave_updates              = ON
 ; slave-skip-errors                = 1050,1062,1032
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
-auto_increment_increment       = 5
-auto_increment_offset          = 5
 __eot__
 cat reptest/my5c/my.cnf
 
