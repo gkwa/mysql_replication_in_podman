@@ -58,7 +58,7 @@ DROP DATABASE IF EXISTS ptest;
 CREATE DATABASE IF NOT EXISTS ptest;
 USE ptest;
 CREATE TABLE dummy ( id   INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5) ) engine=innodb;
-INSERT INTO dummy VALUES (1, 'a'), (2, 'b'), (3, 'c'), (4, 'd'), (5, 'e'), (6, 'f'), (7, 'g'), (8, 'h'), (9, 'i'), (10, 'j');
+INSERT INTO dummy VALUES (1, 'a'), (2, 'b');
 SELECT * FROM dummy;
 __eot__
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra2/20210912_1.sql'
