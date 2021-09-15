@@ -116,6 +116,10 @@ podman pod start {{ pod.name }}
 {%- endfor %}
 
 {% for pod in pods %}
+podman healthcheck run {{ pod.containers[0].name }}
+{%- endfor %}
+
+{% for pod in pods %}
 podman wait {{ pod.containers[0].name }} --condition=running
 {%- endfor %}
 

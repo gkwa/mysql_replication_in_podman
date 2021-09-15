@@ -231,6 +231,13 @@ podman pod start my4p
 podman pod start my5p
 
 
+podman healthcheck run my1c
+podman healthcheck run my2c
+podman healthcheck run my3c
+podman healthcheck run my4c
+podman healthcheck run my5c
+
+
 podman wait my1c --condition=running
 podman wait my2c --condition=running
 podman wait my3c --condition=running
