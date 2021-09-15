@@ -51,7 +51,7 @@ podman pod rm --ignore --force {{ pod.name }}
 
 {% for pod in pods %}
 podman volume exists {{ pod.volume }} && podman volume rm --force {{ pod.volume }}
-{% endfor %}
+{%- endfor %}
 
 podman network exists {{ global.network}} && podman network rm --force {{ global.network }}
 

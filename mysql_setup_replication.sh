@@ -42,15 +42,10 @@ podman pod rm --ignore --force my5p
 
 
 podman volume exists my1dbdata && podman volume rm --force my1dbdata
-
 podman volume exists my2dbdata && podman volume rm --force my2dbdata
-
 podman volume exists my3dbdata && podman volume rm --force my3dbdata
-
 podman volume exists my4dbdata && podman volume rm --force my4dbdata
-
 podman volume exists my5dbdata && podman volume rm --force my5dbdata
-
 
 podman network exists replication && podman network rm --force replication
 
