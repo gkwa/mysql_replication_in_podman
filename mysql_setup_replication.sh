@@ -24,6 +24,18 @@ podman pod ls
 
 
 
+podman container stop --ignore my1c
+
+podman container stop --ignore my2c
+
+podman container stop --ignore my3c
+
+podman container stop --ignore my4c
+
+podman container stop --ignore my5c
+
+
+
 podman pod stop --ignore my1p
 podman pod rm --ignore --force my1p
 

@@ -45,6 +45,10 @@ podman pull docker.io/perconalab/percona-toolkit:latest
 {{ status() }}
 
 {% for pod in pods %}
+podman container stop --ignore {{ pod.containers[0].name }}
+{% endfor %}
+
+{% for pod in pods %}
 podman pod stop --ignore {{ pod.name }}
 podman pod rm --ignore --force {{ pod.name }}
 {% endfor %}
