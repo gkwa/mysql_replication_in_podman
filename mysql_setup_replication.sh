@@ -105,6 +105,7 @@ log_bin                        = mysql-bin.log
 #binlog_format                  = MIXED
 binlog_format                  = STATEMENT
 log_slave_updates              = ON
+skip_name_resolve              = OFF
 
 ; ignore duplicate key errors
 ; slave-skip-errors              = 1062
@@ -129,6 +130,7 @@ log_bin                        = mysql-bin.log
 #binlog_format                  = MIXED
 binlog_format                  = STATEMENT
 log_slave_updates              = ON
+skip_name_resolve              = OFF
 
 ; ignore duplicate key errors
 ; slave-skip-errors              = 1062
@@ -153,6 +155,7 @@ log_bin                        = mysql-bin.log
 #binlog_format                  = MIXED
 binlog_format                  = STATEMENT
 log_slave_updates              = ON
+skip_name_resolve              = OFF
 
 ; ignore duplicate key errors
 ; slave-skip-errors              = 1062
@@ -177,6 +180,7 @@ log_bin                        = mysql-bin.log
 #binlog_format                  = MIXED
 binlog_format                  = STATEMENT
 log_slave_updates              = ON
+skip_name_resolve              = OFF
 
 ; ignore duplicate key errors
 ; slave-skip-errors              = 1062
@@ -201,6 +205,7 @@ log_bin                        = mysql-bin.log
 #binlog_format                  = MIXED
 binlog_format                  = STATEMENT
 log_slave_updates              = ON
+skip_name_resolve              = OFF
 
 ; ignore duplicate key errors
 ; slave-skip-errors              = 1062
