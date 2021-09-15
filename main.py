@@ -34,7 +34,7 @@ mysql --version
 
 # destroy everything except for podman network for sanity check
 : <<'END_COMMENT'
-podman container stop --ignore --all; podman stop --ignore --all; podman system prune --all --force; podman pod rm --all --force; podman container rm --all --force; podman volume rm --all --force; for network in $(podman network ls --format json | jq -r '.[].Name'); do if [[ "$network" !=  "podman" ]]; then podman network exists $network && podman network rm $network; fi; done; podman container stop --ignore --all; podman stop --ignore --all; podman system prune --all --force; podman pod rm --all --force; podman container rm --all --force; podman volume rm --all --force; for network in $(podman network ls --format json | jq -r '.[].Name'); do if [[ "$network" !=  "podman" ]]; then podman network exists $network && podman network rm $network; fi; done; podman ps; podman ps --pod; podman ps -a --pod; podman network ls; podman volume ls; podman pod ls; #destroyall
+podman pod stop --ignore --all; podman container stop --ignore --all; podman system prune --all --force; podman pod rm --all --force; podman container rm --all --force; podman volume rm --all --force; for network in $(podman network ls --format json | jq -r '.[].Name'); do if [[ "$network" !=  "podman" ]]; then podman network exists $network && podman network rm $network; fi; done; podman ps; podman ps --pod; podman ps -a --pod; podman network ls; podman volume ls; podman pod ls  #destroyall
 END_COMMENT
 
 # FIXME: reminder: i'm using appveyor secrets to decrypt this from ./auth.json.enc, thats obscure
@@ -47,6 +47,9 @@ podman pull docker.io/perconalab/percona-toolkit:latest
 {% for pod in pods %}
 podman pod stop --ignore {{ pod.name }}
 podman pod rm --ignore --force {{ pod.name }}
+{% endfor %}
+
+{% for pod in pods %}
 podman volume exists {{ pod.volume }} && podman volume rm --force {{ pod.volume }}
 {% endfor %}
 
@@ -253,7 +256,7 @@ MASTER_LOG_POS=$position"
 {%- endfor %}
 
 {% for pod in pods %}
-podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE'
+podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE USER={{ global.user_replication }} PASSWORD="{{ global.user_replication_pass }}"'
 {%- endfor %}
 
 {% for pod in pods %}
@@ -278,11 +281,11 @@ END_COMMENT
 cat <<'__eot__' >test_replication_is_running.bats
 @test 'ensure replication is running' {
   sleep 5
-  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE'
-  podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE'
-  podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE'
-  podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE'
-  podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE'
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE USER={{ global.user_replication }} PASSWORD="{{ global.user_replication_pass }}"'
+  podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE USER={{ global.user_replication }} PASSWORD="{{ global.user_replication_pass }}"'
+  podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE USER={{ global.user_replication }} PASSWORD="{{ global.user_replication_pass }}"'
+  podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE USER={{ global.user_replication }} PASSWORD="{{ global.user_replication_pass }}"'
+  podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER={{ global.user_replication }} PASSWORD="{{ global.user_replication_pass }}"'
 
   sleep 5
   podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p --execute 'CREATE DATABASE IF NOT EXISTS dummy'
@@ -320,11 +323,11 @@ cat <<'__eot__' >test_replication_is_stopped.bats
   [ "$status" -eq 0 ]
 
   # make sure replication is running again for next test...managing state like this will get dirty, i promise
-  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE'
-  podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE'
-  podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE'
-  podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE'
-  podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE'
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE USER={{ global.user_replication }} PASSWORD="{{ global.user_replication_pass }}"'
+  podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE USER={{ global.user_replication }} PASSWORD="{{ global.user_replication_pass }}"'
+  podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE USER={{ global.user_replication }} PASSWORD="{{ global.user_replication_pass }}"'
+  podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE USER={{ global.user_replication }} PASSWORD="{{ global.user_replication_pass }}"'
+  podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER={{ global.user_replication }} PASSWORD="{{ global.user_replication_pass }}"'
 }
 __eot__
 sudo bats test_replication_is_stopped.bats
