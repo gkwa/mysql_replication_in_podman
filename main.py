@@ -44,6 +44,14 @@ podman pull docker.io/perconalab/percona-toolkit:latest
 
 {{ status() }}
 
+if ! command -v bats &>/dev/null
+then
+    git clone --depth 1 https://github.com/sstephenson/bats.git /usr/local/src/bats
+    pushd /usr/local/src/bats
+    ./install.sh /usr/local
+    popd
+fi
+
 {% for pod in pods %}
 podman container stop --ignore {{ pod.containers[0].name }}
 {%- endfor %}
@@ -108,9 +116,8 @@ podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{lo
 # mysqld containers
 {%- for pod in pods %}
 #podman container create --name={{ pod.containers[0].name }} --pod={{ pod.name }} --health-start-period=80s --log-driver=journald --healthcheck-interval=0 --health-retries=10 --health-timeout=30s --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' --healthcheck-command 'mysql --user={{ global.user_root }} --password="{{ global.user_root_pass }}" --host={{ pod.name }} --execute "USE mysql" || exit 1' --volume=./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/{{ pod.containers[0].name }}/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} --env=MYSQL_USER={{ global.user_non_root }} --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
- podman container create --name={{ pod.containers[0].name }} --pod={{ pod.name }} --health-start-period=80s --log-driver=journald --healthcheck-interval=0 --health-retries=10 --health-timeout=30s --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' --healthcheck-command 'mysql --user={{ global.user_root }} --password="{{ global.user_root_pass }}" --host={{ pod.name }} --execute "USE mysql" || exit 1' --volume=./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/{{ pod.containers[0].name }}/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} --env=MYSQL_USER={{ global.user_non_root }} --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
+podman container create --name={{ pod.containers[0].name }} --pod={{ pod.name }} --health-start-period=80s --log-driver=journald --healthcheck-interval=0 --health-retries=10 --health-timeout=30s --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' --healthcheck-command 'mysql --user={{ global.user_root }} --password="{{ global.user_root_pass }}" --host={{ pod.name }} --execute "USE mysql" || exit 1' --volume=./reptest/{{ pod.containers[0].name }}/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/{{ pod.containers[0].name }}/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} --env=MYSQL_USER={{ global.user_non_root }} --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 {%- endfor %}
-
 
 {% for pod in pods %}
 podman pod start {{ pod.name }}
