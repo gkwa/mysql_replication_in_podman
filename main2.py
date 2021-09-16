@@ -44,11 +44,14 @@ cat <<'__eot__' >reptest/{{ pod.containers[0].name }}_my.cnf
 bind-address                   = {{ pod.name }}.dns.podman
 server_id                      = {{ loop.index }}
 log_bin                        = /var/log/mysql/mysql-bin.log
+auto_increment_offset          = {{ loop.index }}
+auto_increment_increment       = {{ pods|length }}
 __eot__
 {% endfor %}
 
 {% for pod in pods %}
 cat reptest/{{ pod.containers[0].name }}_my.cnf
+echo
 {%- endfor %}
 
 {% for pod in pods %}

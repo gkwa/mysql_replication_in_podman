@@ -17,6 +17,8 @@ cat <<'__eot__' >reptest/my1c_my.cnf
 bind-address                   = my1p.dns.podman
 server_id                      = 1
 log_bin                        = /var/log/mysql/mysql-bin.log
+auto_increment_offset          = 1
+auto_increment_increment       = 5
 __eot__
 
 cat <<'__eot__' >reptest/my2c_my.cnf
@@ -24,6 +26,8 @@ cat <<'__eot__' >reptest/my2c_my.cnf
 bind-address                   = my2p.dns.podman
 server_id                      = 2
 log_bin                        = /var/log/mysql/mysql-bin.log
+auto_increment_offset          = 2
+auto_increment_increment       = 5
 __eot__
 
 cat <<'__eot__' >reptest/my3c_my.cnf
@@ -31,6 +35,8 @@ cat <<'__eot__' >reptest/my3c_my.cnf
 bind-address                   = my3p.dns.podman
 server_id                      = 3
 log_bin                        = /var/log/mysql/mysql-bin.log
+auto_increment_offset          = 3
+auto_increment_increment       = 5
 __eot__
 
 cat <<'__eot__' >reptest/my4c_my.cnf
@@ -38,6 +44,8 @@ cat <<'__eot__' >reptest/my4c_my.cnf
 bind-address                   = my4p.dns.podman
 server_id                      = 4
 log_bin                        = /var/log/mysql/mysql-bin.log
+auto_increment_offset          = 4
+auto_increment_increment       = 5
 __eot__
 
 cat <<'__eot__' >reptest/my5c_my.cnf
@@ -45,15 +53,22 @@ cat <<'__eot__' >reptest/my5c_my.cnf
 bind-address                   = my5p.dns.podman
 server_id                      = 5
 log_bin                        = /var/log/mysql/mysql-bin.log
+auto_increment_offset          = 5
+auto_increment_increment       = 5
 __eot__
 
 
 
 cat reptest/my1c_my.cnf
+echo
 cat reptest/my2c_my.cnf
+echo
 cat reptest/my3c_my.cnf
+echo
 cat reptest/my4c_my.cnf
+echo
 cat reptest/my5c_my.cnf
+echo
 
 
 podman volume exists my1dbdata || podman volume create my1dbdata
