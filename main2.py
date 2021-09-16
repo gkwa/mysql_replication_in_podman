@@ -42,8 +42,9 @@ mkdir -p reptest
 cat <<'__eot__' >reptest/{{ pod.containers[0].name }}_my.cnf
 [mysqld]
 bind-address                   = {{ pod.name }}.dns.podman
-server_id                      = {{ loop.index }}
 log_bin                        = /var/log/mysql/mysql-bin.log
+log_slave_updates              = ON
+server_id                      = {{ loop.index }}
 auto_increment_offset          = {{ loop.index }}
 auto_increment_increment       = {{ pods|length }}
 __eot__
