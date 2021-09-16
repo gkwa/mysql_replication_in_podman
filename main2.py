@@ -38,8 +38,13 @@ podman info --debug
 set +o errexit
 podman container stop --ignore {{ containers |join(' ') }}
 set -o errexit
-podman pod stop --log-level debug --ignore {{ pods |map(attribute='name') |join(' ') }}
-podman wait --condition=stopped {{ containers |join(' ') }}
+{% for pod in pods %}
+podman pod exists {{ pod.name }} && podman pod stop --log-level debug --ignore {{ pod.name }}
+{%- endfor %}
+
+{% for pod in pods %}
+podman pod exists {{ pod.name }} && podman wait --condition=stopped {{ containers |join(' ') }}
+{%- endfor %}
 podman pod ls 
 
 rm -rf reptest

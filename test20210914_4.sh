@@ -11,8 +11,19 @@ podman info --debug
 set +o errexit
 podman container stop --ignore my1c my2c my3c my4c my5c
 set -o errexit
-podman pod stop --log-level debug --ignore my1p my2p my3p my4p my5p
-podman wait --condition=stopped my1c my2c my3c my4c my5c
+
+podman pod exists my1p && podman pod stop --log-level debug --ignore my1p
+podman pod exists my2p && podman pod stop --log-level debug --ignore my2p
+podman pod exists my3p && podman pod stop --log-level debug --ignore my3p
+podman pod exists my4p && podman pod stop --log-level debug --ignore my4p
+podman pod exists my5p && podman pod stop --log-level debug --ignore my5p
+
+
+podman pod exists my1p && podman wait --condition=stopped my1c my2c my3c my4c my5c
+podman pod exists my2p && podman wait --condition=stopped my1c my2c my3c my4c my5c
+podman pod exists my3p && podman wait --condition=stopped my1c my2c my3c my4c my5c
+podman pod exists my4p && podman wait --condition=stopped my1c my2c my3c my4c my5c
+podman pod exists my5p && podman wait --condition=stopped my1c my2c my3c my4c my5c
 podman pod ls 
 
 rm -rf reptest
