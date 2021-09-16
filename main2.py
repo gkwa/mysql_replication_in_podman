@@ -57,6 +57,8 @@ bind-address                   = {{ pod.name }}.dns.podman
 log_bin                        = /var/log/mysql/mysql-bin.log
 log_slave_updates              = ON
 server_id                      = {{ loop.index }}
+auto_increment_offset          = {{ loop.index }}
+;auto_increment_increment       = {{ pods|length }}
 __eot__
 {% endfor %}
 
