@@ -36,7 +36,7 @@ podman info --debug
 # FIXME: {% set containers = [] %}{% for pod in pods %}{{ containers.append( pod.containers[0].name ) }}{% endfor %}
 
 set +o errexit
-podman container stop --ignore {{ containers |join(' ') }}
+podman container stop --log-level debug --ignore {{ containers |join(' ') }}
 set -o errexit
 {% for pod in pods %}
 podman pod exists {{ pod.name }} && podman pod stop --log-level debug --ignore {{ pod.name }}
@@ -54,11 +54,17 @@ mkdir -p reptest
 cat <<'__eot__' >reptest/{{ pod.containers[0].name }}_my.cnf
 [mysqld]
 bind-address                   = {{ pod.name }}.dns.podman
-log_bin                        = /var/log/mysql/mysql-bin.log
-log_slave_updates              = ON
+datadir                        = /var/log/mysql
+log_bin                        = mysql-bin.log
+;log_bin                        = /var/log/mysql/mysql-bin.log
+binlog_format                  = STATEMENT
 server_id                      = {{ loop.index }}
 auto_increment_offset          = {{ loop.index }}
 ;auto_increment_increment       = {{ pods|length }}
+;relay_log                      = {{ pod.name }}-relay-bin
+log_slave_updates              = ON
+innodb_flush_log_at_trx_commit = 1
+sync_binlog                    = 1
 __eot__
 {% endfor %}
 
@@ -106,7 +112,7 @@ podman pod ls
 podman logs --since=30s my1c 
 
 {% for pod in pods %}
-until podman healthcheck run {{ pod.containers[0].name }} </dev/null; do sleep 5; done
+until podman healthcheck run {{ pod.containers[0].name }} </dev/null; do sleep 3; done
 {%- endfor %}
 
 {% for pod in pods %}
@@ -137,6 +143,26 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user={{ global.user_root }} --host
 {% for pod in pods %}
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} my1c mysql --host={{ pod.name }} --user={{ global.user_root }} --execute 'USE ptest' && echo {{ pod.name }} ok
 {%- endfor %}
+
+cat <<'__eot__' >test_simple_insert.bats
+@test 'test_simple_insert' {
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest'
+  run bash -c "podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'SHOW DATABASES' | grep ptest"
+  [ "$status" -eq 1 ]
+  run bash -c "podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --execute 'SHOW DATABASES' | grep ptest"
+  [ "$status" -eq 1 ]
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'CREATE DATABASE IF NOT EXISTS ptest'
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=ptest --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=ptest --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=ptest --execute 'SELECT * FROM dummy'
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --database=ptest --execute 'SELECT * FROM dummy'
+  result=$(podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="a"')
+  [ $result -eq 1 ]
+  result=$(podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="c"')
+  [ "$result" == "" ]
+}
+__eot__
+sudo bats test_simple_insert.bats
 """
 
 template = jinja2.Template(tmpl_str)

@@ -9,7 +9,7 @@ podman info --debug
 # FIXME: NoneNoneNoneNoneNone
 
 set +o errexit
-podman container stop --ignore my1c my2c my3c my4c my5c
+podman container stop --log-level debug --ignore my1c my2c my3c my4c my5c
 set -o errexit
 
 podman pod exists my1p && podman pod stop --log-level debug --ignore my1p
@@ -33,51 +33,81 @@ mkdir -p reptest
 cat <<'__eot__' >reptest/my1c_my.cnf
 [mysqld]
 bind-address                   = my1p.dns.podman
-log_bin                        = /var/log/mysql/mysql-bin.log
-log_slave_updates              = ON
+datadir                        = /var/log/mysql
+log_bin                        = mysql-bin.log
+;log_bin                        = /var/log/mysql/mysql-bin.log
+binlog_format                  = STATEMENT
 server_id                      = 1
 auto_increment_offset          = 1
 ;auto_increment_increment       = 5
+;relay_log                      = my1p-relay-bin
+log_slave_updates              = ON
+innodb_flush_log_at_trx_commit = 1
+sync_binlog                    = 1
 __eot__
 
 cat <<'__eot__' >reptest/my2c_my.cnf
 [mysqld]
 bind-address                   = my2p.dns.podman
-log_bin                        = /var/log/mysql/mysql-bin.log
-log_slave_updates              = ON
+datadir                        = /var/log/mysql
+log_bin                        = mysql-bin.log
+;log_bin                        = /var/log/mysql/mysql-bin.log
+binlog_format                  = STATEMENT
 server_id                      = 2
 auto_increment_offset          = 2
 ;auto_increment_increment       = 5
+;relay_log                      = my2p-relay-bin
+log_slave_updates              = ON
+innodb_flush_log_at_trx_commit = 1
+sync_binlog                    = 1
 __eot__
 
 cat <<'__eot__' >reptest/my3c_my.cnf
 [mysqld]
 bind-address                   = my3p.dns.podman
-log_bin                        = /var/log/mysql/mysql-bin.log
-log_slave_updates              = ON
+datadir                        = /var/log/mysql
+log_bin                        = mysql-bin.log
+;log_bin                        = /var/log/mysql/mysql-bin.log
+binlog_format                  = STATEMENT
 server_id                      = 3
 auto_increment_offset          = 3
 ;auto_increment_increment       = 5
+;relay_log                      = my3p-relay-bin
+log_slave_updates              = ON
+innodb_flush_log_at_trx_commit = 1
+sync_binlog                    = 1
 __eot__
 
 cat <<'__eot__' >reptest/my4c_my.cnf
 [mysqld]
 bind-address                   = my4p.dns.podman
-log_bin                        = /var/log/mysql/mysql-bin.log
-log_slave_updates              = ON
+datadir                        = /var/log/mysql
+log_bin                        = mysql-bin.log
+;log_bin                        = /var/log/mysql/mysql-bin.log
+binlog_format                  = STATEMENT
 server_id                      = 4
 auto_increment_offset          = 4
 ;auto_increment_increment       = 5
+;relay_log                      = my4p-relay-bin
+log_slave_updates              = ON
+innodb_flush_log_at_trx_commit = 1
+sync_binlog                    = 1
 __eot__
 
 cat <<'__eot__' >reptest/my5c_my.cnf
 [mysqld]
 bind-address                   = my5p.dns.podman
-log_bin                        = /var/log/mysql/mysql-bin.log
-log_slave_updates              = ON
+datadir                        = /var/log/mysql
+log_bin                        = mysql-bin.log
+;log_bin                        = /var/log/mysql/mysql-bin.log
+binlog_format                  = STATEMENT
 server_id                      = 5
 auto_increment_offset          = 5
 ;auto_increment_increment       = 5
+;relay_log                      = my5p-relay-bin
+log_slave_updates              = ON
+innodb_flush_log_at_trx_commit = 1
+sync_binlog                    = 1
 __eot__
 
 
@@ -151,11 +181,11 @@ podman pod ls
 podman logs --since=30s my1c 
 
 
-until podman healthcheck run my1c </dev/null; do sleep 5; done
-until podman healthcheck run my2c </dev/null; do sleep 5; done
-until podman healthcheck run my3c </dev/null; do sleep 5; done
-until podman healthcheck run my4c </dev/null; do sleep 5; done
-until podman healthcheck run my5c </dev/null; do sleep 5; done
+until podman healthcheck run my1c </dev/null; do sleep 3; done
+until podman healthcheck run my2c </dev/null; do sleep 3; done
+until podman healthcheck run my3c </dev/null; do sleep 3; done
+until podman healthcheck run my4c </dev/null; do sleep 3; done
+until podman healthcheck run my5c </dev/null; do sleep 3; done
 
 
 # 'repl'@'%' on my1c:
@@ -211,3 +241,23 @@ podman exec --env=MYSQL_PWD=root my1c mysql --host=my2p --user=root --execute 'U
 podman exec --env=MYSQL_PWD=root my1c mysql --host=my3p --user=root --execute 'USE ptest' && echo my3p ok
 podman exec --env=MYSQL_PWD=root my1c mysql --host=my4p --user=root --execute 'USE ptest' && echo my4p ok
 podman exec --env=MYSQL_PWD=root my1c mysql --host=my5p --user=root --execute 'USE ptest' && echo my5p ok
+
+cat <<'__eot__' >test_simple_insert.bats
+@test 'test_simple_insert' {
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest'
+  run bash -c "podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'SHOW DATABASES' | grep ptest"
+  [ "$status" -eq 1 ]
+  run bash -c "podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --execute 'SHOW DATABASES' | grep ptest"
+  [ "$status" -eq 1 ]
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'CREATE DATABASE IF NOT EXISTS ptest'
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=ptest --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=ptest --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=ptest --execute 'SELECT * FROM dummy'
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --database=ptest --execute 'SELECT * FROM dummy'
+  result=$(podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="a"')
+  [ $result -eq 1 ]
+  result=$(podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="c"')
+  [ "$result" == "" ]
+}
+__eot__
+sudo bats test_simple_insert.bats
