@@ -8,6 +8,13 @@ podman info --debug
 
 # FIXME: NoneNoneNoneNoneNone
 
+set +o errexit
+podman container stop --ignore my1c my2c my3c my4c my5c
+set -o errexit
+podman pod stop --log-level debug --ignore my1p my2p my3p my4p my5p
+podman wait --condition=stopped my1c my2c my3c my4c my5c
+podman pod ls 
+
 rm -rf reptest
 mkdir -p reptest
 
@@ -85,14 +92,6 @@ podman container exists my2c || podman container create --name=my2c --pod=my2p -
 podman container exists my3c || podman container create --name=my3c --pod=my3p --health-start-period=80s --log-driver=journald --healthcheck-interval=0 --health-retries=10 --health-timeout=30s --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' --volume=./reptest/my3c_my.cnf:/etc/my.cnf.d/100-reptest.cnf --healthcheck-command 'mysql --user=root --password="root" --host=my3p --execute "USE mysql" || exit 1' --volume=my3dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 podman container exists my4c || podman container create --name=my4c --pod=my4p --health-start-period=80s --log-driver=journald --healthcheck-interval=0 --health-retries=10 --health-timeout=30s --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' --volume=./reptest/my4c_my.cnf:/etc/my.cnf.d/100-reptest.cnf --healthcheck-command 'mysql --user=root --password="root" --host=my4p --execute "USE mysql" || exit 1' --volume=my4dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 podman container exists my5c || podman container create --name=my5c --pod=my5p --health-start-period=80s --log-driver=journald --healthcheck-interval=0 --health-retries=10 --health-timeout=30s --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' --volume=./reptest/my5c_my.cnf:/etc/my.cnf.d/100-reptest.cnf --healthcheck-command 'mysql --user=root --password="root" --host=my5p --execute "USE mysql" || exit 1' --volume=my5dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
-
-
-set +o errexit
-podman container stop --ignore my1c my2c my3c my4c my5c
-set -o errexit
-podman pod stop --log-level debug --ignore my1p my2p my3p my4p my5p
-podman wait --condition=stopped my1c my2c my3c my4c my5c
-podman pod ls 
 
 
 rm -rf --preserve-root $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/*;
