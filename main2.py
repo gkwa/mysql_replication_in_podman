@@ -56,8 +56,8 @@ cat <<'__eot__' >reptest/{{ pod.containers[0].name }}_my.cnf
 bind-address                   = {{ pod.name }}.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
-log_bin                        = /var/log/mysql/mysql-bin.log
-;binlog_format                  = STATEMENT
+;log_bin                        = /var/log/mysql/mysql-bin.log
+binlog_format                  = STATEMENT
 server_id                      = {{ loop.index }}
 auto_increment_offset          = {{ loop.index }}
 ;auto_increment_increment       = {{ pods|length }}

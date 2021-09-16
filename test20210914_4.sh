@@ -35,8 +35,8 @@ cat <<'__eot__' >reptest/my1c_my.cnf
 bind-address                   = my1p.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
-log_bin                        = /var/log/mysql/mysql-bin.log
-;binlog_format                  = STATEMENT
+;log_bin                        = /var/log/mysql/mysql-bin.log
+binlog_format                  = STATEMENT
 server_id                      = 1
 auto_increment_offset          = 1
 ;auto_increment_increment       = 5
@@ -51,8 +51,8 @@ cat <<'__eot__' >reptest/my2c_my.cnf
 bind-address                   = my2p.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
-log_bin                        = /var/log/mysql/mysql-bin.log
-;binlog_format                  = STATEMENT
+;log_bin                        = /var/log/mysql/mysql-bin.log
+binlog_format                  = STATEMENT
 server_id                      = 2
 auto_increment_offset          = 2
 ;auto_increment_increment       = 5
@@ -67,8 +67,8 @@ cat <<'__eot__' >reptest/my3c_my.cnf
 bind-address                   = my3p.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
-log_bin                        = /var/log/mysql/mysql-bin.log
-;binlog_format                  = STATEMENT
+;log_bin                        = /var/log/mysql/mysql-bin.log
+binlog_format                  = STATEMENT
 server_id                      = 3
 auto_increment_offset          = 3
 ;auto_increment_increment       = 5
@@ -83,8 +83,8 @@ cat <<'__eot__' >reptest/my4c_my.cnf
 bind-address                   = my4p.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
-log_bin                        = /var/log/mysql/mysql-bin.log
-;binlog_format                  = STATEMENT
+;log_bin                        = /var/log/mysql/mysql-bin.log
+binlog_format                  = STATEMENT
 server_id                      = 4
 auto_increment_offset          = 4
 ;auto_increment_increment       = 5
@@ -99,8 +99,8 @@ cat <<'__eot__' >reptest/my5c_my.cnf
 bind-address                   = my5p.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
-log_bin                        = /var/log/mysql/mysql-bin.log
-;binlog_format                  = STATEMENT
+;log_bin                        = /var/log/mysql/mysql-bin.log
+binlog_format                  = STATEMENT
 server_id                      = 5
 auto_increment_offset          = 5
 ;auto_increment_increment       = 5
