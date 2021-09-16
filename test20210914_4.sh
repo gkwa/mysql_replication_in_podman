@@ -33,8 +33,8 @@ mkdir -p reptest
 cat <<'__eot__' >reptest/my1c_my.cnf
 [mysqld]
 bind-address                   = my1p.dns.podman
-;datadir                        = /var/log/mysql
-;log_bin                        = mysql-bin.log
+datadir                        = /var/log/mysql
+log_bin                        = mysql-bin.log
 log_bin                        = /var/log/mysql/mysql-bin.log
 ;binlog_format                  = STATEMENT
 server_id                      = 1
@@ -49,8 +49,8 @@ __eot__
 cat <<'__eot__' >reptest/my2c_my.cnf
 [mysqld]
 bind-address                   = my2p.dns.podman
-;datadir                        = /var/log/mysql
-;log_bin                        = mysql-bin.log
+datadir                        = /var/log/mysql
+log_bin                        = mysql-bin.log
 log_bin                        = /var/log/mysql/mysql-bin.log
 ;binlog_format                  = STATEMENT
 server_id                      = 2
@@ -65,8 +65,8 @@ __eot__
 cat <<'__eot__' >reptest/my3c_my.cnf
 [mysqld]
 bind-address                   = my3p.dns.podman
-;datadir                        = /var/log/mysql
-;log_bin                        = mysql-bin.log
+datadir                        = /var/log/mysql
+log_bin                        = mysql-bin.log
 log_bin                        = /var/log/mysql/mysql-bin.log
 ;binlog_format                  = STATEMENT
 server_id                      = 3
@@ -81,8 +81,8 @@ __eot__
 cat <<'__eot__' >reptest/my4c_my.cnf
 [mysqld]
 bind-address                   = my4p.dns.podman
-;datadir                        = /var/log/mysql
-;log_bin                        = mysql-bin.log
+datadir                        = /var/log/mysql
+log_bin                        = mysql-bin.log
 log_bin                        = /var/log/mysql/mysql-bin.log
 ;binlog_format                  = STATEMENT
 server_id                      = 4
@@ -97,8 +97,8 @@ __eot__
 cat <<'__eot__' >reptest/my5c_my.cnf
 [mysqld]
 bind-address                   = my5p.dns.podman
-;datadir                        = /var/log/mysql
-;log_bin                        = mysql-bin.log
+datadir                        = /var/log/mysql
+log_bin                        = mysql-bin.log
 log_bin                        = /var/log/mysql/mysql-bin.log
 ;binlog_format                  = STATEMENT
 server_id                      = 5
