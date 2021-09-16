@@ -8,7 +8,9 @@ podman info --debug
 
 # FIXME: NoneNoneNoneNoneNone
 
+rm -rf reptest
 mkdir -p reptest
+
 
 cat <<'__eot__' >reptest/my1c_my.cnf
 [mysqld]
@@ -16,15 +18,12 @@ bind-address                   = my1p.dns.podman
 server_id                      = 1
 auto_increment_offset          = 1
 auto_increment_increment       = 5
-innodb_flush_log_at_trx_commit = 1
-sync_binlog                    = 1
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 log_slave_updates              = ON
 skip_name_resolve              = FALSE
 __eot__
-cat reptest/my1c_my.cnf
 
 cat <<'__eot__' >reptest/my2c_my.cnf
 [mysqld]
@@ -32,15 +31,12 @@ bind-address                   = my2p.dns.podman
 server_id                      = 2
 auto_increment_offset          = 2
 auto_increment_increment       = 5
-innodb_flush_log_at_trx_commit = 1
-sync_binlog                    = 1
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 log_slave_updates              = ON
 skip_name_resolve              = FALSE
 __eot__
-cat reptest/my2c_my.cnf
 
 cat <<'__eot__' >reptest/my3c_my.cnf
 [mysqld]
@@ -48,15 +44,12 @@ bind-address                   = my3p.dns.podman
 server_id                      = 3
 auto_increment_offset          = 3
 auto_increment_increment       = 5
-innodb_flush_log_at_trx_commit = 1
-sync_binlog                    = 1
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 log_slave_updates              = ON
 skip_name_resolve              = FALSE
 __eot__
-cat reptest/my3c_my.cnf
 
 cat <<'__eot__' >reptest/my4c_my.cnf
 [mysqld]
@@ -64,15 +57,12 @@ bind-address                   = my4p.dns.podman
 server_id                      = 4
 auto_increment_offset          = 4
 auto_increment_increment       = 5
-innodb_flush_log_at_trx_commit = 1
-sync_binlog                    = 1
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 log_slave_updates              = ON
 skip_name_resolve              = FALSE
 __eot__
-cat reptest/my4c_my.cnf
 
 cat <<'__eot__' >reptest/my5c_my.cnf
 [mysqld]
@@ -80,16 +70,20 @@ bind-address                   = my5p.dns.podman
 server_id                      = 5
 auto_increment_offset          = 5
 auto_increment_increment       = 5
-innodb_flush_log_at_trx_commit = 1
-sync_binlog                    = 1
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 log_slave_updates              = ON
 skip_name_resolve              = FALSE
 __eot__
-cat reptest/my5c_my.cnf
 
+
+
+cat reptest/my1c_my.cnf
+cat reptest/my2c_my.cnf
+cat reptest/my3c_my.cnf
+cat reptest/my4c_my.cnf
+cat reptest/my5c_my.cnf
 
 
 podman volume exists my1dbdata || podman volume create my1dbdata

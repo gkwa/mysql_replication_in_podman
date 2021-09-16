@@ -35,7 +35,9 @@ podman info --debug
 
 # FIXME: {% set containers = [] %}{% for pod in pods %}{{ containers.append( pod.containers[0].name ) }}{% endfor %}
 
+rm -rf reptest
 mkdir -p reptest
+
 {% for pod in pods %}
 cat <<'__eot__' >reptest/{{ pod.containers[0].name }}_my.cnf
 [mysqld]
@@ -43,16 +45,17 @@ bind-address                   = {{ pod.name }}.dns.podman
 server_id                      = {{ loop.index }}
 auto_increment_offset          = {{ loop.index }}
 auto_increment_increment       = {{ pods|length }}
-innodb_flush_log_at_trx_commit = 1
-sync_binlog                    = 1
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 log_slave_updates              = ON
 skip_name_resolve              = FALSE
 __eot__
-cat reptest/{{ pod.containers[0].name }}_my.cnf
 {% endfor %}
+
+{% for pod in pods %}
+cat reptest/{{ pod.containers[0].name }}_my.cnf
+{%- endfor %}
 
 {% for pod in pods %}
 podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }}
