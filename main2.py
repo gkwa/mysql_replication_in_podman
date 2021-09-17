@@ -45,7 +45,7 @@ podman pod exists {{ pod.name }} && podman pod stop --log-level debug --ignore {
 {% for pod in pods %}
 podman pod exists {{ pod.name }} && podman wait --condition=stopped {{ containers |join(' ') }}
 {%- endfor %}
-podman pod ls 
+podman pod ls
 
 rm -rf reptest
 mkdir reptest
@@ -108,8 +108,8 @@ podman pod start {{ pods |map(attribute='name') |join(' ') }}
 du -shc $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')
 {%- endfor %}
 
-podman pod ls 
-podman logs --since=30s {{ pods[0].containers[0].name }} 
+podman pod ls
+podman logs --since=30s {{ pods[0].containers[0].name }}
 
 {% for pod in pods %}
 until podman healthcheck run {{ pod.containers[0].name }} </dev/null; do sleep 3; done
@@ -149,10 +149,10 @@ podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0]
 {%- endfor %}
 
 """
-path = pathlib.Path("test.sh")
-template = jinja2.Template(tmpl_str)
-result = template.render(manifest=manifest)
-path.write_text(result)
+name = "test"
+pathlib.Path(f"{name}.sh").write_text(
+    jinja2.Template(tmpl_str).render(manifest=manifest, test_name=name)
+)
 
 tmpl_str = """
 {%- set global=manifest['global'] %}
@@ -160,7 +160,7 @@ tmpl_str = """
 {%- set pods=manifest['pods'] %}
 source ./common.sh
 
-@test 'test_ensure_replication_is_running' {
+@test '{{ test_name }}' {
   podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest'
   run bash -c "podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'SHOW DATABASES' | grep ptest"
   [ "$status" -eq 1 ]
@@ -177,10 +177,10 @@ source ./common.sh
   [ "$result" == "" ]
 }
 """
-path = pathlib.Path("test_ensure_replication_is_running.bats")
-template = jinja2.Template(tmpl_str)
-result = template.render(manifest=manifest)
-path.write_text(result)
+name = "test_ensure_replication_is_running"
+pathlib.Path(f"{name}.bats").write_text(
+    jinja2.Template(tmpl_str).render(manifest=manifest, test_name=name)
+)
 
 tmpl_str = """
 {%- set global=manifest['global'] %}
@@ -188,7 +188,7 @@ tmpl_str = """
 {%- set pods=manifest['pods'] %}
 source ./common.sh
 
-@test 'test_ensure_replication_is_running' {
+@test '{{ test_name }}' {
   podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest'
   run bash -c "podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'SHOW DATABASES' | grep ptest"
   [ "$status" -eq 1 ]
@@ -204,11 +204,16 @@ source ./common.sh
   [ "$result" == "" ]
 
   {% for pod in pods %}
+  result=$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute 'SHOW VARIABLES LIKE "binlog_format"')
+  [ "$result" == "STATMENT" ]
+  {%- endfor %}
+
+  {% for pod in pods %}
   podman run --pod={{ pods[0].name }} --env=PTDEBUG=0 --env=MYSQL_PWD={{ global.user_root_pass }} percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h={{ pod.name }}.dns.podman,u={{ global.user_root }},p={{ global.user_root_pass }},P=3306
   {%- endfor %}
 }
 """
-path = pathlib.Path("test_percona_checksums.bats")
-template = jinja2.Template(tmpl_str)
-result = template.render(manifest=manifest)
-path.write_text(result)
+name = "test_percona_checksums"
+pathlib.Path(f"{name}.bats").write_text(
+    jinja2.Template(tmpl_str).render(manifest=manifest, test_name=name)
+)

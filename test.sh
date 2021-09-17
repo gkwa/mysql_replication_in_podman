@@ -24,7 +24,7 @@ podman pod exists my2p && podman wait --condition=stopped my1c my2c my3c my4c my
 podman pod exists my3p && podman wait --condition=stopped my1c my2c my3c my4c my5c
 podman pod exists my4p && podman wait --condition=stopped my1c my2c my3c my4c my5c
 podman pod exists my5p && podman wait --condition=stopped my1c my2c my3c my4c my5c
-podman pod ls 
+podman pod ls
 
 rm -rf reptest
 mkdir reptest
@@ -165,8 +165,8 @@ du -shc $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')
 du -shc $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')
 du -shc $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')
 
-podman pod ls 
-podman logs --since=30s my1c 
+podman pod ls
+podman logs --since=30s my1c
 
 
 until podman healthcheck run my1c </dev/null; do sleep 3; done
