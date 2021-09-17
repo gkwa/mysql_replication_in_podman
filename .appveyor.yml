@@ -15,7 +15,7 @@ install:
 test_script:
 - sudo time bash -x test.sh
 - sudo time bash -x test20210914_4.sh
-- sudo source common.sh && cleanall
+- sudo time bash -x 'source common.sh && cleanall'
 - sudo time bats test100.bats
 - sudo time bats test200.bats
 build: off
