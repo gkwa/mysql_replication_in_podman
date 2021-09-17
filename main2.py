@@ -60,7 +60,6 @@ auto_increment_offset          = {{ loop.index }}
 bind-address                   = {{ pod.name }}.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
-log_slave_updates              = ON
 __eot__
 {% endfor %}
 
