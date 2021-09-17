@@ -143,8 +143,16 @@ podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0]
 {% for pod in pods %}
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute 'SHOW VARIABLES LIKE "binlog_format"'
 {%- endfor %}
+"""
+path = pathlib.Path("test.sh")
+template = jinja2.Template(tmpl_str)
+result = template.render(manifest=manifest)
+path.write_text(result)
 
-cat <<'__eot__' >test_ensure_replication_is_running.bats
+tmpl_str = """
+{%- set global=manifest['global'] %}
+{%- set replication=manifest['replication'] %}
+{%- set pods=manifest['pods'] %}
 source ./common.sh
 
 @test 'test_ensure_replication_is_running' {
@@ -163,9 +171,8 @@ source ./common.sh
   result=$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --skip-column-names --user={{ global.user_root }} --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="c"')
   [ "$result" == "" ]
 }
-__eot__
 """
-
+path = pathlib.Path("test_ensure_replication_is_running.bats")
 template = jinja2.Template(tmpl_str)
 result = template.render(manifest=manifest)
-print(result)
+path.write_text(result)
