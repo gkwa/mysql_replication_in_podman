@@ -4,8 +4,6 @@
 
 set -o errexit
 
-podman info --debug
-
 # FIXME: NoneNoneNoneNoneNone
 
 set +o errexit
@@ -147,9 +145,9 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ |awk 
 [[ $size -le 8 ]]
 
 set +o errexit
-podman pod start my1p my2p my3p my4p my5p
+podman pod start my1p my2p my3p my4p my5p >/dev/null
 set -o errexit
-podman pod start my1p my2p my3p my4p my5p
+podman pod start my1p my2p my3p my4p my5p >/dev/null
 
 # ensure data directory is bigger than 90MB (tends to be ~97MB)
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')

@@ -12,6 +12,7 @@ install:
 - sudo bash containers.sh >/dev/null
 - sudo bash setup_debian.sh >/dev/null
 - sudo bash create_setup.sh
+- sudo podman info --debug
 
 test_script:
 - sudo bash setup.sh

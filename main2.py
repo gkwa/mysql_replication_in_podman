@@ -32,8 +32,6 @@ podman pod ls
 
 set -o errexit
 
-podman info --debug
-
 # FIXME: {% set containers = [] %}{% for pod in pods %}{{ containers.append( pod.containers[0].name ) }}{% endfor %}
 
 set +o errexit
@@ -98,9 +96,9 @@ size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')
 {%- endfor %}
 
 set +o errexit
-podman pod start {{ pods |map(attribute='name') |join(' ') }}
+podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
 set -o errexit
-podman pod start {{ pods |map(attribute='name') |join(' ') }}
+podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
 
 # ensure data directory is bigger than 90MB (tends to be ~97MB)
 {%- for pod in pods %}
