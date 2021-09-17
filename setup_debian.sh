@@ -16,4 +16,4 @@ sudo apt-get -qqy install podman
 git clone --quiet --depth 1 https://github.com/sstephenson/bats.git /tmp/bats
 pushd /tmp/bats >/dev/null
 sudo ./install.sh /usr/local
-popd
+popd >/dev/null
