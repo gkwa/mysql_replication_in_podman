@@ -151,18 +151,6 @@ podman pod start my1p my2p my3p my4p my5p >/dev/null
 set -o errexit
 podman pod start my1p my2p my3p my4p my5p >/dev/null
 
-# ensure data directory is bigger than 90MB (tends to be ~97MB)
-size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
-[[ $size -gt 90000 ]]
-size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
-[[ $size -gt 90000 ]]
-size=$(du -s $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
-[[ $size -gt 90000 ]]
-size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
-[[ $size -gt 90000 ]]
-size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
-[[ $size -gt 90000 ]]
-
 # podman pod ls
 # podman logs --since=30s my1c
 
@@ -218,3 +206,15 @@ podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman -
 podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
+
+# ensure data directory is bigger than 90MB (tends to be ~97MB)
+size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
+[[ $size -gt 90000 ]]
+size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
+[[ $size -gt 90000 ]]
+size=$(du -s $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
+[[ $size -gt 90000 ]]
+size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
+[[ $size -gt 90000 ]]
+size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
+[[ $size -gt 90000 ]]
