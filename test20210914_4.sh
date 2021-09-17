@@ -229,10 +229,10 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --execute 'S
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --execute 'SHOW VARIABLES LIKE "binlog_format"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --execute 'SHOW VARIABLES LIKE "binlog_format"'
 
-cat <<'__eot__' >test_simple_insert.bats
+cat <<'__eot__' >test_ensure_replication_is_running.bats
 source ./common.sh
 
-@test 'test_simple_insert' {
+@test 'test_ensure_replication_is_running' {
   podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest'
   run bash -c "podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'SHOW DATABASES' | grep ptest"
   [ "$status" -eq 1 ]
