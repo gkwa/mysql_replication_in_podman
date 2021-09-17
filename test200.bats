@@ -11,7 +11,7 @@ source ./common.sh
 
     bash ./test20210914_4.sh
     run bats test_simple_insert.bats
-    [ "$status" -eq 1 ]
+    [ "$status" -eq 0 ]
 
     bash ./test20210914_4.sh
     run bats test_simple_insert.bats
