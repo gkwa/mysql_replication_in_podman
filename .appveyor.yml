@@ -9,12 +9,9 @@ install:
 - sudo bash ./containers.sh 
 - sudo bash -x setup_debian.sh
 - sudo bash -x create_test.sh
-- |
-  sudo git clone --depth 1 https://github.com/sstephenson/bats.git /tmp/bats
-  pushd /tmp/bats; sudo ./install.sh /usr/local; popd
+- sudo git clone --depth 1 https://github.com/sstephenson/bats.git /tmp/bats; pushd /tmp/bats; sudo ./install.sh /usr/local; popd
 test_script:
 - sudo time bash -x test.sh
-- sudo time bash -x test20210914_4.sh
 - sudo time bash -c 'source common.sh && cleanall'
 - sudo time bats test100.bats
 - sudo time bats test200.bats
