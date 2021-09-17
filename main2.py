@@ -55,7 +55,6 @@ cat <<'__eot__' >reptest/{{ pod.containers[0].name }}_my.cnf
 [mysqld]
 innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
-server_id                      = {{ loop.index }}
 auto_increment_offset          = {{ loop.index }}
 bind-address                   = {{ pod.name }}.dns.podman
 datadir                        = /var/log/mysql
