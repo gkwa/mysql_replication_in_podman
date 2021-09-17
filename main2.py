@@ -93,7 +93,7 @@ rm -rf --preserve-root $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mo
 # ensure data directory is cleaned out
 {% for pod in pods %}
 size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
-[[ $size -le 8 ]] 
+[[ $size -le 8 ]]
 {%- endfor %}
 
 set +o errexit
