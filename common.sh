@@ -1,4 +1,36 @@
-function repcheck() {
+cleanall()
+{
+    podman pod stop --ignore --all
+    podman images prune
+    podman container stop --ignore --all
+    podman pod rm --all --force
+    podman container rm --all --force
+    podman volume rm --all --force
+    for network in $(podman network ls --format json | jq -r '.[].Name')
+    do if [[ "$network" !=  "podman" ]]
+       then podman network exists $network && podman network rm $network
+       fi
+    done
+    podman pod stop --ignore --all
+    podman images prune
+    podman container stop --ignore --all
+    podman pod rm --all --force
+    podman container rm --all --force
+    podman volume rm --all --force
+    for network in $(podman network ls --format json | jq -r '.[].Name')
+    do if [[ "$network" !=  "podman" ]]
+       then podman network exists $network && podman network rm $network
+       fi
+    done
+    podman ps
+    podman ps --pod
+    podman ps -a --pod
+    podman network ls
+    podman volume ls
+    podman pod ls
+}
+
+repcheck() {
     jump_container=$1
     target_host=$2
 
@@ -13,7 +45,7 @@ function repcheck() {
     [ $r1 -eq 0 ] && [ $r2 -eq 0 ]
 }
 
-function loop1() {
+loop1() {
     func=$1
     jump_container=$2
     target_host=$3
