@@ -40,6 +40,7 @@ bind-address                   = my1p.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 log_slave_updates              = ON
+binlog_format                  = STATEMENT
 __eot__
 
 cat <<'__eot__' >reptest/my2c_my.cnf
@@ -52,6 +53,7 @@ bind-address                   = my2p.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 log_slave_updates              = ON
+binlog_format                  = STATEMENT
 __eot__
 
 cat <<'__eot__' >reptest/my3c_my.cnf
@@ -64,6 +66,7 @@ bind-address                   = my3p.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 log_slave_updates              = ON
+binlog_format                  = STATEMENT
 __eot__
 
 cat <<'__eot__' >reptest/my4c_my.cnf
@@ -76,6 +79,7 @@ bind-address                   = my4p.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 log_slave_updates              = ON
+binlog_format                  = STATEMENT
 __eot__
 
 cat <<'__eot__' >reptest/my5c_my.cnf
@@ -88,6 +92,7 @@ bind-address                   = my5p.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 log_slave_updates              = ON
+binlog_format                  = STATEMENT
 __eot__
 
 
@@ -117,6 +122,9 @@ podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --n
 podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication
 podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication
 podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication
+podman pull docker.io/perconalab/percona-toolkit:latest
+podman pull registry.redhat.io/rhel8/mysql-80
+
 
 podman container exists my1c || podman container create --name=my1c --pod=my1p --health-start-period=80s --log-driver=journald --healthcheck-interval=0 --health-retries=10 --health-timeout=30s --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' --volume=./reptest/my1c_my.cnf:/etc/my.cnf.d/100-reptest.cnf --healthcheck-command 'mysql --user=root --password="root" --host=my1p --execute "USE mysql" || exit 1' --volume=my1dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 podman container exists my2c || podman container create --name=my2c --pod=my2p --health-start-period=80s --log-driver=journald --healthcheck-interval=0 --health-retries=10 --health-timeout=30s --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' --volume=./reptest/my2c_my.cnf:/etc/my.cnf.d/100-reptest.cnf --healthcheck-command 'mysql --user=root --password="root" --host=my2p --execute "USE mysql" || exit 1' --volume=my2dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80

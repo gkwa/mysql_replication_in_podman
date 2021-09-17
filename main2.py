@@ -61,6 +61,7 @@ bind-address                   = {{ pod.name }}.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
 log_slave_updates              = ON
+binlog_format                  = STATEMENT
 __eot__
 {% endfor %}
 
@@ -78,6 +79,9 @@ podman network exists {{ global.network}} || podman network create {{ global.net
 {% for pod in pods -%}
 podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} --network={{ global.network }}
 {% endfor -%}
+
+podman pull docker.io/perconalab/percona-toolkit:latest
+podman pull registry.redhat.io/rhel8/mysql-80
 
 {% for pod in pods %}
 podman container exists {{ pod.containers[0].name }} || podman container create --name={{ pod.containers[0].name }} --pod={{ pod.name }} --health-start-period=80s --log-driver=journald --healthcheck-interval=0 --health-retries=10 --health-timeout=30s --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' --volume=./reptest/{{ pod.containers[0].name }}_my.cnf:/etc/my.cnf.d/100-reptest.cnf --healthcheck-command 'mysql --user={{ global.user_root }} --password="{{ global.user_root_pass }}" --host={{ pod.name }} --execute "USE mysql" || exit 1' --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} --env=MYSQL_USER={{ global.user_non_root }} --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
@@ -174,6 +178,37 @@ source ./common.sh
 }
 """
 path = pathlib.Path("test_ensure_replication_is_running.bats")
+template = jinja2.Template(tmpl_str)
+result = template.render(manifest=manifest)
+path.write_text(result)
+
+tmpl_str = """
+{%- set global=manifest['global'] %}
+{%- set replication=manifest['replication'] %}
+{%- set pods=manifest['pods'] %}
+source ./common.sh
+
+@test 'test_ensure_replication_is_running' {
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest'
+  run bash -c "podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'SHOW DATABASES' | grep ptest"
+  [ "$status" -eq 1 ]
+  run bash -c "podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host=my4p --execute 'SHOW DATABASES' | grep ptest"
+  [ "$status" -eq 1 ]
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'CREATE DATABASE IF NOT EXISTS ptest'
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --database=ptest --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --database=ptest --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --database=ptest --execute 'SELECT * FROM dummy'
+  result=$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --skip-column-names --user={{ global.user_root }} --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="a"')
+  [ $result -eq 1 ]
+  result=$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --skip-column-names --user={{ global.user_root }} --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="c"')
+  [ "$result" == "" ]
+
+  {% for pod in pods %}
+  podman run --pod={{ pods[0].name }} --env=PTDEBUG=0 --env=MYSQL_PWD={{ global.user_root_pass }} percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h={{ pod.name }}.dns.podman,u={{ global.user_root }},p={{ global.user_root_pass }},P=3306
+  {%- endfor %}
+}
+"""
+path = pathlib.Path("test_percona_checksums.bats")
 template = jinja2.Template(tmpl_str)
 result = template.render(manifest=manifest)
 path.write_text(result)
