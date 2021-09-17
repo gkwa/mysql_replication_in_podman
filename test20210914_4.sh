@@ -222,6 +222,13 @@ podman exec --env=MYSQL_PWD=root my1c mysql --host=my3p --user=root --execute 'U
 podman exec --env=MYSQL_PWD=root my1c mysql --host=my4p --user=root --execute 'USE ptest' && echo my4p ok
 podman exec --env=MYSQL_PWD=root my1c mysql --host=my5p --user=root --execute 'USE ptest' && echo my5p ok
 
+
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'SHOW VARIABLES LIKE "binlog_format"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --execute 'SHOW VARIABLES LIKE "binlog_format"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --execute 'SHOW VARIABLES LIKE "binlog_format"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --execute 'SHOW VARIABLES LIKE "binlog_format"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --execute 'SHOW VARIABLES LIKE "binlog_format"'
+
 cat <<'__eot__' >test_simple_insert.bats
 source ./common.sh
 
