@@ -34,6 +34,9 @@ set -o errexit
 
 # FIXME: {% set containers = [] %}{% for pod in pods %}{{ containers.append( pod.containers[0].name ) }}{% endfor %}
 
+podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
+podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
+
 set +o errexit
 podman container stop --log-level debug --ignore {{ containers |join(' ') }}
 set -o errexit
@@ -74,12 +77,9 @@ podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }} >
 
 podman network exists {{ global.network}} || podman network create {{ global.network }} >/dev/null
 
-{% for pod in pods -%}
+{% for pod in pods %}
 podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} --network={{ global.network }} >/dev/null
-{% endfor -%}
-
-podman pull --quiet docker.io/perconalab/percona-toolkit:latest
-podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
+{%- endfor %}
 
 {% for pod in pods %}
 podman container exists {{ pod.containers[0].name }} || podman container create --name={{ pod.containers[0].name }} --pod={{ pod.name }} --health-start-period=80s --log-driver=journald --healthcheck-interval=0 --health-retries=10 --health-timeout=30s --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' --volume=./reptest/{{ pod.containers[0].name }}_my.cnf:/etc/my.cnf.d/100-reptest.cnf --healthcheck-command 'mysql --user={{ global.user_root }} --password="{{ global.user_root_pass }}" --host={{ pod.name }} --execute "USE mysql" || exit 1' --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} --env=MYSQL_USER={{ global.user_non_root }} --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80 >/dev/null

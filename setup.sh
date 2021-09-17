@@ -6,6 +6,9 @@ set -o errexit
 
 # FIXME: NoneNoneNoneNoneNone
 
+podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
+podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
+
 set +o errexit
 podman container stop --log-level debug --ignore my1c my2c my3c my4c my5c
 set -o errexit
@@ -110,13 +113,12 @@ podman volume exists my5dbdata || podman volume create my5dbdata >/dev/null
 
 podman network exists replication || podman network create replication >/dev/null
 
+
 podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
 podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
 podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
 podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
 podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
-podman pull --quiet docker.io/perconalab/percona-toolkit:latest
-podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 
 
 podman container exists my1c || podman container create --name=my1c --pod=my1p --health-start-period=80s --log-driver=journald --healthcheck-interval=0 --health-retries=10 --health-timeout=30s --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' --volume=./reptest/my1c_my.cnf:/etc/my.cnf.d/100-reptest.cnf --healthcheck-command 'mysql --user=root --password="root" --host=my1p --execute "USE mysql" || exit 1' --volume=my1dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80 >/dev/null
