@@ -134,6 +134,7 @@ rm -rf --preserve-root $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoin
 rm -rf --preserve-root $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/*
 rm -rf --preserve-root $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/*
 
+# ensure data directory is cleaned out
 
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -le 8 ]]
@@ -145,13 +146,6 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ |awk 
 [[ $size -le 8 ]]
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -le 8 ]]
-
-
-du -shc $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')
-du -shc $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')
-du -shc $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')
-du -shc $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')
-du -shc $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')
 
 set +o errexit
 podman pod start my1p my2p my3p my4p my5p

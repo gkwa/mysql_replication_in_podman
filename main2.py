@@ -90,13 +90,10 @@ podman container exists {{ pod.containers[0].name }} || podman container create 
 rm -rf --preserve-root $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/*
 {%- endfor %}
 
+# ensure data directory is cleaned out
 {% for pod in pods %}
 size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
-[[ $size -le 8 ]]
-{%- endfor %}
-
-{% for pod in pods %}
-du -shc $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')
+[[ $size -le 8 ]] 
 {%- endfor %}
 
 set +o errexit
