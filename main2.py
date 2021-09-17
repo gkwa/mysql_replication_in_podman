@@ -91,7 +91,7 @@ rm -rf --preserve-root $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mo
 {%- endfor %}
 
 # ensure data directory is cleaned out
-{% for pod in pods %}
+{%- for pod in pods %}
 size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -le 8 ]]
 {%- endfor %}
@@ -187,7 +187,7 @@ source ./common.sh
   result=$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --skip-column-names --execute 'SHOW VARIABLES LIKE "binlog_format"')
   run grep --silent -E 'binlog_format.*STATEMENT' <<<"$result"
   [ "$status" -eq 0 ]
-  {%- endfor %}
+  {% endfor %}
 }
 
 """

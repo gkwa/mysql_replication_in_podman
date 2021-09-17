@@ -135,7 +135,6 @@ rm -rf --preserve-root $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoin
 rm -rf --preserve-root $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/*
 
 # ensure data directory is cleaned out
-
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -le 8 ]]
 size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
