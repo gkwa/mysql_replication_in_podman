@@ -151,15 +151,20 @@ podman pod start my1p my2p my3p my4p my5p
 set -o errexit
 podman pod start my1p my2p my3p my4p my5p
 
+# ensure data directory is bigger than 90MB (tends to be ~97MB)
+size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
+[[ $size -gt 90000 ]]
+size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
+[[ $size -gt 90000 ]]
+size=$(du -s $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
+[[ $size -gt 90000 ]]
+size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
+[[ $size -gt 90000 ]]
+size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
+[[ $size -gt 90000 ]]
 
-du -shc $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')
-du -shc $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')
-du -shc $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')
-du -shc $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')
-du -shc $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')
-
-podman pod ls
-podman logs --since=30s my1c
+# podman pod ls
+# podman logs --since=30s my1c
 
 
 until podman healthcheck run my1c </dev/null; do sleep 3; done
@@ -213,12 +218,3 @@ podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman -
 podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
-
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'CREATE DATABASE IF NOT EXISTS ptest'
-
-
-podman exec --env=MYSQL_PWD=root my1c mysql --host=my1p --user=root --execute 'USE ptest' && echo my1p ok
-podman exec --env=MYSQL_PWD=root my1c mysql --host=my2p --user=root --execute 'USE ptest' && echo my2p ok
-podman exec --env=MYSQL_PWD=root my1c mysql --host=my3p --user=root --execute 'USE ptest' && echo my3p ok
-podman exec --env=MYSQL_PWD=root my1c mysql --host=my4p --user=root --execute 'USE ptest' && echo my4p ok
-podman exec --env=MYSQL_PWD=root my1c mysql --host=my5p --user=root --execute 'USE ptest' && echo my5p ok
