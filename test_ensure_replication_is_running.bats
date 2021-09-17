@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bats
 source ./common.sh
 
 @test 'test_ensure_replication_is_running' {

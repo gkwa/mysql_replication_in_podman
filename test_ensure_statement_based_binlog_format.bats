@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bats
 source ./common.sh
 
 @test 'test_ensure_statement_based_binlog_format' {

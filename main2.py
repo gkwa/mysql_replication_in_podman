@@ -143,7 +143,7 @@ path.write_text(
 )
 path.chmod(path.stat().st_mode | stat.S_IEXEC)
 
-tmpl_str = """
+tmpl_str = """#!/usr/bin/env bats
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
@@ -173,7 +173,7 @@ path.write_text(
 )
 path.chmod(path.stat().st_mode | stat.S_IEXEC)
 
-tmpl_str = """
+tmpl_str = """#!/usr/bin/env bats
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
@@ -194,7 +194,7 @@ path.write_text(
 )
 path.chmod(path.stat().st_mode | stat.S_IEXEC)
 
-tmpl_str = """
+tmpl_str = """#!/usr/bin/env bats
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
@@ -226,3 +226,53 @@ path.write_text(
     jinja2.Template(tmpl_str).render(manifest=manifest, test_name=path.stem)
 )
 path.chmod(path.stat().st_mode | stat.S_IEXEC)
+
+tmpl_str = """#!/usr/bin/env bats
+{%- set global=manifest['global'] %}
+{%- set replication=manifest['replication'] %}
+{%- set pods=manifest['pods'] %}
+source ./common.sh
+
+# This assumes replication is running
+
+@test '{{ test_name }}' {
+  podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest'
+
+  {% for pod in pods %}
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'STOP SLAVE'
+  {%- endfor %}
+
+  podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user=root --host={{ pods[0].name }} --execute 'CREATE DATABASE IF NOT EXISTS ptest'
+  podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user=root --host={{ pods[0].name }} --database=ptest --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+  podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user=root --host={{ pods[0].name }} --database=ptest --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+
+  result=$(podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --skip-column-names --user=root --host={{ pods[0].name }} --database=ptest --execute 'SELECT id FROM dummy WHERE name="a"')
+  [ "$result" == 1 ]
+
+  # ensure these fail
+  {%- for pod in pods %}
+  {% if not loop.first -%}
+  run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest'
+  [ "$status" == 1 ]
+  {%- endif %}
+  {%- endfor %}
+
+  # start rep
+  {%- for pod in pods %}
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
+  {%- endfor %}
+
+  # ensure these pass
+  {%- for pod in pods %}
+  run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest'
+  [ "$status" == 0 ]
+  {%- endfor %}
+}
+
+"""
+path = pathlib.Path("test_fart.bats")
+path.write_text(
+    jinja2.Template(tmpl_str).render(manifest=manifest, test_name=path.stem)
+)
+path.chmod(path.stat().st_mode | stat.S_IEXEC)
+
