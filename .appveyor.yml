@@ -7,7 +7,7 @@ install:
 - sh: ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret $my_secret -salt $my_salt -out /tmp/auth.json.decrypted
 # https://ci.appveyor.com/project/TaylorMonacelli/mysql-replication-in-podman/builds/40699358
 - sudo bash ./containers.sh 
-- sudo bash setup_debian.sh
+- sudo bash setup_debian.sh >/dev/null
 - sudo bash create_test.sh
 - sudo git clone --depth 1 https://github.com/sstephenson/bats.git /tmp/bats; pushd /tmp/bats; sudo ./install.sh /usr/local; popd
 test_script:
