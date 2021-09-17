@@ -11,7 +11,6 @@ install:
 - sudo bash create_test.sh
 - sudo git clone --depth 1 https://github.com/sstephenson/bats.git /tmp/bats; pushd /tmp/bats; sudo ./install.sh /usr/local; popd
 test_script:
-# - sudo bash -c 'source common.sh && cleanall'
 - sudo bash test.sh
 - sudo bats test_ensure_replication_is_running.bats
 - sudo bats test_ensure_statement_based_binlog_format.bats
