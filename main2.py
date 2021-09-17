@@ -142,7 +142,7 @@ podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0]
 
 {% for pod in pods %}
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute 'SHOW VARIABLES LIKE "binlog_format"'
-{%- endfor %}
+{% endfor %}
 """
 path = pathlib.Path("test.sh")
 template = jinja2.Template(tmpl_str)
