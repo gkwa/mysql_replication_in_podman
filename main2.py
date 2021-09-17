@@ -189,6 +189,24 @@ tmpl_str = """
 source ./common.sh
 
 @test '{{ test_name }}' {
+  {% for pod in pods %}
+  result=$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute 'SHOW VARIABLES LIKE "binlog_format"')
+  [ "$result" == "STATMENT" ]
+  {%- endfor %}
+}
+"""
+name = "test_ensure_statement_based_binlog_format"
+pathlib.Path(f"{name}.bats").write_text(
+    jinja2.Template(tmpl_str).render(manifest=manifest, test_name=name)
+)
+
+tmpl_str = """
+{%- set global=manifest['global'] %}
+{%- set replication=manifest['replication'] %}
+{%- set pods=manifest['pods'] %}
+source ./common.sh
+
+@test '{{ test_name }}' {
   podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest'
   run bash -c "podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'SHOW DATABASES' | grep ptest"
   [ "$status" -eq 1 ]
@@ -202,11 +220,6 @@ source ./common.sh
   [ $result -eq 1 ]
   result=$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --skip-column-names --user={{ global.user_root }} --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="c"')
   [ "$result" == "" ]
-
-  {% for pod in pods %}
-  result=$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute 'SHOW VARIABLES LIKE "binlog_format"')
-  [ "$result" == "STATMENT" ]
-  {%- endfor %}
 
   {% for pod in pods %}
   podman run --pod={{ pods[0].name }} --env=PTDEBUG=0 --env=MYSQL_PWD={{ global.user_root_pass }} percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h={{ pod.name }}.dns.podman,u={{ global.user_root }},p={{ global.user_root_pass }},P=3306
