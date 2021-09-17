@@ -1,4 +1,5 @@
 import pathlib
+import stat
 
 import jinja2
 import yaml
@@ -142,9 +143,11 @@ podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0]
 {%- endfor %}
 
 """
-pathlib.Path("setup.sh").write_text(
-    jinja2.Template(tmpl_str).render(manifest=manifest, test_name="setup")
+path = pathlib.Path("setup.sh")
+path.write_text(
+    jinja2.Template(tmpl_str).render(manifest=manifest, test_name=path.stem)
 )
+path.chmod(path.stat().st_mode | stat.S_IEXEC)
 
 tmpl_str = """
 {%- set global=manifest['global'] %}
@@ -170,10 +173,11 @@ source ./common.sh
 }
 
 """
-name = "test_ensure_replication_is_running"
-pathlib.Path(f"{name}.bats").write_text(
-    jinja2.Template(tmpl_str).render(manifest=manifest, test_name=name)
+path = pathlib.Path("test_ensure_replication_is_running.bats")
+path.write_text(
+    jinja2.Template(tmpl_str).render(manifest=manifest, test_name=path.stem)
 )
+path.chmod(path.stat().st_mode | stat.S_IEXEC)
 
 tmpl_str = """
 {%- set global=manifest['global'] %}
@@ -190,10 +194,11 @@ source ./common.sh
 }
 
 """
-name = "test_ensure_statement_based_binlog_format"
-pathlib.Path(f"{name}.bats").write_text(
-    jinja2.Template(tmpl_str).render(manifest=manifest, test_name=name)
+path = pathlib.Path("test_ensure_statement_based_binlog_format.bats")
+path.write_text(
+    jinja2.Template(tmpl_str).render(manifest=manifest, test_name=path.stem)
 )
+path.chmod(path.stat().st_mode | stat.S_IEXEC)
 
 tmpl_str = """
 {%- set global=manifest['global'] %}
@@ -222,7 +227,8 @@ source ./common.sh
 }
 
 """
-name = "test_percona_checksums"
-pathlib.Path(f"{name}.bats").write_text(
-    jinja2.Template(tmpl_str).render(manifest=manifest, test_name=name)
+path = pathlib.Path("test_percona_checksums.bats")
+path.write_text(
+    jinja2.Template(tmpl_str).render(manifest=manifest, test_name=path.stem)
 )
+path.chmod(path.stat().st_mode | stat.S_IEXEC)

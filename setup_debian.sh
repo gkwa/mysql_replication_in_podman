@@ -12,3 +12,5 @@ echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers
 curl -sSL "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | sudo apt-key add -
 sudo apt-get update
 sudo apt-get -qqy install podman
+
+git clone --depth 1 https://github.com/sstephenson/bats.git /tmp/bats; pushd /tmp/bats; sudo ./install.sh /usr/local; popd
