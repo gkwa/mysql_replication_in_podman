@@ -39,7 +39,6 @@ auto_increment_offset          = 1
 bind-address                   = my1p.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
-binlog_format                  = STATEMENT
 log_slave_updates              = ON
 __eot__
 
@@ -52,7 +51,6 @@ auto_increment_offset          = 2
 bind-address                   = my2p.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
-binlog_format                  = STATEMENT
 log_slave_updates              = ON
 __eot__
 
@@ -65,7 +63,6 @@ auto_increment_offset          = 3
 bind-address                   = my3p.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
-binlog_format                  = STATEMENT
 log_slave_updates              = ON
 __eot__
 
@@ -78,7 +75,6 @@ auto_increment_offset          = 4
 bind-address                   = my4p.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
-binlog_format                  = STATEMENT
 log_slave_updates              = ON
 __eot__
 
@@ -91,7 +87,6 @@ auto_increment_offset          = 5
 bind-address                   = my5p.dns.podman
 datadir                        = /var/log/mysql
 log_bin                        = mysql-bin.log
-binlog_format                  = STATEMENT
 log_slave_updates              = ON
 __eot__
 
@@ -228,6 +223,8 @@ podman exec --env=MYSQL_PWD=root my1c mysql --host=my4p --user=root --execute 'U
 podman exec --env=MYSQL_PWD=root my1c mysql --host=my5p --user=root --execute 'USE ptest' && echo my5p ok
 
 cat <<'__eot__' >test_simple_insert.bats
+source ./common.sh
+
 @test 'test_simple_insert' {
   podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest'
   run bash -c "podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'SHOW DATABASES' | grep ptest"
@@ -245,4 +242,3 @@ cat <<'__eot__' >test_simple_insert.bats
   [ "$result" == "" ]
 }
 __eot__
-sudo bats test_simple_insert.bats
