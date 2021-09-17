@@ -8,10 +8,10 @@ install:
 # https://ci.appveyor.com/project/TaylorMonacelli/mysql-replication-in-podman/builds/40699358
 - sudo bash ./containers.sh 
 - sudo bash setup_debian.sh >/dev/null
-- sudo bash create_test.sh
+- sudo bash create_setup.sh
 - sudo git clone --depth 1 https://github.com/sstephenson/bats.git /tmp/bats; pushd /tmp/bats; sudo ./install.sh /usr/local; popd
 test_script:
-- sudo bash test.sh
+- sudo bash setup.sh
 - sudo bats test_ensure_replication_is_running.bats
 - sudo bats test_ensure_statement_based_binlog_format.bats
 - sudo bats test_percona_checksums.bats
