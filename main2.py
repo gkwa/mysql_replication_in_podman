@@ -107,6 +107,12 @@ podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
 until podman healthcheck run {{ pod.containers[0].name }} </dev/null; do sleep 3; done
 {%- endfor %}
 
+# ensure data directory is bigger than 90MB (tends to be ~97MB)
+{%- for pod in pods %}
+size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
+[[ $size -gt 90000 ]] 
+{%- endfor %}
+
 {% for pod in pods %}
 {%- set user = "'" ~ global.user_replication ~ "'@'" ~ '%' ~ "'" %}
 # {{ user }} on {{ pod.containers[0].name }}:
@@ -128,12 +134,6 @@ MASTER_LOG_POS=$position"
 
 {% for pod in pods %}
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE USER="{{ global.user_replication }}" PASSWORD="{{ global.user_replication_pass }}"'
-{%- endfor %}
-
-# ensure data directory is bigger than 90MB (tends to be ~97MB)
-{%- for pod in pods %}
-size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
-[[ $size -gt 90000 ]] 
 {%- endfor %}
 
 """
