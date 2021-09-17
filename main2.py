@@ -144,10 +144,6 @@ podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0]
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --host={{ pod.name }} --user={{ global.user_root }} --execute 'USE ptest' && echo {{ pod.name }} ok
 {%- endfor %}
 
-{% for pod in pods %}
-podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute 'SHOW VARIABLES LIKE "binlog_format"'
-{%- endfor %}
-
 """
 name = "test"
 pathlib.Path(f"{name}.sh").write_text(
@@ -191,8 +187,9 @@ source ./common.sh
 
 @test '{{ test_name }}' {
   {% for pod in pods %}
-  result=$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute 'SHOW VARIABLES LIKE "binlog_format"')
-  [ "$result" == "STATMENT" ]
+  result=$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --skip-column-names --execute 'SHOW VARIABLES LIKE "binlog_format"')
+  run grep --silent -E 'binlog_format.*STATEMENT' <<<"$result"
+  [ "$status" -eq 0 ]
   {%- endfor %}
 }
 
