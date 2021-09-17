@@ -13,9 +13,9 @@ install:
 - sudo bash setup_debian.sh >/dev/null
 - sudo bash create_setup.sh
 - sudo podman info --debug
+- sudo bash setup.sh
 
 test_script:
-- sudo bash setup.sh
 - sudo ./test_ensure_replication_is_running.bats
 - sudo ./test_ensure_statement_based_binlog_format.bats
 - sudo ./test_percona_checksums.bats
