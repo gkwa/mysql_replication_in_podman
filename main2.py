@@ -48,7 +48,7 @@ podman pod exists {{ pod.name }} && podman wait --condition=stopped {{ container
 podman pod ls 
 
 rm -rf reptest
-mkdir -p reptest
+mkdir reptest
 
 {% for pod in pods %}
 cat <<'__eot__' >reptest/{{ pod.containers[0].name }}_my.cnf
@@ -101,8 +101,8 @@ du -shc $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')
 
 set +o errexit
 podman pod start {{ pods |map(attribute='name') |join(' ') }}
-podman pod start {{ pods |map(attribute='name') |join(' ') }}
 set -o errexit
+podman pod start {{ pods |map(attribute='name') |join(' ') }}
 
 {% for pod in pods %}
 du -shc $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')

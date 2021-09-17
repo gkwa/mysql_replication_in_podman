@@ -27,7 +27,7 @@ podman pod exists my5p && podman wait --condition=stopped my1c my2c my3c my4c my
 podman pod ls 
 
 rm -rf reptest
-mkdir -p reptest
+mkdir reptest
 
 
 cat <<'__eot__' >reptest/my1c_my.cnf
@@ -167,8 +167,8 @@ du -shc $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')
 
 set +o errexit
 podman pod start my1p my2p my3p my4p my5p
-podman pod start my1p my2p my3p my4p my5p
 set -o errexit
+podman pod start my1p my2p my3p my4p my5p
 
 
 du -shc $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')
