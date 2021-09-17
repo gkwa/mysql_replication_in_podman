@@ -105,7 +105,7 @@ du -shc $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')
 {%- endfor %}
 
 podman pod ls 
-podman logs --since=30s my1c 
+podman logs --since=30s {{ pods[0].containers[0].name }} 
 
 {% for pod in pods %}
 until podman healthcheck run {{ pod.containers[0].name }} </dev/null; do sleep 3; done
@@ -134,31 +134,32 @@ MASTER_LOG_POS=$position"
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE USER="{{ global.user_replication }}" PASSWORD="{{ global.user_replication_pass }}"'
 {%- endfor %}
 
-podman exec --env=MYSQL_PWD=root my1c mysql --user={{ global.user_root }} --host=my1p --execute 'CREATE DATABASE IF NOT EXISTS ptest'
+podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'CREATE DATABASE IF NOT EXISTS ptest'
 
 {% for pod in pods %}
-podman exec --env=MYSQL_PWD={{ global.user_root_pass }} my1c mysql --host={{ pod.name }} --user={{ global.user_root }} --execute 'USE ptest' && echo {{ pod.name }} ok
+podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --host={{ pod.name }} --user={{ global.user_root }} --execute 'USE ptest' && echo {{ pod.name }} ok
 {%- endfor %}
 
-cat <<'__eot__' >test_simple_insert.bats
+cat <<'__eot__' >simple_insert.bats
+source ./common.sh
+
 @test 'test_simple_insert' {
-  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest'
-  run bash -c "podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'SHOW DATABASES' | grep ptest"
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest'
+  run bash -c "podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'SHOW DATABASES' | grep ptest"
   [ "$status" -eq 1 ]
-  run bash -c "podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --execute 'SHOW DATABASES' | grep ptest"
+  run bash -c "podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host=my4p --execute 'SHOW DATABASES' | grep ptest"
   [ "$status" -eq 1 ]
-  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'CREATE DATABASE IF NOT EXISTS ptest'
-  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=ptest --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
-  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=ptest --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
-  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=ptest --execute 'SELECT * FROM dummy'
-  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --database=ptest --execute 'SELECT * FROM dummy'
-  result=$(podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="a"')
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'CREATE DATABASE IF NOT EXISTS ptest'
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --database=ptest --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --database=ptest --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --database=ptest --execute 'SELECT * FROM dummy'
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host=my4p --database=ptest --execute 'SELECT * FROM dummy'
+  result=$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --skip-column-names --user={{ global.user_root }} --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="a"')
   [ $result -eq 1 ]
-  result=$(podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="c"')
+  result=$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --skip-column-names --user={{ global.user_root }} --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="c"')
   [ "$result" == "" ]
 }
 __eot__
-sudo bats test_simple_insert.bats
 """
 
 template = jinja2.Template(tmpl_str)
