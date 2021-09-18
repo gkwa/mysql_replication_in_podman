@@ -77,17 +77,11 @@ podman container stop --log-level debug --ignore my3c
 podman container stop --log-level debug --ignore my4c
 podman container stop --log-level debug --ignore my5c
 
-podman pod exists my1p && podman pod stop my1p --log-level debug --ignore my1p
-podman pod exists my2p && podman pod stop my2p --log-level debug --ignore my2p
-podman pod exists my3p && podman pod stop my3p --log-level debug --ignore my3p
-podman pod exists my4p && podman pod stop my4p --log-level debug --ignore my4p
-podman pod exists my5p && podman pod stop my5p --log-level debug --ignore my5p
-
-podman container exists my1c && podman wait --condition=stopped my1c
-podman container exists my2c && podman wait --condition=stopped my2c
-podman container exists my3c && podman wait --condition=stopped my3c
-podman container exists my4c && podman wait --condition=stopped my4c
-podman container exists my5c && podman wait --condition=stopped my5c
+podman pod stop my1p --log-level debug --ignore my1p
+podman pod stop my2p --log-level debug --ignore my2p
+podman pod stop my3p --log-level debug --ignore my3p
+podman pod stop my4p --log-level debug --ignore my4p
+podman pod stop my5p --log-level debug --ignore my5p
 podman pod ls
 
 mkdir -p reptest
