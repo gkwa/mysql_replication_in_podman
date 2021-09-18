@@ -83,7 +83,6 @@ podman pod exists my3p && podman pod stop my3p --log-level debug --ignore my3p
 podman pod exists my4p && podman pod stop my4p --log-level debug --ignore my4p
 podman pod exists my5p && podman pod stop my5p --log-level debug --ignore my5p
 podman wait --condition=stopped my1c my2c my3c my4c my5c
-
 podman pod ls
 
 mkdir -p reptest
