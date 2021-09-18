@@ -9,11 +9,11 @@ install:
 - bash secure_file_setup.sh
 - sh: ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret $my_secret -salt $my_salt -out /tmp/auth.json.decrypted
 
-- sudo ./containers.sh >/dev/null
-- sudo ./setup_debian.sh >/dev/null
-- sudo ./create_setup.sh
+- sudo bash containers.sh >/dev/null
+- sudo bash setup_debian.sh >/dev/null
+- sudo bash create_setup.sh
 - sudo podman info --debug
-- sudo ./setup.sh
+- sudo bash setup.sh
 
 test_script:
 - sudo time ./test_replication_is_running.bats
