@@ -110,7 +110,7 @@ until podman healthcheck run {{ pod.containers[0].name }} </dev/null; do sleep 3
 # ensure data directory is bigger than 90MB (tends to be ~97MB)
 {%- for pod in pods %}
 size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
-[[ $size -gt 90000 ]] 
+[[ $size -gt 90000 ]]
 {%- endfor %}
 
 {% for pod in pods %}
