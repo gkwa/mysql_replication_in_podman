@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ./common.sh
+
 # podman pod stop --ignore --all; podman images prune; podman container stop --ignore --all; podman pod rm --all --force; podman container rm --all --force; podman volume rm --all --force; for network in $(podman network ls --format json | jq -r '.[].Name'); do if [[ "$network" !=  "podman" ]]; then podman network exists $network && podman network rm $network; fi; done; podman pod stop --ignore --all; podman images prune; podman container stop --ignore --all; podman pod rm --all --force; podman container rm --all --force; podman volume rm --all --force; for network in $(podman network ls --format json | jq -r '.[].Name'); do if [[ "$network" !=  "podman" ]]; then podman network exists $network && podman network rm $network; fi; done; podman ps; podman ps --pod; podman ps -a --pod; podman network ls; podman volume ls; podman pod ls; #destroyall
 
 set -o errexit

@@ -15,6 +15,9 @@ with open(in_file, "r") as stream:
         print(exc)
 
 tmpl_str = """#!/bin/bash
+
+source ./common.sh
+
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
