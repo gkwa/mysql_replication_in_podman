@@ -253,6 +253,10 @@ source ./common.sh
   podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest'
 
   {% for pod in pods %}
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
+  {%- endfor %}
+
+  {% for pod in pods %}
   podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'STOP SLAVE'
   {%- endfor %}
 
@@ -319,6 +323,10 @@ source ./common.sh
   [ "$status" == 1 ]
   run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest2'
   [ "$status" == 1 ]
+  {%- endfor %}
+
+  {% for pod in pods %}
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
   {%- endfor %}
 
   {% for pod in pods %}
