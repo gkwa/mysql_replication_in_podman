@@ -3,9 +3,9 @@ source ./common.sh
 
 @test 'test_replication_is_running' {
   podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest'
-  run bash -c "podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'SHOW DATABASES' | grep ptest"
+  run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'USE ptest'
   [ "$status" -eq 1 ]
-  run bash -c "podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --execute 'SHOW DATABASES' | grep ptest"
+  run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --execute 'USE ptest'
   [ "$status" -eq 1 ]
   podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'CREATE DATABASE IF NOT EXISTS ptest'
   podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=ptest --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
