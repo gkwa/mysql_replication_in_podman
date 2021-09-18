@@ -33,7 +33,10 @@ podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].nam
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
 {% for block in replication %}
-position=$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ block.source.container }} mysql --user={{ global.user_root }} --host={{ block.source.pod }} --execute 'SHOW MASTER STATUS\G' |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
+position=$(
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ block.source.container }} \
+  mysql --user={{ global.user_root }} --host={{ block.source.pod }} --execute 'SHOW MASTER STATUS\G' |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+)
 {#- echo target:{{ block.instance.container }} source:{{ block.source.container }} position:$position #}
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ block.instance.container }} mysql --host={{ block.instance.pod }} --user={{ global.user_root }} --execute \
 "CHANGE MASTER TO MASTER_HOST='{{ block.source.pod }}.dns.podman',MASTER_USER='{{ global.user_replication }}',\
@@ -87,8 +90,23 @@ podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --pu
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
 {% for pod in pods %}
-podman container exists {{ pod.containers[0].name }} || podman container create --name={{ pod.containers[0].name }} --pod={{ pod.name }} --health-start-period=80s --log-driver=journald --healthcheck-interval=0 --health-retries=10 --health-timeout=30s --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' --volume=./reptest/{{ pod.containers[0].name }}_my.cnf:/etc/my.cnf.d/100-reptest.cnf --healthcheck-command 'mysql --user={{ global.user_root }} --password="{{ global.user_root_pass }}" --host={{ pod.name }} --execute "USE mysql" || exit 1' --volume={{ pod.volume }}:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} --env=MYSQL_USER={{ global.user_non_root }} --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80 >/dev/null
-{%- endfor %}
+podman container exists {{ pod.containers[0].name }} || podman container create \
+  --name={{ pod.containers[0].name }} \
+  --pod={{ pod.name }} \
+  --health-start-period=80s \
+  --log-driver=journald --healthcheck-interval=0 --health-retries=10 --health-timeout=30s \
+  --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' \
+  --volume=./reptest/{{ pod.containers[0].name }}_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+  --healthcheck-command 'mysql --user={{ global.user_root }} \
+  --password="{{ global.user_root_pass }}" \
+  --host={{ pod.name }} \
+  --execute "USE mysql" || exit 1' \
+  --volume={{ pod.volume }}:/var/lib/mysql/data:Z \
+  --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} \
+  --env=MYSQL_USER={{ global.user_non_root }} \
+  --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} \
+  --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80 >/dev/null
+{% endfor %}
 {%- endmacro -%}
 
 {% macro remove_mysql_data_but_keep_container_volume() -%}
@@ -172,8 +190,10 @@ run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0]
 {% for pod in pods %}
 {%- set user = "'" ~ global.user_replication ~ "'@'" ~ '%' ~ "'" %}
 # {{ user }} on {{ pod.containers[0].name }}:
-podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute "CREATE USER IF NOT EXISTS {{ user }} IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}'"
-podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute "GRANT REPLICATION SLAVE ON *.* TO {{ user }}"
+podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute \
+"CREATE USER IF NOT EXISTS {{ user }} IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}'"
+podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute \
+"GRANT REPLICATION SLAVE ON *.* TO {{ user }}"
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute 'FLUSH PRIVILEGES'
 {%- endfor %}
 {%- endmacro -%}
