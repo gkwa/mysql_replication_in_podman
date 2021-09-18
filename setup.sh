@@ -283,9 +283,6 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -le 8 ]]
 
-set +o errexit
-podman pod start my1p my2p my3p my4p my5p >/dev/null
-set -o errexit
 podman pod start my1p my2p my3p my4p my5p >/dev/null
 
 echo 'wait for container healthcheck(s)'

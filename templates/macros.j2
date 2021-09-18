@@ -135,12 +135,10 @@ size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
-set +o errexit
-podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
-set -o errexit
 podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
 
 {{ healthcheck() }}
+
 {{ assert_mysql_data_volume_size() }}
 {%- endmacro -%}
 
