@@ -20,4 +20,4 @@ test_script:
 - sudo ./test_statement_based_binlog_format.bats
 - sudo ./test_percona_checksums.bats
 - sudo ./test_fart.bats
-- sudo ./recover_from_bad_state.bats
+- sudo ./test_recover_from_bad_state.bats

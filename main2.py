@@ -340,7 +340,7 @@ source ./common.sh
 }
 
 """
-path = pathlib.Path("recover_from_bad_state.bats")
+path = pathlib.Path("test_recover_from_bad_state.bats")
 path.write_text(
     jinja2.Template(tmpl_str).render(manifest=manifest, test_name=path.stem)
 )

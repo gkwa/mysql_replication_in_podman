@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 source ./common.sh
 
-@test 'recover_from_bad_state' {
+@test 'test_recover_from_bad_state' {
   # This assumes replication is running
   podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest1'
   podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest2'
