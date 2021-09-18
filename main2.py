@@ -276,3 +276,40 @@ path.write_text(
 )
 path.chmod(path.stat().st_mode | stat.S_IEXEC)
 
+tmpl_str = """#!/usr/bin/env bats
+{%- set global=manifest['global'] %}
+{%- set replication=manifest['replication'] %}
+{%- set pods=manifest['pods'] %}
+source ./common.sh
+
+# This assumes replication is running
+
+@test '{{ test_name }}' {
+  podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest1'
+  podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest2'
+
+  {% for pod in pods %}
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'STOP SLAVE'
+  {%- endfor %}
+
+  podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user=root --host={{ pods[0].name }} --execute 'CREATE DATABASE IF NOT EXISTS ptest1'
+  podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user=root --host={{ pods[0].name }} --database=ptest1 --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+  podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user=root --host={{ pods[0].name }} --database=ptest1 --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+
+  podman exec --env=MYSQL_PWD=root {{ pods[1].containers[0].name }} mysql --user=root --host={{ pods[0].name }} --execute 'CREATE DATABASE IF NOT EXISTS ptest2'
+  podman exec --env=MYSQL_PWD=root {{ pods[1].containers[0].name }} mysql --user=root --host={{ pods[0].name }} --database=ptest2 --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+  podman exec --env=MYSQL_PWD=root {{ pods[1].containers[0].name }} mysql --user=root --host={{ pods[0].name }} --database=ptest2 --execute 'INSERT INTO dummy (name) VALUES ("c"), ("d")'
+
+  result=$(podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --skip-column-names --user=root --host={{ pods[0].name }} --database=ptest1 --execute 'SELECT id FROM dummy WHERE name="a"')
+  [ "$result" == 1 ]
+
+  result=$(podman exec --env=MYSQL_PWD=root {{ pods[1].containers[].name }} mysql --skip-column-names --user=root --host={{ pods[0].name }} --database=ptest2 --execute 'SELECT id FROM dummy WHERE name="c"')
+  [ "$result" == 3 ]
+}
+
+"""
+path = pathlib.Path("test_fart2.bats")
+path.write_text(
+    jinja2.Template(tmpl_str).render(manifest=manifest, test_name=path.stem)
+)
+path.chmod(path.stat().st_mode | stat.S_IEXEC)
