@@ -59,6 +59,7 @@ innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 server_id                      = {{ loop.index }}
 auto_increment_offset          = {{ loop.index }}
+auto_increment_increment       = {{ pods|length }}
 bind-address                   = {{ pod.name }}.dns.podman
 log_bin                        = mysql-bin.log
 log_slave_updates              = ON
