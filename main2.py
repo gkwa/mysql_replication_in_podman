@@ -58,7 +58,7 @@ cat <<'__eot__' >reptest/{{ pod.containers[0].name }}_my.cnf
 server_id                      = {{ loop.index }}
 auto_increment_offset          = {{ loop.index }}
 bind-address                   = {{ pod.name }}.dns.podman
-log_bin                        = ON
+log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 __eot__
 {% endfor %}
