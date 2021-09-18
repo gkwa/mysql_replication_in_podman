@@ -178,7 +178,7 @@ podman pod exists my5p ||
     podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo creating containers
-podman container exists my1c || podman container create registry.redhat.io/rhel8/mysql-80 \
+podman container exists my1c || podman container create \
     --name=my1c \
     --pod=my1p \
     --log-driver=journald \
@@ -192,8 +192,9 @@ podman container exists my1c || podman container create registry.redhat.io/rhel8
     --env=MYSQL_ROOT_PASSWORD=root \
     --env=MYSQL_USER=joe \
     --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db >/dev/null
-podman container exists my2c || podman container create registry.redhat.io/rhel8/mysql-80 \
+    --env=MYSQL_DATABASE=db \
+    registry.redhat.io/rhel8/mysql-80 >/dev/null
+podman container exists my2c || podman container create \
     --name=my2c \
     --pod=my2p \
     --log-driver=journald \
@@ -207,8 +208,9 @@ podman container exists my2c || podman container create registry.redhat.io/rhel8
     --env=MYSQL_ROOT_PASSWORD=root \
     --env=MYSQL_USER=joe \
     --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db >/dev/null
-podman container exists my3c || podman container create registry.redhat.io/rhel8/mysql-80 \
+    --env=MYSQL_DATABASE=db \
+    registry.redhat.io/rhel8/mysql-80 >/dev/null
+podman container exists my3c || podman container create \
     --name=my3c \
     --pod=my3p \
     --log-driver=journald \
@@ -222,8 +224,9 @@ podman container exists my3c || podman container create registry.redhat.io/rhel8
     --env=MYSQL_ROOT_PASSWORD=root \
     --env=MYSQL_USER=joe \
     --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db >/dev/null
-podman container exists my4c || podman container create registry.redhat.io/rhel8/mysql-80 \
+    --env=MYSQL_DATABASE=db \
+    registry.redhat.io/rhel8/mysql-80 >/dev/null
+podman container exists my4c || podman container create \
     --name=my4c \
     --pod=my4p \
     --log-driver=journald \
@@ -237,8 +240,9 @@ podman container exists my4c || podman container create registry.redhat.io/rhel8
     --env=MYSQL_ROOT_PASSWORD=root \
     --env=MYSQL_USER=joe \
     --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db >/dev/null
-podman container exists my5c || podman container create registry.redhat.io/rhel8/mysql-80 \
+    --env=MYSQL_DATABASE=db \
+    registry.redhat.io/rhel8/mysql-80 >/dev/null
+podman container exists my5c || podman container create \
     --name=my5c \
     --pod=my5p \
     --log-driver=journald \
@@ -252,7 +256,8 @@ podman container exists my5c || podman container create registry.redhat.io/rhel8
     --env=MYSQL_ROOT_PASSWORD=root \
     --env=MYSQL_USER=joe \
     --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db >/dev/null
+    --env=MYSQL_DATABASE=db \
+    registry.redhat.io/rhel8/mysql-80 >/dev/null
 
 echo removing data from volume, but leaving volume in place
 rm -rf --preserve-root $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/*

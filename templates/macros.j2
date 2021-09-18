@@ -95,7 +95,7 @@ podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{lo
 {%- set pods=manifest['pods'] %}
 echo creating containers
 {%- for pod in pods %}
-podman container exists {{ pod.containers[0].name }} || podman container create registry.redhat.io/rhel8/mysql-80 \
+podman container exists {{ pod.containers[0].name }} || podman container create \
   --name={{ pod.containers[0].name }} \
   --pod={{ pod.name }} \
   --log-driver=journald \
@@ -109,7 +109,8 @@ podman container exists {{ pod.containers[0].name }} || podman container create 
   --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} \
   --env=MYSQL_USER={{ global.user_non_root }} \
   --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} \
-  --env=MYSQL_DATABASE=db >/dev/null
+  --env=MYSQL_DATABASE=db \
+  registry.redhat.io/rhel8/mysql-80 >/dev/null
 {%- endfor %}
 {%- endmacro -%}
 
