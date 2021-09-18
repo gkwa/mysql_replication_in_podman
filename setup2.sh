@@ -68,9 +68,10 @@ loop1() {
 podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
 podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 
-set +o errexit
-podman container stop --log-level debug --ignore my1c my2c my3c my4c my5c
+# set +o errexit
+# podman container stop --log-level debug --ignore my1c my2c my3c my4c my5c
 # set -o errexit
+set -o errexit
 podman container exists my1c && podman container stop --log-level debug --ignore my1c
 podman container exists my2c && podman container stop --log-level debug --ignore my2c
 podman container exists my3c && podman container stop --log-level debug --ignore my3c
