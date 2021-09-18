@@ -11,6 +11,8 @@ set -o errexit
 podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
 podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 
+# FIXME: {% set containers = [] %}{% for pod in pods %}{{ containers.append( pod.containers[0].name ) }}{% endfor %}
+
 set +o errexit
 podman container stop --log-level debug --ignore {{ containers |join(' ') }}
 set -o errexit

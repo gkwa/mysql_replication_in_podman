@@ -69,8 +69,10 @@ set -o errexit
 podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
 podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 
+# FIXME: NoneNoneNoneNoneNone
+
 set +o errexit
-podman container stop --log-level debug --ignore
+podman container stop --log-level debug --ignore my1c my2c my3c my4c my5c
 set -o errexit
 
 podman pod exists my1p && podman pod stop --log-level debug --ignore my1p
@@ -79,11 +81,11 @@ podman pod exists my3p && podman pod stop --log-level debug --ignore my3p
 podman pod exists my4p && podman pod stop --log-level debug --ignore my4p
 podman pod exists my5p && podman pod stop --log-level debug --ignore my5p
 
-podman pod exists my1p && podman wait --condition=stopped
-podman pod exists my2p && podman wait --condition=stopped
-podman pod exists my3p && podman wait --condition=stopped
-podman pod exists my4p && podman wait --condition=stopped
-podman pod exists my5p && podman wait --condition=stopped
+podman pod exists my1p && podman wait --condition=stopped my1c my2c my3c my4c my5c
+podman pod exists my2p && podman wait --condition=stopped my1c my2c my3c my4c my5c
+podman pod exists my3p && podman wait --condition=stopped my1c my2c my3c my4c my5c
+podman pod exists my4p && podman wait --condition=stopped my1c my2c my3c my4c my5c
+podman pod exists my5p && podman wait --condition=stopped my1c my2c my3c my4c my5c
 podman pod ls
 
 rm -rf reptest
@@ -155,7 +157,7 @@ echo
 cat reptest/my5c_my.cnf
 echo
 
-echo creating volumes
+echo create volumes
 podman volume exists my1dbdata || podman volume create my1dbdata >/dev/null
 podman volume exists my2dbdata || podman volume create my2dbdata >/dev/null
 podman volume exists my3dbdata || podman volume create my3dbdata >/dev/null
@@ -165,7 +167,7 @@ podman volume exists my5dbdata || podman volume create my5dbdata >/dev/null
 echo creating network
 podman network exists replication || podman network create replication >/dev/null
 
-echo creating pods
+echo create pods
 podman pod exists my1p ||
     podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
 podman pod exists my2p ||
@@ -177,7 +179,7 @@ podman pod exists my4p ||
 podman pod exists my5p ||
     podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
-echo creating containers
+echo create containers
 podman container exists my1c || podman container create \
     --name=my1c \
     --pod=my1p \
@@ -259,7 +261,7 @@ podman container exists my5c || podman container create \
     --env=MYSQL_DATABASE=db \
     registry.redhat.io/rhel8/mysql-80 >/dev/null
 
-echo removing data from volume, but leaving volume in place
+echo remove data from volume, but leaving volume in place
 rm -rf --preserve-root $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/*
 rm -rf --preserve-root $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/*
 rm -rf --preserve-root $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')/*
@@ -305,7 +307,7 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 90000 ]]
 
-echo adding user repl
+echo add user repl
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute \
     "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute \
@@ -317,14 +319,14 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute \
     "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 
-echo granting repl user replication permission
+echo grant repl user replication permission
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 
-echo flushing
+echo flush
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'FLUSH PRIVILEGES'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'FLUSH PRIVILEGES'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'FLUSH PRIVILEGES'
