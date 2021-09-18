@@ -132,10 +132,6 @@ size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro podman_list_pods() %}
-podman pod ls
-{%- endmacro -%}
-
 {% macro podman_start_pods() -%}
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
@@ -148,7 +144,7 @@ podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
 {{ healthcheck() }}
 {%- endmacro -%}
 
-{% macro podman_stop_pods() -%}
+{% macro podman_list_pods() -%}
 podman pod ls
 {%- endmacro -%}
 
@@ -168,6 +164,15 @@ podman network exists {{ global.network}} || podman network create {{ global.net
 podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --log-level debug --ignore {{ pod.name }}
 {%- endfor %}
 podman wait --condition=stopped {{ containers_as_single_line() }}
+{%- endmacro -%}
+
+{% macro podman_rm_pods() -%}
+{%- set global=manifest['global'] %}
+{%- set replication=manifest['replication'] %}
+{%- set pods=manifest['pods'] %}
+{% for pod in pods %}
+podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} 
+{%- endfor %}
 {%- endmacro -%}
 
 {% macro podman_pull_images() -%}
@@ -193,6 +198,15 @@ podman container stop --log-level debug --ignore {{ containers_as_single_line() 
 set -o errexit
 {%- for pod in pods %}
 podman container exits {{ pod.containers[0].name }} && podman container stop --log-level debug --ignore {{ pod.containers[0].name }}
+{%- endfor %}
+{%- endmacro -%}
+
+{% macro podman_rm_containers() -%}
+{%- set global=manifest['global'] %}
+{%- set replication=manifest['replication'] %}
+{%- set pods=manifest['pods'] %}
+{%- for pod in pods %}
+podman container rm --force --ignore {{ pod.containers[0].name }}
 {%- endfor %}
 {%- endmacro -%}
 
