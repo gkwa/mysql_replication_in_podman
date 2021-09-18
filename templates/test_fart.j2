@@ -13,13 +13,13 @@
 
 
 
-{{ macros.wait_for_replication() }}
+{{ macros.mysql_wait_for_replication() }}
 
 podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest'
 
-{{ macros.stop_slave() }}
+{{ macros.mysql_stop_slave() }}
 
-{{ macros.create_database_ptest() }}
+{{ macros.mysql_create_database_ptest() }}
 
 result=$(podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --skip-column-names --user=root --host={{ pods[0].name }} --database=ptest --execute 'SELECT id FROM dummy WHERE name="a"')
 [ "$result" == 1 ]
@@ -32,11 +32,11 @@ run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0]
 {%- endif %}
 {%- endfor %}
 
-{{ macros.start_slave() }}
+{{ macros.mysql_start_slave() }}
 
-{{ macros.wait_for_replication() }}
+{{ macros.mysql_wait_for_replication() }}
 
-{{ macros.ensure_ptest_exists_everywhere() }}
+{{ macros.mysql_ensure_ptest_exists_everywhere() }}
 
 
 

@@ -27,23 +27,23 @@ rm -rf reptest
 mkdir reptest
 
 {{ macros.mysql_conf_setup() }}
-{{ macros.container_volume_setup() }}
+{{ macros.podman_container_volume_setup() }}
 
 podman network exists {{ global.network}} || podman network create {{ global.network }} >/dev/null
 
-{{ macros.create_pods() }}
-{{ macros.create_containers() }}
+{{ macros.podman_create_pods() }}
+{{ macros.podman_create_containers() }}
 {{ macros.remove_mysql_data_but_keep_container_volume() }}
-{{ macros.start_pods() }}
+{{ macros.podman_start_pods() }}
 
 # podman pod ls
 # podman logs --since=30s {{ pods[0].containers[0].name }}
 
 {{ macros.healthcheck() }}
 {{ macros.assert_mysql_data_volum_size() }}
-{{ macros.create_mysql_user_repl() }}
-{{ macros.change_master_to_master_host() }}
-{{ macros.start_slave() }}
-{{ macros.wait_for_replication() }}
+{{ macros.mysql_create_mysql_user_repl() }}
+{{ macros.mysql_change_master_to_master_host() }}
+{{ macros.mysql_start_slave() }}
+{{ macros.mysql_wait_for_replication() }}
 
 {# keep newline at end of file please but only for aesthetics #}

@@ -13,7 +13,7 @@
 
 
 
-{{ macros.wait_for_replication() }}
+{{ macros.mysql_wait_for_replication() }}
 
 podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest1'
 podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest2'
@@ -61,8 +61,8 @@ run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0]
 {%- endif %}  
 {%- endfor %}
 
-{{ macros.start_slave() }}
-{{ macros.wait_for_replication() }}
+{{ macros.mysql_start_slave() }}
+{{ macros.mysql_wait_for_replication() }}
 
 {% for pod in pods %}
 run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest1' #{{ loop.index }}

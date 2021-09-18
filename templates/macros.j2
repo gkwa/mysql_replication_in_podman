@@ -1,4 +1,4 @@
-{% macro status() -%}
+{% macro podman_status() -%}
 podman ps
 podman ps --pod
 podman ps -a --pod
@@ -7,7 +7,7 @@ podman volume ls
 podman pod ls
 {%- endmacro -%}
 
-{% macro wait_for_replication() -%}
+{% macro mysql_wait_for_replication() -%}
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
@@ -18,7 +18,7 @@ loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.name }}.dns.podman $sleep
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro start_slave() -%}
+{% macro mysql_start_slave() -%}
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
@@ -28,7 +28,7 @@ podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].nam
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro change_master_to_master_host() -%}
+{% macro mysql_change_master_to_master_host() -%}
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
@@ -67,7 +67,7 @@ echo
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro container_volume_setup() -%}
+{% macro podman_container_volume_setup() -%}
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
@@ -76,7 +76,7 @@ podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }} >
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro create_pods() -%}
+{% macro podman_create_pods() -%}
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
@@ -85,7 +85,7 @@ podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --pu
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro create_containers() -%}
+{% macro podman_create_containers() -%}
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
@@ -124,7 +124,7 @@ size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro start_pods() -%}
+{% macro podman_start_pods() -%}
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
@@ -143,7 +143,7 @@ until podman healthcheck run {{ pod.containers[0].name }} </dev/null; do sleep 3
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro stop_slave() -%}
+{% macro mysql_stop_slave() -%}
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
@@ -155,7 +155,7 @@ podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].nam
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro create_database_ptest() -%}
+{% macro mysql_create_database_ptest() -%}
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
@@ -173,7 +173,7 @@ podman run --pod={{ pods[0].name }} --env=PTDEBUG=0 --env=MYSQL_PWD={{ global.us
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro ensure_ptest_exists_everywhere() -%}
+{% macro mysql_ensure_ptest_exists_everywhere() -%}
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
@@ -183,7 +183,7 @@ run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0]
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro create_mysql_user_repl() -%}
+{% macro mysql_create_mysql_user_repl() -%}
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
