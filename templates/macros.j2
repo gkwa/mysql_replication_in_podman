@@ -71,7 +71,9 @@ echo
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
-{% import "macros.j2" as macros %}{% for pod in pods %}
+{% import "macros.j2" as macros %}
+echo creating volumes
+{%- for pod in pods %}
 podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }} >/dev/null
 {%- endfor %}
 {%- endmacro -%}
@@ -80,8 +82,10 @@ podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }} >
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
-{% for pod in pods %}
-podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} --network={{ global.network }} >/dev/null
+echo creating pods
+{%- for pod in pods %}
+podman pod exists {{ pod.name }} ||
+podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} --network={{ global.network }} >/dev/null
 {%- endfor %}
 {%- endmacro -%}
 
@@ -89,7 +93,8 @@ podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --pu
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
-{% for pod in pods %}
+echo creating containers
+{%- for pod in pods %}
 podman container exists {{ pod.containers[0].name }} || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name={{ pod.containers[0].name }} \
   --pod={{ pod.name }} \
@@ -106,14 +111,15 @@ podman container exists {{ pod.containers[0].name }} || podman container create 
   --env=MYSQL_USER={{ global.user_non_root }} \
   --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} \
   --env=MYSQL_DATABASE=db >/dev/null
-{% endfor %}
+{%- endfor %}
 {%- endmacro -%}
 
 {% macro remove_mysql_data_but_keep_container_volume() -%}
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
-{% for pod in pods %}
+echo removing data from volume, but leaving volume in place
+{%- for pod in pods %}
 rm -rf --preserve-root $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/*
 {%- endfor %}
 
@@ -138,7 +144,8 @@ podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
-{% for pod in pods %}
+echo waiting for container healthcheck
+{%- for pod in pods %}
 until podman healthcheck run {{ pod.containers[0].name }} </dev/null; do sleep 3; done
 {%- endfor %}
 {%- endmacro -%}
@@ -187,9 +194,9 @@ run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0]
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
-{% for pod in pods %}
+echo granting repl user replication permission
+{%- for pod in pods %}
 {%- set user = "'" ~ global.user_replication ~ "'@'" ~ '%' ~ "'" %}
-# {{ user }} on {{ pod.containers[0].name }}:
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute \
 "CREATE USER IF NOT EXISTS {{ user }} IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}'"
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute \

@@ -162,23 +162,30 @@ cat reptest/my5c_my.cnf
 echo
 
 
+echo creating volumes
 podman volume exists my1dbdata || podman volume create my1dbdata >/dev/null
 podman volume exists my2dbdata || podman volume create my2dbdata >/dev/null
 podman volume exists my3dbdata || podman volume create my3dbdata >/dev/null
 podman volume exists my4dbdata || podman volume create my4dbdata >/dev/null
 podman volume exists my5dbdata || podman volume create my5dbdata >/dev/null
 
+echo creating network
 podman network exists replication || podman network create replication >/dev/null
 
 
+echo creating pods
+podman pod exists my1p ||
+podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
+podman pod exists my2p ||
+podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
+podman pod exists my3p ||
+podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
+podman pod exists my4p ||
+podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
+podman pod exists my5p ||
+podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
-podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
-podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
-podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
-podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
-podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
-
-
+echo creating containers
 podman container exists my1c || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name=my1c \
   --pod=my1p \
@@ -195,7 +202,6 @@ podman container exists my1c || podman container create registry.redhat.io/rhel8
   --env=MYSQL_USER=joe \
   --env=MYSQL_PASSWORD=joe \
   --env=MYSQL_DATABASE=db >/dev/null
-
 podman container exists my2c || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name=my2c \
   --pod=my2p \
@@ -212,7 +218,6 @@ podman container exists my2c || podman container create registry.redhat.io/rhel8
   --env=MYSQL_USER=joe \
   --env=MYSQL_PASSWORD=joe \
   --env=MYSQL_DATABASE=db >/dev/null
-
 podman container exists my3c || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name=my3c \
   --pod=my3p \
@@ -229,7 +234,6 @@ podman container exists my3c || podman container create registry.redhat.io/rhel8
   --env=MYSQL_USER=joe \
   --env=MYSQL_PASSWORD=joe \
   --env=MYSQL_DATABASE=db >/dev/null
-
 podman container exists my4c || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name=my4c \
   --pod=my4p \
@@ -246,7 +250,6 @@ podman container exists my4c || podman container create registry.redhat.io/rhel8
   --env=MYSQL_USER=joe \
   --env=MYSQL_PASSWORD=joe \
   --env=MYSQL_DATABASE=db >/dev/null
-
 podman container exists my5c || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name=my5c \
   --pod=my5p \
@@ -264,8 +267,7 @@ podman container exists my5c || podman container create registry.redhat.io/rhel8
   --env=MYSQL_PASSWORD=joe \
   --env=MYSQL_DATABASE=db >/dev/null
 
-
-
+echo removing data from volume, but leaving volume in place
 rm -rf --preserve-root $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/*
 rm -rf --preserve-root $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/*
 rm -rf --preserve-root $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')/*
@@ -293,7 +295,7 @@ podman pod start my1p my2p my3p my4p my5p >/dev/null
 # podman logs --since=30s my1c
 
 
-
+echo waiting for container healthcheck
 until podman healthcheck run my1c </dev/null; do sleep 3; done
 until podman healthcheck run my2c </dev/null; do sleep 3; done
 until podman healthcheck run my3c </dev/null; do sleep 3; done
@@ -312,32 +314,27 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ |awk 
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -gt 90000 ]]
 
-
-# 'repl'@'%' on my1c:
+echo granting repl user replication permission
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute \
 "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute \
 "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'FLUSH PRIVILEGES'
-# 'repl'@'%' on my2c:
 podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p --execute \
 "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p --execute \
 "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p --execute 'FLUSH PRIVILEGES'
-# 'repl'@'%' on my3c:
 podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p --execute \
 "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p --execute \
 "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p --execute 'FLUSH PRIVILEGES'
-# 'repl'@'%' on my4c:
 podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p --execute \
 "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p --execute \
 "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p --execute 'FLUSH PRIVILEGES'
-# 'repl'@'%' on my5c:
 podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p --execute \
 "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p --execute \

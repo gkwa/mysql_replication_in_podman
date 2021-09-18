@@ -29,6 +29,7 @@ mkdir reptest
 {{ macros.mysql_conf_setup() }}
 {{ macros.podman_container_volume_setup() }}
 
+echo creating network
 podman network exists {{ global.network}} || podman network create {{ global.network }} >/dev/null
 
 {{ macros.podman_create_pods() }}
