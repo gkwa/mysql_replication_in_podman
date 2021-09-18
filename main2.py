@@ -282,11 +282,17 @@ tmpl_str = """#!/usr/bin/env bats
 {%- set pods=manifest['pods'] %}
 source ./common.sh
 
-# This assumes replication is running
-
 @test '{{ test_name }}' {
+  # This assumes replication is running
   podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest1'
   podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest2'
+
+  {%- for pod in pods %}
+  run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest1'
+  [ "$status" == 1 ]
+  run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest2'
+  [ "$status" == 1 ]
+  {%- endfor %}
 
   {% for pod in pods %}
   podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'STOP SLAVE'
@@ -296,9 +302,9 @@ source ./common.sh
   podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user=root --host={{ pods[0].name }} --database=ptest1 --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
   podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user=root --host={{ pods[0].name }} --database=ptest1 --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 
-  podman exec --env=MYSQL_PWD=root {{ pods[1].containers[0].name }} mysql --user=root --host={{ pods[0].name }} --execute 'CREATE DATABASE IF NOT EXISTS ptest2'
-  podman exec --env=MYSQL_PWD=root {{ pods[1].containers[0].name }} mysql --user=root --host={{ pods[0].name }} --database=ptest2 --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
-  podman exec --env=MYSQL_PWD=root {{ pods[1].containers[0].name }} mysql --user=root --host={{ pods[0].name }} --database=ptest2 --execute 'INSERT INTO dummy (name) VALUES ("c"), ("d")'
+  podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user=root --host={{ pods[1].name }} --execute 'CREATE DATABASE IF NOT EXISTS ptest2'
+  podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user=root --host={{ pods[1].name }} --database=ptest2 --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+  podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user=root --host={{ pods[1].name }} --database=ptest2 --execute 'INSERT INTO dummy (name) VALUES ("c"), ("d")'
 
   result=$(podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --skip-column-names --user=root --host={{ pods[0].name }} --database=ptest1 --execute 'SELECT id FROM dummy WHERE name="a"')
   [ "$result" == 1 ]
@@ -308,7 +314,7 @@ source ./common.sh
 }
 
 """
-path = pathlib.Path("test_fart2.bats")
+path = pathlib.Path("recover_from_bad_state.bats")
 path.write_text(
     jinja2.Template(tmpl_str).render(manifest=manifest, test_name=path.stem)
 )
