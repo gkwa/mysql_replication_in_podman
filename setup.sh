@@ -39,7 +39,6 @@ server_id                      = 1
 auto_increment_offset          = 1
 bind-address                   = my1p.dns.podman
 log_bin                        = ON
-log_slave_updates              = ON
 binlog_format                  = STATEMENT
 __eot__
 
@@ -51,7 +50,6 @@ server_id                      = 2
 auto_increment_offset          = 2
 bind-address                   = my2p.dns.podman
 log_bin                        = ON
-log_slave_updates              = ON
 binlog_format                  = STATEMENT
 __eot__
 
@@ -63,7 +61,6 @@ server_id                      = 3
 auto_increment_offset          = 3
 bind-address                   = my3p.dns.podman
 log_bin                        = ON
-log_slave_updates              = ON
 binlog_format                  = STATEMENT
 __eot__
 
@@ -75,7 +72,6 @@ server_id                      = 4
 auto_increment_offset          = 4
 bind-address                   = my4p.dns.podman
 log_bin                        = ON
-log_slave_updates              = ON
 binlog_format                  = STATEMENT
 __eot__
 
@@ -87,7 +83,6 @@ server_id                      = 5
 auto_increment_offset          = 5
 bind-address                   = my5p.dns.podman
 log_bin                        = ON
-log_slave_updates              = ON
 binlog_format                  = STATEMENT
 __eot__
 
