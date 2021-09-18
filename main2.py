@@ -234,9 +234,14 @@ tmpl_str = """#!/usr/bin/env bats
 {%- set pods=manifest['pods'] %}
 source ./common.sh
 
-# This assumes replication is running
-
 @test '{{ test_name }}' {
+  echo waiting for replication to be ready...
+  sleep=3
+  tries=20
+  {%- for pod in pods %}
+  loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.containers[0].name }}.dns.podman $sleep $tries
+  {%- endfor %}
+
   podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest'
 
   {% for pod in pods %}
