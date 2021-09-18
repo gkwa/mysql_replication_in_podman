@@ -5,11 +5,11 @@ source ./common.sh
   echo waiting for replication to be ready...
   sleep=3
   tries=20
-  loop1 repcheck my1c my1c.dns.podman $sleep $tries
-  loop1 repcheck my1c my2c.dns.podman $sleep $tries
-  loop1 repcheck my1c my3c.dns.podman $sleep $tries
-  loop1 repcheck my1c my4c.dns.podman $sleep $tries
-  loop1 repcheck my1c my5c.dns.podman $sleep $tries
+  loop1 repcheck my1c my1p.dns.podman $sleep $tries
+  loop1 repcheck my1c my2p.dns.podman $sleep $tries
+  loop1 repcheck my1c my3p.dns.podman $sleep $tries
+  loop1 repcheck my1c my4p.dns.podman $sleep $tries
+  loop1 repcheck my1c my5p.dns.podman $sleep $tries
 
   podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest1'
   podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest2'

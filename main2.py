@@ -238,7 +238,7 @@ source ./common.sh
   sleep=3
   tries=20
   {%- for pod in pods %}
-  loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.containers[0].name }}.dns.podman $sleep $tries
+  loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.name }}.dns.podman $sleep $tries
   {%- endfor %}
 
   podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest'
@@ -271,7 +271,7 @@ source ./common.sh
   sleep=3
   tries=20
   {%- for pod in pods %}
-  loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.containers[0].name }}.dns.podman $sleep $tries
+  loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.name }}.dns.podman $sleep $tries
   {%- endfor %}
 
   # ensure these pass
@@ -299,7 +299,7 @@ source ./common.sh
   sleep=3
   tries=20
   {%- for pod in pods %}
-  loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.containers[0].name }}.dns.podman $sleep $tries
+  loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.name }}.dns.podman $sleep $tries
   {%- endfor %}
 
   podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest1'
