@@ -344,7 +344,7 @@ source ./common.sh
   {%- endif %}  
   {%- endfor %}
 
-  # start rep
+  # start replication
   {%- for pod in pods %}
   podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
   {%- endfor %}
