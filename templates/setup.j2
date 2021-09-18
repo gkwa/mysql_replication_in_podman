@@ -4,9 +4,14 @@ set -o errexit
 
 {{ macros.import_common_functions() }}
 {{ macros.podman_pull_images() }}
+
 {{ macros.podman_stop_containers() }}
 {{ macros.podman_stop_pods() }}
+{{ macros.podman_rm_containers() }}
+{{ macros.podman_rm_pods() }}
+
 {{ macros.podman_list_pods() }}
+
 {{ macros.mysql_conf_setup() }}
 {{ macros.podman_container_volume_setup() }}
 {{ macros.podman_create_network() }}
@@ -14,7 +19,6 @@ set -o errexit
 {{ macros.podman_create_containers() }}
 {{ macros.remove_mysql_data_but_keep_container_volume() }}
 {{ macros.podman_start_pods() }}
-{{ macros.assert_mysql_data_volume_size() }}
 {{ macros.mysql_create_mysql_user_repl() }}
 {{ macros.mysql_change_master_to_master_host() }}
 {{ macros.mysql_start_slave() }}

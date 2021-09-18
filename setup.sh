@@ -82,6 +82,19 @@ podman pod stop my2p --log-level debug --ignore my2p
 podman pod stop my3p --log-level debug --ignore my3p
 podman pod stop my4p --log-level debug --ignore my4p
 podman pod stop my5p --log-level debug --ignore my5p
+
+podman container rm --force --ignore my1c
+podman container rm --force --ignore my2c
+podman container rm --force --ignore my3c
+podman container rm --force --ignore my4c
+podman container rm --force --ignore my5c
+
+podman pod rm --force my1p --ignore my1p
+podman pod rm --force my2p --ignore my2p
+podman pod rm --force my3p --ignore my3p
+podman pod rm --force my4p --ignore my4p
+podman pod rm --force my5p --ignore my5p
+
 podman pod ls
 
 mkdir -p reptest
@@ -321,7 +334,6 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'FLUSH PRIVILEGES'
 
 echo mysql: setup replication
-
 position=$(
     podman exec --env=MYSQL_PWD=root my5c \
         mysql --user=root --host=my5p --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'

@@ -21,12 +21,6 @@ expanded = tmpl.render(manifest=manifest, test_name=path.stem)
 path.write_text(expanded)
 path.chmod(path.stat().st_mode | stat.S_IEXEC)
 
-tmpl = env.get_template("setup2.j2")
-path = pathlib.Path("setup2.sh")
-expanded = tmpl.render(manifest=manifest, test_name=path.stem)
-path.write_text(expanded)
-path.chmod(path.stat().st_mode | stat.S_IEXEC)
-
 path = pathlib.Path("test_replication_is_running.bats")
 tmpl = env.get_template(f"{path.stem}.j2")
 expanded = tmpl.render(manifest=manifest, test_name=path.stem)
