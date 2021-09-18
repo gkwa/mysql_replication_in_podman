@@ -337,9 +337,11 @@ source ./common.sh
   podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
   {%- endfor %}
 
-  {% for block in replication %}
-  until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ block.source.container }} mysql --user={{ global.user_root_pass }} --host={{ block.instance.pod }}.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-  until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ block.source.container }} mysql --user={{ global.user_root_pass }} --host={{ block.instance.pod }}.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
+  echo waiting for replication to be ready...
+  sleep=3
+  tries=20
+  {%- for pod in pods %}
+  loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.containers[0].name }}.dns.podman $sleep $tries
   {%- endfor %}
 
   {% for pod in pods %}
