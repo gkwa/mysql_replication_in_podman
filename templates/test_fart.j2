@@ -36,7 +36,7 @@ run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0]
 
 {{ macros.mysql_wait_for_replication() }}
 
-{{ macros.mysql_ensure_ptest_exists_everywhere() }}
+{{ macros.mysql_check_ptest_exists_everywhere() }}
 
 
 

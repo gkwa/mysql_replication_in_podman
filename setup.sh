@@ -272,7 +272,7 @@ rm -rf --preserve-root $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoin
 rm -rf --preserve-root $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/*
 rm -rf --preserve-root $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/*
 
-# ensure data directory is cleaned out
+echo check data directory is cleaned out
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -le 8 ]]
 size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
@@ -300,7 +300,7 @@ until podman healthcheck run my3c </dev/null; do sleep 3; done
 until podman healthcheck run my4c </dev/null; do sleep 3; done
 until podman healthcheck run my5c </dev/null; do sleep 3; done
 
-# ensure data directory is bigger than 90MB (tends to be ~97MB)
+echo check data directory is larger than 90MB (tends to be ~97MB)
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -gt 90000 ]]
 size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')

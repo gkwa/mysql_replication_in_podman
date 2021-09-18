@@ -117,7 +117,7 @@ podman container exists {{ pod.containers[0].name }} || podman container create 
 rm -rf --preserve-root $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/*
 {%- endfor %}
 
-# ensure data directory is cleaned out
+echo check data directory is cleaned out
 {%- for pod in pods %}
 size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -le 8 ]]
@@ -173,7 +173,7 @@ podman run --pod={{ pods[0].name }} --env=PTDEBUG=0 --env=MYSQL_PWD={{ global.us
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro mysql_ensure_ptest_exists_everywhere() -%}
+{% macro mysql_check_ptest_exists_everywhere() -%}
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
@@ -272,7 +272,7 @@ loop1() {
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
-# ensure data directory is bigger than 90MB (tends to be ~97MB)
+echo check data directory is larger than 90MB (tends to be ~97MB)
 {%- for pod in pods %}
 size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -gt 90000 ]]
