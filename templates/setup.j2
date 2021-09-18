@@ -14,7 +14,7 @@ set -o errexit
 {{ macros.podman_create_containers() }}
 {{ macros.remove_mysql_data_but_keep_container_volume() }}
 {{ macros.podman_start_pods() }}
-{{ macros.assert_mysql_data_volum_size() }}
+{{ macros.assert_mysql_data_volume_size() }}
 {{ macros.mysql_create_mysql_user_repl() }}
 {{ macros.mysql_change_master_to_master_host() }}
 {{ macros.mysql_start_slave() }}
