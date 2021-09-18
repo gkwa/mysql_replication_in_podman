@@ -59,6 +59,7 @@ innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 server_id                      = {{ loop.index }}
 auto_increment_offset          = {{ loop.index }}
+auto_increment_increment       = {{ pods|length }}
 bind-address                   = {{ pod.name }}.dns.podman
 log_bin                        = mysql-bin.log
 log_slave_updates              = ON
@@ -312,16 +313,16 @@ source ./common.sh
   run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[1].name }}.dns.podman --execute 'USE ptest2'
   [ "$status" == 0 ]
 
-  {%- for pod in pods %}
-  {% if not loop.first -%}
-  run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest1'
+  {% for pod in pods %}
+  {% if loop.index !=1 -%}
+  run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest1' #{{ loop.index }}
   [ "$status" == 1 ]
   {%- endif %}  
   {%- endfor %}
 
   {%- for pod in pods %}
-  {% if not loop.second -%}
-  run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest2'
+  {% if loop.index !=2 -%}
+  run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest2' #{{ loop.index }}
   [ "$status" == 1 ]
   {%- endif %}  
   {%- endfor %}
@@ -332,9 +333,9 @@ source ./common.sh
   {%- endfor %}
 
   {% for pod in pods %}
-  run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest1'
+  run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest1' #{{ loop.index }}
   [ "$status" == 0 ]
-  run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest2'
+  run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest2' #{{ loop.index }}
   [ "$status" == 0 ]
   {%- endfor %}
 }
