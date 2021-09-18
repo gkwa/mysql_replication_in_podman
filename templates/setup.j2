@@ -1,0 +1,62 @@
+#!/bin/bash
+
+{% import "macros.j2" as macros with context %}
+
+{%- set global=manifest['global'] %}
+{%- set replication=manifest['replication'] %}
+{%- set pods=manifest['pods'] %}
+
+{{ macros.import_common_functions() }}
+
+# podman pod stop --ignore --all; podman images prune; podman container stop --ignore --all; podman pod rm --all --force; podman container rm --all --force; podman volume rm --all --force; for network in $(podman network ls --format json | jq -r '.[].Name'); do if [[ "$network" !=  "podman" ]]; then podman network exists $network && podman network rm $network; fi; done; podman pod stop --ignore --all; podman images prune; podman container stop --ignore --all; podman pod rm --all --force; podman container rm --all --force; podman volume rm --all --force; for network in $(podman network ls --format json | jq -r '.[].Name'); do if [[ "$network" !=  "podman" ]]; then podman network exists $network && podman network rm $network; fi; done; podman ps; podman ps --pod; podman ps -a --pod; podman network ls; podman volume ls; podman pod ls; #destroyall
+
+set -o errexit
+
+# FIXME: {% set containers = [] %}{% for pod in pods %}{{ containers.append( pod.containers[0].name ) }}{% endfor %}
+
+podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
+podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
+
+set +o errexit
+podman container stop --log-level debug --ignore {{ containers |join(' ') }}
+set -o errexit
+{% for pod in pods %}
+podman pod exists {{ pod.name }} && podman pod stop --log-level debug --ignore {{ pod.name }}
+{%- endfor %}
+
+{% for pod in pods %}
+podman pod exists {{ pod.name }} && podman wait --condition=stopped {{ containers |join(' ') }}
+{%- endfor %}
+podman pod ls
+
+rm -rf reptest
+mkdir reptest
+
+{{ macros.mysql_conf_setup() }}
+{{ macros.container_volume_setup() }}
+
+podman network exists {{ global.network}} || podman network create {{ global.network }} >/dev/null
+
+{{ macros.create_pods() }}
+{{ macros.create_containers() }}
+{{ macros.remove_mysql_data_but_keep_container_volume() }}
+{{ macros.start_pods() }}
+
+# podman pod ls
+# podman logs --since=30s {{ pods[0].containers[0].name }}
+
+{{ macros.healthcheck() }}
+
+# ensure data directory is bigger than 90MB (tends to be ~97MB)
+{%- for pod in pods %}
+size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
+[[ $size -gt 90000 ]]
+{%- endfor %}
+
+{{ macros.create_mysql_user_repl() }}
+
+{{ macros.change_master_to_master_host() }}
+
+{{ macros.start_slave() }}
+
+{{ macros.wait_for_replication() }}
