@@ -197,7 +197,7 @@ set +o errexit
 podman container stop --log-level debug --ignore {{ containers_as_single_line() }}
 set -o errexit
 {%- for pod in pods %}
-podman container exits {{ pod.containers[0].name }} && podman container stop --log-level debug --ignore {{ pod.containers[0].name }}
+podman container exists {{ pod.containers[0].name }} && podman container stop --log-level debug --ignore {{ pod.containers[0].name }}
 {%- endfor %}
 {%- endmacro -%}
 
