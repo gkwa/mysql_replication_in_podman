@@ -286,7 +286,7 @@ podman pod start my1p my2p my3p my4p my5p >/dev/null
 # podman pod ls
 # podman logs --since=30s my1c
 
-echo waiting for container healthcheck
+echo wait for container healthcheck
 until podman healthcheck run my1c </dev/null; do sleep 3; done
 until podman healthcheck run my2c </dev/null; do sleep 3; done
 until podman healthcheck run my3c </dev/null; do sleep 3; done
@@ -305,7 +305,7 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 90000 ]]
 
-echo granting repl user replication permission
+echo adding user repl
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute \
     "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute \
@@ -316,11 +316,15 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman -
     "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute \
     "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
+
+echo granting repl user replication permission
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
+
+echo flushing
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'FLUSH PRIVILEGES'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'FLUSH PRIVILEGES'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'FLUSH PRIVILEGES'
@@ -370,7 +374,7 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 
-echo waiting for replication to be ready...
+echo wait for replication to be ready...
 sleep=3
 tries=20
 loop1 repcheck my1c my1p.dns.podman $sleep $tries

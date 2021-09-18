@@ -11,7 +11,7 @@ podman pod ls
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
-echo waiting for replication to be ready...
+echo wait for replication to be ready...
 sleep=3; tries=20
 {%- for pod in pods %}
 loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.name }}.dns.podman $sleep $tries
@@ -144,7 +144,7 @@ podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
-echo waiting for container healthcheck
+echo wait for container healthcheck
 {%- for pod in pods %}
 until podman healthcheck run {{ pod.containers[0].name }} </dev/null; do sleep 3; done
 {%- endfor %}
@@ -194,7 +194,7 @@ run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].container
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
-echo granting repl user replication permission
+echo adding user {{ global.user_replication }}
 
 {%- for pod in pods %}
 {%- set user = "'" ~ global.user_replication ~ "'@'" ~ '%' ~ "'" %}
@@ -202,11 +202,13 @@ podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0]
 "CREATE USER IF NOT EXISTS {{ user }} IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}'"
 {%- endfor %}
 
+echo granting repl user replication permission
 {%- for pod in pods %}
 {%- set user = "'" ~ global.user_replication ~ "'@'" ~ '%' ~ "'" %}
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO {{ user }}"
 {%- endfor %}
 
+echo flushing
 {%- for pod in pods %}
 {%- set user = "'" ~ global.user_replication ~ "'@'" ~ '%' ~ "'" %}
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'FLUSH PRIVILEGES'

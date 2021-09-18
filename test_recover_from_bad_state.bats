@@ -75,7 +75,7 @@ loop1() {
 
 
 
-echo waiting for replication to be ready...
+echo wait for replication to be ready...
 sleep=3; tries=20
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
 loop1 repcheck my1c my2p.dns.podman $sleep $tries
@@ -162,7 +162,7 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 
-echo waiting for replication to be ready...
+echo wait for replication to be ready...
 sleep=3; tries=20
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
 loop1 repcheck my1c my2p.dns.podman $sleep $tries
