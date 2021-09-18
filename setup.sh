@@ -160,23 +160,23 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ |awk 
 
 
 # 'repl'@'%' on my1c:
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute "CREATE USER 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'FLUSH PRIVILEGES'
 # 'repl'@'%' on my2c:
-podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p --execute "CREATE USER 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
+podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p --execute "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p --execute 'FLUSH PRIVILEGES'
 # 'repl'@'%' on my3c:
-podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p --execute "CREATE USER 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
+podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p --execute "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p --execute 'FLUSH PRIVILEGES'
 # 'repl'@'%' on my4c:
-podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p --execute "CREATE USER 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
+podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p --execute "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p --execute 'FLUSH PRIVILEGES'
 # 'repl'@'%' on my5c:
-podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p --execute "CREATE USER 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
+podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p --execute "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p --execute 'FLUSH PRIVILEGES'
 
@@ -203,3 +203,12 @@ podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman -
 podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
+
+echo waiting for replication to be ready...
+sleep=3
+tries=20
+loop1 repcheck my1c my1p.dns.podman $sleep $tries
+loop1 repcheck my1c my2p.dns.podman $sleep $tries
+loop1 repcheck my1c my3p.dns.podman $sleep $tries
+loop1 repcheck my1c my4p.dns.podman $sleep $tries
+loop1 repcheck my1c my5p.dns.podman $sleep $tries

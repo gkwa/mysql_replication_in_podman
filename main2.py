@@ -113,7 +113,7 @@ size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')
 {% for pod in pods %}
 {%- set user = "'" ~ global.user_replication ~ "'@'" ~ '%' ~ "'" %}
 # {{ user }} on {{ pod.containers[0].name }}:
-podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute "CREATE USER {{ user }} IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}'"
+podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute "CREATE USER IF NOT EXISTS {{ user }} IDENTIFIED WITH mysql_native_password BY '{{ global.user_replication_pass }}'"
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute "GRANT REPLICATION SLAVE ON *.* TO {{ user }}"
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }} --execute 'FLUSH PRIVILEGES'
 {%- endfor %}
@@ -131,6 +131,13 @@ MASTER_LOG_POS=$position"
 
 {% for pod in pods %}
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE USER="{{ global.user_replication }}" PASSWORD="{{ global.user_replication_pass }}"'
+{%- endfor %}
+
+echo waiting for replication to be ready...
+sleep=3
+tries=20
+{%- for pod in pods %}
+loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.name }}.dns.podman $sleep $tries
 {%- endfor %}
 
 """
