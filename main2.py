@@ -303,7 +303,7 @@ source ./common.sh
   result=$(podman exec --env=MYSQL_PWD=root {{ pods[0].containers[0].name }} mysql --skip-column-names --user=root --host={{ pods[0].name }} --database=ptest1 --execute 'SELECT id FROM dummy WHERE name="a"')
   [ "$result" == 1 ]
 
-  result=$(podman exec --env=MYSQL_PWD=root {{ pods[1].containers[].name }} mysql --skip-column-names --user=root --host={{ pods[0].name }} --database=ptest2 --execute 'SELECT id FROM dummy WHERE name="c"')
+  result=$(podman exec --env=MYSQL_PWD=root {{ pods[1].containers[0].name }} mysql --skip-column-names --user=root --host={{ pods[1].name }} --database=ptest2 --execute 'SELECT id FROM dummy WHERE name="c"')
   [ "$result" == 3 ]
 }
 
