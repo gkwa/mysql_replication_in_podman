@@ -1,47 +1,19 @@
 #!/bin/bash
+set -o errexit
 {%- import "macros.j2" as macros with context %}
 
-{%- set global=manifest['global'] %}
-{%- set replication=manifest['replication'] %}
-{%- set pods=manifest['pods'] %}
-
 {{ macros.import_common_functions() }}
-set -o errexit
-
-podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
-podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
-
-# FIXME: {% set containers = [] %}{% for pod in pods %}{{ containers.append( pod.containers[0].name ) }}{% endfor %}
-
-set +o errexit
-podman container stop --log-level debug --ignore {{ containers |join(' ') }}
-set -o errexit
-{% for pod in pods %}
-podman pod exists {{ pod.name }} && podman pod stop --log-level debug --ignore {{ pod.name }}
-{%- endfor %}
-
-{% for pod in pods %}
-podman pod exists {{ pod.name }} && podman wait --condition=stopped {{ containers |join(' ') }}
-{%- endfor %}
-podman pod ls
-
-rm -rf reptest
-mkdir reptest
-
+{{ macros.podman_pull_images() }}
+{{ macros.podman_stop_containers() }}
+{{ macros.podman_stop_pods() }}
+{{ macros.podman_list_pods() }}
 {{ macros.mysql_conf_setup() }}
 {{ macros.podman_container_volume_setup() }}
-
-echo create network
-podman network exists {{ global.network}} || podman network create {{ global.network }} >/dev/null
-
+{{ macros.podman_create_network() }}
 {{ macros.podman_create_pods() }}
 {{ macros.podman_create_containers() }}
 {{ macros.remove_mysql_data_but_keep_container_volume() }}
 {{ macros.podman_start_pods() }}
-
-# podman pod ls
-# podman logs --since=30s {{ pods[0].containers[0].name }}
-
 {{ macros.healthcheck() }}
 {{ macros.assert_mysql_data_volum_size() }}
 {{ macros.mysql_create_mysql_user_repl() }}
