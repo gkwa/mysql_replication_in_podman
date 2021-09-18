@@ -41,9 +41,9 @@ source ./common.sh
   podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --database=ptest2 --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
   podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --database=ptest2 --execute 'INSERT INTO dummy (name) VALUES ("c"), ("d")'
 
-  result=$(podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my1p --database=ptest1 --execute 'SELECT id FROM dummy WHERE name="a"')
-  [ "$result" == 1 ]
+  run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
+  [ "$status" == 0 ]
 
-  result=$(podman exec --env=MYSQL_PWD=root my2c mysql --skip-column-names --user=root --host=my2p --database=ptest2 --execute 'SELECT id FROM dummy WHERE name="c"')
-  [ "$result" == 3 ]
+  run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest2'
+  [ "$status" == 0 ]
 }
