@@ -70,6 +70,8 @@ loop1() {
 
 @test 'test_percona_checksums' {
 
+
+
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest'
 
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'USE ptest'
@@ -96,4 +98,12 @@ podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=root percona-toolkit pt-ta
 podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=root percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h=my3p.dns.podman,u=root,p=root,P=3306
 podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=root percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h=my4p.dns.podman,u=root,p=root,P=3306
 podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=root percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h=my5p.dns.podman,u=root,p=root,P=3306
+
+
+
+
+
+
+
+
 }

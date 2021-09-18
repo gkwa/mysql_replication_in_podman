@@ -71,9 +71,12 @@ loop1() {
 @test 'test_recover_from_bad_state' {
 
 
+
+
+
+
 echo waiting for replication to be ready...
-sleep=3
-tries=20
+sleep=3; tries=20
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
 loop1 repcheck my1c my2p.dns.podman $sleep $tries
 loop1 repcheck my1c my3p.dns.podman $sleep $tries
@@ -152,8 +155,7 @@ run podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podm
 [ "$status" == 1 ]
 
 
-# start replication
-
+echo start replication
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
@@ -161,8 +163,7 @@ podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman -
 podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 
 echo waiting for replication to be ready...
-sleep=3
-tries=20
+sleep=3; tries=20
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
 loop1 repcheck my1c my2p.dns.podman $sleep $tries
 loop1 repcheck my1c my3p.dns.podman $sleep $tries
@@ -190,5 +191,11 @@ run podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podm
 [ "$status" == 0 ]
 run podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest2' #5
 [ "$status" == 0 ]
+
+
+
+
+
+
 
 }

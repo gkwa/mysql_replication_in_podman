@@ -1,8 +1,6 @@
 #!/bin/bash
 
 
-
-
 cleanall() {
     podman pod stop --ignore --all
     podman images prune
@@ -67,18 +65,13 @@ loop1() {
         fi
     done
 }
-
-# podman pod stop --ignore --all; podman images prune; podman container stop --ignore --all; podman pod rm --all --force; podman container rm --all --force; podman volume rm --all --force; for network in $(podman network ls --format json | jq -r '.[].Name'); do if [[ "$network" !=  "podman" ]]; then podman network exists $network && podman network rm $network; fi; done; podman pod stop --ignore --all; podman images prune; podman container stop --ignore --all; podman pod rm --all --force; podman container rm --all --force; podman volume rm --all --force; for network in $(podman network ls --format json | jq -r '.[].Name'); do if [[ "$network" !=  "podman" ]]; then podman network exists $network && podman network rm $network; fi; done; podman ps; podman ps --pod; podman ps -a --pod; podman network ls; podman volume ls; podman pod ls; #destroyall
-
 set -o errexit
-
-# FIXME: NoneNoneNoneNoneNone
 
 podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
 podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 
 set +o errexit
-podman container stop --log-level debug --ignore my1c my2c my3c my4c my5c
+podman container stop --log-level debug --ignore 
 set -o errexit
 
 podman pod exists my1p && podman pod stop --log-level debug --ignore my1p
@@ -88,11 +81,11 @@ podman pod exists my4p && podman pod stop --log-level debug --ignore my4p
 podman pod exists my5p && podman pod stop --log-level debug --ignore my5p
 
 
-podman pod exists my1p && podman wait --condition=stopped my1c my2c my3c my4c my5c
-podman pod exists my2p && podman wait --condition=stopped my1c my2c my3c my4c my5c
-podman pod exists my3p && podman wait --condition=stopped my1c my2c my3c my4c my5c
-podman pod exists my4p && podman wait --condition=stopped my1c my2c my3c my4c my5c
-podman pod exists my5p && podman wait --condition=stopped my1c my2c my3c my4c my5c
+podman pod exists my1p && podman wait --condition=stopped 
+podman pod exists my2p && podman wait --condition=stopped 
+podman pod exists my3p && podman wait --condition=stopped 
+podman pod exists my4p && podman wait --condition=stopped 
+podman pod exists my5p && podman wait --condition=stopped 
 podman pod ls
 
 rm -rf reptest
@@ -240,7 +233,6 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ |awk 
 [[ $size -gt 90000 ]]
 
 
-
 # 'repl'@'%' on my1c:
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
@@ -263,43 +255,39 @@ podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p --execute "G
 podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p --execute 'FLUSH PRIVILEGES'
 
 
-
 position=$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p --execute 'SHOW MASTER STATUS\G' |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
-podman exec --env=MYSQL_PWD=root my1c mysql --host=my1p --user=root \
---execute "CHANGE MASTER TO MASTER_HOST='my5p.dns.podman',MASTER_USER='repl',\
+podman exec --env=MYSQL_PWD=root my1c mysql --host=my1p --user=root --execute \
+"CHANGE MASTER TO MASTER_HOST='my5p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
 position=$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'SHOW MASTER STATUS\G' |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
-podman exec --env=MYSQL_PWD=root my2c mysql --host=my2p --user=root \
---execute "CHANGE MASTER TO MASTER_HOST='my1p.dns.podman',MASTER_USER='repl',\
+podman exec --env=MYSQL_PWD=root my2c mysql --host=my2p --user=root --execute \
+"CHANGE MASTER TO MASTER_HOST='my1p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
 position=$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p --execute 'SHOW MASTER STATUS\G' |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
-podman exec --env=MYSQL_PWD=root my3c mysql --host=my3p --user=root \
---execute "CHANGE MASTER TO MASTER_HOST='my2p.dns.podman',MASTER_USER='repl',\
+podman exec --env=MYSQL_PWD=root my3c mysql --host=my3p --user=root --execute \
+"CHANGE MASTER TO MASTER_HOST='my2p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
 position=$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p --execute 'SHOW MASTER STATUS\G' |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
-podman exec --env=MYSQL_PWD=root my4c mysql --host=my4p --user=root \
---execute "CHANGE MASTER TO MASTER_HOST='my3p.dns.podman',MASTER_USER='repl',\
+podman exec --env=MYSQL_PWD=root my4c mysql --host=my4p --user=root --execute \
+"CHANGE MASTER TO MASTER_HOST='my3p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
 position=$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p --execute 'SHOW MASTER STATUS\G' |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
-podman exec --env=MYSQL_PWD=root my5c mysql --host=my5p --user=root \
---execute "CHANGE MASTER TO MASTER_HOST='my4p.dns.podman',MASTER_USER='repl',\
+podman exec --env=MYSQL_PWD=root my5c mysql --host=my5p --user=root --execute \
+"CHANGE MASTER TO MASTER_HOST='my4p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
 
-
-# start replication
-
+echo start replication
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 
-
 echo waiting for replication to be ready...
-sleep=3
-tries=20
+sleep=3; tries=20
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
 loop1 repcheck my1c my2p.dns.podman $sleep $tries
 loop1 repcheck my1c my3p.dns.podman $sleep $tries
 loop1 repcheck my1c my4p.dns.podman $sleep $tries
 loop1 repcheck my1c my5p.dns.podman $sleep $tries
+

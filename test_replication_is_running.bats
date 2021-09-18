@@ -70,6 +70,9 @@ loop1() {
 
 @test 'test_replication_is_running' {
 
+
+
+
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest'
 
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'USE ptest'
@@ -90,5 +93,8 @@ result=$(podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=
 
 result=$(podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="c"')
 [ "$result" == "" ]
+
+
+
 
 }
