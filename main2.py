@@ -60,6 +60,8 @@ auto_increment_offset          = {{ loop.index }}
 bind-address                   = {{ pod.name }}.dns.podman
 log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
+innodb_flush_log_at_trx_commit = 1 
+sync_binlog                    = 1
 __eot__
 {% endfor %}
 
