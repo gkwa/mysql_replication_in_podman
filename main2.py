@@ -258,9 +258,16 @@ source ./common.sh
   {%- endif %}
   {%- endfor %}
 
-  # start rep
+  # start replication
   {%- for pod in pods %}
   podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
+  {%- endfor %}
+
+  echo waiting for replication to be ready...
+  sleep=3
+  tries=20
+  {%- for pod in pods %}
+  loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.containers[0].name }}.dns.podman $sleep $tries
   {%- endfor %}
 
   # ensure these pass
