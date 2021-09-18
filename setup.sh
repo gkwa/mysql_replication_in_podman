@@ -194,7 +194,7 @@ podman container exists my1c || podman container create registry.redhat.io/rhel8
   --healthcheck-interval=0 \
   --health-retries=10 \
   --health-timeout=30s \
-  --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' 
+  --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' \
   --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my1p --execute "USE mysql" || exit 1' \
   --volume=./reptest/my1c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
   --volume=my1dbdata:/var/lib/mysql/data:Z \
@@ -210,7 +210,7 @@ podman container exists my2c || podman container create registry.redhat.io/rhel8
   --healthcheck-interval=0 \
   --health-retries=10 \
   --health-timeout=30s \
-  --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' 
+  --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' \
   --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my2p --execute "USE mysql" || exit 1' \
   --volume=./reptest/my2c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
   --volume=my2dbdata:/var/lib/mysql/data:Z \
@@ -226,7 +226,7 @@ podman container exists my3c || podman container create registry.redhat.io/rhel8
   --healthcheck-interval=0 \
   --health-retries=10 \
   --health-timeout=30s \
-  --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' 
+  --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' \
   --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my3p --execute "USE mysql" || exit 1' \
   --volume=./reptest/my3c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
   --volume=my3dbdata:/var/lib/mysql/data:Z \
@@ -242,7 +242,7 @@ podman container exists my4c || podman container create registry.redhat.io/rhel8
   --healthcheck-interval=0 \
   --health-retries=10 \
   --health-timeout=30s \
-  --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' 
+  --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' \
   --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my4p --execute "USE mysql" || exit 1' \
   --volume=./reptest/my4c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
   --volume=my4dbdata:/var/lib/mysql/data:Z \
@@ -258,7 +258,7 @@ podman container exists my5c || podman container create registry.redhat.io/rhel8
   --healthcheck-interval=0 \
   --health-retries=10 \
   --health-timeout=30s \
-  --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' 
+  --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' \
   --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my5p --execute "USE mysql" || exit 1' \
   --volume=./reptest/my5c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
   --volume=my5dbdata:/var/lib/mysql/data:Z \
