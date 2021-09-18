@@ -86,7 +86,7 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=p
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=ptest --execute 'SELECT * FROM dummy'
 
 result=$(podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="a"')
-[ $result -eq 0 ]
+[ $result -eq 1 ]
 
 result=$(podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="c"')
 [ "$result" == "" ]
