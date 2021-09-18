@@ -195,10 +195,11 @@ podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 {%- set pods=manifest['pods'] %}
 set +o errexit
 podman container stop --log-level debug --ignore {{ containers_as_single_line() }}
-set -o errexit
+# set -o errexit
 {%- for pod in pods %}
 podman container exists {{ pod.containers[0].name }} && podman container stop --log-level debug --ignore {{ pod.containers[0].name }}
 {%- endfor %}
+set -o errexit
 {%- endmacro -%}
 
 {% macro podman_rm_containers() -%}
