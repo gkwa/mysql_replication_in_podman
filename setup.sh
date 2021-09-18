@@ -288,7 +288,7 @@ podman pod start my1p my2p my3p my4p my5p >/dev/null
 # podman pod ls
 # podman logs --since=30s my1c
 
-echo wait for container healthcheck
+echo 'wait for container healthcheck(s)'
 until podman healthcheck run my1c </dev/null; do sleep 3; done
 until podman healthcheck run my2c </dev/null; do sleep 3; done
 until podman healthcheck run my3c </dev/null; do sleep 3; done
@@ -319,7 +319,7 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute \
     "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 
-echo mysql grant repl user replication permission
+echo mysql: grant repl user replication permission
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
@@ -369,14 +369,14 @@ podman exec --env=MYSQL_PWD=root my5c mysql --host=my5p --user=root --execute \
     "CHANGE MASTER TO MASTER_HOST='my4p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
 
-echo start replication
+echo mysql: start replication
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 
-echo wait for replication to be ready
+echo mysql: wait for replication to be ready
 sleep=3
 tries=20
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
