@@ -90,7 +90,7 @@ podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --pu
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
 {% for pod in pods %}
-podman container exists {{ pod.containers[0].name }} || podman container create \
+podman container exists {{ pod.containers[0].name }} || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name={{ pod.containers[0].name }} \
   --pod={{ pod.name }} \
   --health-start-period=80s \
@@ -105,7 +105,7 @@ podman container exists {{ pod.containers[0].name }} || podman container create 
   --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} \
   --env=MYSQL_USER={{ global.user_non_root }} \
   --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} \
-  --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80 >/dev/null
+  --env=MYSQL_DATABASE=db >/dev/null
 {% endfor %}
 {%- endmacro -%}
 

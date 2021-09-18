@@ -179,7 +179,7 @@ podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --n
 podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 
-podman container exists my1c || podman container create \
+podman container exists my1c || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name=my1c \
   --pod=my1p \
   --health-start-period=80s \
@@ -194,9 +194,9 @@ podman container exists my1c || podman container create \
   --env=MYSQL_ROOT_PASSWORD=root \
   --env=MYSQL_USER=joe \
   --env=MYSQL_PASSWORD=joe \
-  --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80 >/dev/null
+  --env=MYSQL_DATABASE=db >/dev/null
 
-podman container exists my2c || podman container create \
+podman container exists my2c || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name=my2c \
   --pod=my2p \
   --health-start-period=80s \
@@ -211,9 +211,9 @@ podman container exists my2c || podman container create \
   --env=MYSQL_ROOT_PASSWORD=root \
   --env=MYSQL_USER=joe \
   --env=MYSQL_PASSWORD=joe \
-  --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80 >/dev/null
+  --env=MYSQL_DATABASE=db >/dev/null
 
-podman container exists my3c || podman container create \
+podman container exists my3c || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name=my3c \
   --pod=my3p \
   --health-start-period=80s \
@@ -228,9 +228,9 @@ podman container exists my3c || podman container create \
   --env=MYSQL_ROOT_PASSWORD=root \
   --env=MYSQL_USER=joe \
   --env=MYSQL_PASSWORD=joe \
-  --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80 >/dev/null
+  --env=MYSQL_DATABASE=db >/dev/null
 
-podman container exists my4c || podman container create \
+podman container exists my4c || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name=my4c \
   --pod=my4p \
   --health-start-period=80s \
@@ -245,9 +245,9 @@ podman container exists my4c || podman container create \
   --env=MYSQL_ROOT_PASSWORD=root \
   --env=MYSQL_USER=joe \
   --env=MYSQL_PASSWORD=joe \
-  --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80 >/dev/null
+  --env=MYSQL_DATABASE=db >/dev/null
 
-podman container exists my5c || podman container create \
+podman container exists my5c || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name=my5c \
   --pod=my5p \
   --health-start-period=80s \
@@ -262,7 +262,7 @@ podman container exists my5c || podman container create \
   --env=MYSQL_ROOT_PASSWORD=root \
   --env=MYSQL_USER=joe \
   --env=MYSQL_PASSWORD=joe \
-  --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80 >/dev/null
+  --env=MYSQL_DATABASE=db >/dev/null
 
 
 
