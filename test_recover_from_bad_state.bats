@@ -2,18 +2,14 @@
 source ./common.sh
 
 @test 'test_recover_from_bad_state' {
-
-  
-  until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my1p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-  until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my1p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-  until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-  until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-  until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my3p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-  until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my3p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-  until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my4p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-  until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my4p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-  until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my5p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-  until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my5p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
+  echo waiting for replication to be ready...
+  sleep=3
+  tries=20
+  loop1 repcheck my1c my1c.dns.podman $sleep $tries
+  loop1 repcheck my1c my2c.dns.podman $sleep $tries
+  loop1 repcheck my1c my3c.dns.podman $sleep $tries
+  loop1 repcheck my1c my4c.dns.podman $sleep $tries
+  loop1 repcheck my1c my5c.dns.podman $sleep $tries
 
   podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest1'
   podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest2'
