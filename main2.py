@@ -167,7 +167,7 @@ source ./common.sh
 }
 
 """
-path = pathlib.Path("test_ensure_replication_is_running.bats")
+path = pathlib.Path("test_replication_is_running.bats")
 path.write_text(
     jinja2.Template(tmpl_str).render(manifest=manifest, test_name=path.stem)
 )
@@ -188,7 +188,7 @@ source ./common.sh
 }
 
 """
-path = pathlib.Path("test_ensure_statement_based_binlog_format.bats")
+path = pathlib.Path("test_statement_based_binlog_format.bats")
 path.write_text(
     jinja2.Template(tmpl_str).render(manifest=manifest, test_name=path.stem)
 )
@@ -311,6 +311,32 @@ source ./common.sh
 
   run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }} --host={{ pods[1].name }}.dns.podman --execute 'USE ptest2'
   [ "$status" == 0 ]
+
+  {%- for pod in pods %}
+  {% if not loop.first -%}
+  run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest1'
+  [ "$status" == 1 ]
+  {%- endif %}  
+  {%- endfor %}
+
+  {%- for pod in pods %}
+  {% if not loop.second -%}
+  run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest2'
+  [ "$status" == 1 ]
+  {%- endif %}  
+  {%- endfor %}
+
+  # start rep
+  {%- for pod in pods %}
+  podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
+  {%- endfor %}
+
+  {% for pod in pods %}
+  run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest1'
+  [ "$status" == 0 ]
+  run podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pod.containers[0].name }} mysql --user={{ global.user_root }} --host={{ pod.name }}.dns.podman --execute 'USE ptest2'
+  [ "$status" == 0 ]
+  {%- endfor %}
 }
 
 """

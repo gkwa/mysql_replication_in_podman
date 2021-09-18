@@ -16,8 +16,8 @@ install:
 - sudo bash setup.sh
 
 test_script:
-- sudo ./test_ensure_replication_is_running.bats
-- sudo ./test_ensure_statement_based_binlog_format.bats
+- sudo ./test_replication_is_running.bats
+- sudo ./test_statement_based_binlog_format.bats
 - sudo ./test_percona_checksums.bats
 - sudo ./test_fart.bats
 - sudo ./recover_from_bad_state.bats

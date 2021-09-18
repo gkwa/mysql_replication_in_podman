@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 source ./common.sh
 
-@test 'test_ensure_replication_is_running' {
+@test 'test_replication_is_running' {
   podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest'
   run bash -c "podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'SHOW DATABASES' | grep ptest"
   [ "$status" -eq 1 ]
