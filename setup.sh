@@ -189,11 +189,11 @@ echo creating containers
 podman container exists my1c || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name=my1c \
   --pod=my1p \
-  --health-start-period=80s \
   --log-driver=journald \
   --healthcheck-interval=0 \
   --health-retries=10 \
   --health-timeout=30s \
+  --health-start-period=80s \
   --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' \
   --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my1p --execute "USE mysql" || exit 1' \
   --volume=./reptest/my1c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
@@ -205,11 +205,11 @@ podman container exists my1c || podman container create registry.redhat.io/rhel8
 podman container exists my2c || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name=my2c \
   --pod=my2p \
-  --health-start-period=80s \
   --log-driver=journald \
   --healthcheck-interval=0 \
   --health-retries=10 \
   --health-timeout=30s \
+  --health-start-period=80s \
   --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' \
   --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my2p --execute "USE mysql" || exit 1' \
   --volume=./reptest/my2c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
@@ -221,11 +221,11 @@ podman container exists my2c || podman container create registry.redhat.io/rhel8
 podman container exists my3c || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name=my3c \
   --pod=my3p \
-  --health-start-period=80s \
   --log-driver=journald \
   --healthcheck-interval=0 \
   --health-retries=10 \
   --health-timeout=30s \
+  --health-start-period=80s \
   --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' \
   --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my3p --execute "USE mysql" || exit 1' \
   --volume=./reptest/my3c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
@@ -237,11 +237,11 @@ podman container exists my3c || podman container create registry.redhat.io/rhel8
 podman container exists my4c || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name=my4c \
   --pod=my4p \
-  --health-start-period=80s \
   --log-driver=journald \
   --healthcheck-interval=0 \
   --health-retries=10 \
   --health-timeout=30s \
+  --health-start-period=80s \
   --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' \
   --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my4p --execute "USE mysql" || exit 1' \
   --volume=./reptest/my4c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
@@ -253,11 +253,11 @@ podman container exists my4c || podman container create registry.redhat.io/rhel8
 podman container exists my5c || podman container create registry.redhat.io/rhel8/mysql-80 \
   --name=my5c \
   --pod=my5p \
-  --health-start-period=80s \
   --log-driver=journald \
   --healthcheck-interval=0 \
   --health-retries=10 \
   --health-timeout=30s \
+  --health-start-period=80s \
   --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' \
   --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my5p --execute "USE mysql" || exit 1' \
   --volume=./reptest/my5c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
