@@ -24,7 +24,7 @@ cat <<__eot__ >$tmp/auth.json.tmp
   }
 }
 __eot__
-cat $tmp/auth.json.tmp |python -m base64 >$tmp/auth.json
+cat $tmp/auth.json.tmp | python -m base64 >$tmp/auth.json
 rm -f $tmp/auth.json.tmp
 
 curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -
@@ -38,7 +38,7 @@ echo -n "$salt" >$tmp/salt
 
 # now try decrypting it to verify it all worked
 ./appveyor-tools/secure-file -decrypt $tmp/auth.json.enc -secret "$secret" -salt "$salt" -out $tmp/auth.json.decrypted.tmp
-cat $tmp/auth.json.decrypted.tmp |python -m base64 -d >$tmp/auth.json.decrypted
+cat $tmp/auth.json.decrypted.tmp | python -m base64 -d >$tmp/auth.json.decrypted
 rm -f $tmp/auth.json.decrypted.tmp
 
 credentials=$(jq -r .auths.'"registry.redhat.io"'.auth $tmp/auth.json.decrypted | python -m base64 -d)

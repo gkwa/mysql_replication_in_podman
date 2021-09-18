@@ -27,5 +27,3 @@ podman pod start my2p
 podman pod start my3p
 podman pod start my4p
 podman pod start my5p
-
-

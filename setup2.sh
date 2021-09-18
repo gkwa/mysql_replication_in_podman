@@ -254,25 +254,6 @@ podman container exists my5c || podman container create \
     --env=MYSQL_DATABASE=db \
     registry.redhat.io/rhel8/mysql-80 >/dev/null
 
-echo remove data from volume, but leaving volume in place
-rm -rf --preserve-root $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/*
-rm -rf --preserve-root $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/*
-rm -rf --preserve-root $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')/*
-rm -rf --preserve-root $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/*
-rm -rf --preserve-root $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/*
-
-echo check data directory is cleaned out
-size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
-[[ $size -le 8 ]]
-size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
-[[ $size -le 8 ]]
-size=$(du -s $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
-[[ $size -le 8 ]]
-size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
-[[ $size -le 8 ]]
-size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
-[[ $size -le 8 ]]
-
 set +o errexit
 podman pod start my1p my2p my3p my4p my5p >/dev/null
 set -o errexit

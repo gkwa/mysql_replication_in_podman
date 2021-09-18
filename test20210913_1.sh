@@ -2,9 +2,6 @@
 
 set -o errexit
 
-
-
-
 cleanall() {
     podman pod stop --ignore --all
     podman images prune
@@ -70,11 +67,9 @@ loop1() {
     done
 }
 
-
-
-
 echo waiting for replication to be ready...
-sleep=3; tries=20
+sleep=3
+tries=20
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
 loop1 repcheck my1c my2p.dns.podman $sleep $tries
 loop1 repcheck my1c my3p.dns.podman $sleep $tries
@@ -97,11 +92,11 @@ set -o errexit
 # podman run --pod=my4p --env=PTDEBUG=0 --env=MYSQL_PWD=root percona-toolkit pt-table-checksum --replicate=percona.checksums h=my4p.dns.podman,u=root,p=root,P=3306
 # podman run --pod=my5p --env=PTDEBUG=0 --env=MYSQL_PWD=root percona-toolkit pt-table-checksum --replicate=percona.checksums h=my5p.dns.podman,u=root,p=root,P=3306
 
-until grep --silent percona <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW DATABASES\G')"; do sleep 5; done;
-until grep --silent percona <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW DATABASES\G')"; do sleep 5; done;
-until grep --silent percona <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW DATABASES\G')"; do sleep 5; done;
-until grep --silent percona <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW DATABASES\G')"; do sleep 5; done;
-until grep --silent percona <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW DATABASES\G')"; do sleep 5; done;
+until grep --silent percona <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW DATABASES\G')"; do sleep 5; done
+until grep --silent percona <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW DATABASES\G')"; do sleep 5; done
+until grep --silent percona <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW DATABASES\G')"; do sleep 5; done
+until grep --silent percona <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW DATABASES\G')"; do sleep 5; done
+until grep --silent percona <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW DATABASES\G')"; do sleep 5; done
 
 podman run --pod=my1p --env=MYSQL_PWD=root percona-toolkit pt-table-sync --sync-to-master h=my1p.dns.podman,u=root,p=root,P=3306 --databases=ptest --tables=dummy --verbose --print
 podman run --pod=my1p --env=MYSQL_PWD=root percona-toolkit pt-table-sync --sync-to-master h=my2p.dns.podman,u=root,p=root,P=3306 --databases=ptest --tables=dummy --verbose --print
@@ -110,7 +105,8 @@ podman run --pod=my1p --env=MYSQL_PWD=root percona-toolkit pt-table-sync --sync-
 podman run --pod=my1p --env=MYSQL_PWD=root percona-toolkit pt-table-sync --sync-to-master h=my5p.dns.podman,u=root,p=root,P=3306 --databases=ptest --tables=dummy --verbose --print
 
 echo waiting for replication to be ready...
-sleep=3; tries=20
+sleep=3
+tries=20
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
 loop1 repcheck my1c my2p.dns.podman $sleep $tries
 loop1 repcheck my1c my3p.dns.podman $sleep $tries
@@ -127,11 +123,11 @@ SELECT * FROM dummy;
 __eot__
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra2/20210912_1.sql'
 
-until podman exec --env=MYSQL_PWD=root my1c mysql --host=my1p --user=root --execute 'SHOW DATABASES'; do sleep 5; done;
-until podman exec --env=MYSQL_PWD=root my2c mysql --host=my2p --user=root --execute 'SHOW DATABASES'; do sleep 5; done;
-until podman exec --env=MYSQL_PWD=root my3c mysql --host=my3p --user=root --execute 'SHOW DATABASES'; do sleep 5; done;
-until podman exec --env=MYSQL_PWD=root my4c mysql --host=my4p --user=root --execute 'SHOW DATABASES'; do sleep 5; done;
-until podman exec --env=MYSQL_PWD=root my5c mysql --host=my5p --user=root --execute 'SHOW DATABASES'; do sleep 5; done;
+until podman exec --env=MYSQL_PWD=root my1c mysql --host=my1p --user=root --execute 'SHOW DATABASES'; do sleep 5; done
+until podman exec --env=MYSQL_PWD=root my2c mysql --host=my2p --user=root --execute 'SHOW DATABASES'; do sleep 5; done
+until podman exec --env=MYSQL_PWD=root my3c mysql --host=my3p --user=root --execute 'SHOW DATABASES'; do sleep 5; done
+until podman exec --env=MYSQL_PWD=root my4c mysql --host=my4p --user=root --execute 'SHOW DATABASES'; do sleep 5; done
+until podman exec --env=MYSQL_PWD=root my5c mysql --host=my5p --user=root --execute 'SHOW DATABASES'; do sleep 5; done
 
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --database=ptest --execute 'SELECT * FROM dummy'
 podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --database=ptest --execute 'SELECT * FROM dummy'
@@ -185,7 +181,8 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 
 echo waiting for replication to be ready...
-sleep=3; tries=20
+sleep=3
+tries=20
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
 loop1 repcheck my1c my2p.dns.podman $sleep $tries
 loop1 repcheck my1c my3p.dns.podman $sleep $tries

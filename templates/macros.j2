@@ -144,6 +144,8 @@ set +o errexit
 podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
 set -o errexit
 podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
+
+{{ healthcheck() }}
 {%- endmacro -%}
 
 {% macro podman_stop_pods() -%}
@@ -165,7 +167,6 @@ podman network exists {{ global.network}} || podman network create {{ global.net
 {% for pod in pods %}
 podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --log-level debug --ignore {{ pod.name }}
 {%- endfor %}
-
 podman wait --condition=stopped {{ containers_as_single_line() }}
 {%- endmacro -%}
 

@@ -22,22 +22,18 @@ podman network ls
 podman volume ls
 podman pod ls
 
-
-if ! command -v bats &>/dev/null
-then
+if ! command -v bats &>/dev/null; then
     git clone --depth 1 https://github.com/sstephenson/bats.git /usr/local/src/bats
     pushd /usr/local/src/bats
     ./install.sh /usr/local
     popd
 fi
 
-
 podman container stop --ignore my1c
 podman container stop --ignore my2c
 podman container stop --ignore my3c
 podman container stop --ignore my4c
 podman container stop --ignore my5c
-
 
 podman pod stop --ignore my1p
 podman pod rm --ignore --force my1p
@@ -54,8 +50,6 @@ podman pod rm --ignore --force my4p
 podman pod stop --ignore my5p
 podman pod rm --ignore --force my5p
 
-
-
 podman volume exists my1dbdata && podman volume rm --force my1dbdata
 podman volume exists my2dbdata && podman volume rm --force my2dbdata
 podman volume exists my3dbdata && podman volume rm --force my3dbdata
@@ -70,7 +64,6 @@ podman ps -a --pod
 podman network ls
 podman volume ls
 podman pod ls
-
 
 podman network create replication
 
@@ -89,7 +82,6 @@ mkdir -p reptest/my2c/extra
 mkdir -p reptest/my3c/extra
 mkdir -p reptest/my4c/extra
 mkdir -p reptest/my5c/extra
-
 
 mkdir -p reptest/my1c
 cat <<'__eot__' >reptest/my1c/my.cnf
@@ -216,7 +208,6 @@ sync_binlog                    = 1
 __eot__
 cat reptest/my5c/my.cnf
 
-
 # pods with bridge mode networking
 podman pod create --name=my1p --publish=33061:3306 --network=replication
 podman pod create --name=my2p --publish=33062:3306 --network=replication
@@ -236,13 +227,11 @@ podman container create --name=my4c --pod=my4p --health-start-period=80s --log-d
 #podman container create --name=my5c --pod=my5p --health-start-period=80s --log-driver=journald --healthcheck-interval=0 --health-retries=10 --health-timeout=30s --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' --healthcheck-command 'mysql --user=root --password="root" --host=my5p --execute "USE mysql" || exit 1' --volume=./reptest/my5c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my5c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my5dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 podman container create --name=my5c --pod=my5p --health-start-period=80s --log-driver=journald --healthcheck-interval=0 --health-retries=10 --health-timeout=30s --healthcheck-command 'CMD-SHELL mysqladmin ping -h localhost || exit 1' --healthcheck-command 'mysql --user=root --password="root" --host=my5p --execute "USE mysql" || exit 1' --volume=./reptest/my5c/my.cnf:/etc/my.cnf.d/100-reptest.cnf --volume=./reptest/my5c/extra:/tmp/extra:Z --volume=./reptest/extra2:/tmp/extra2:Z --volume=my5dbdata:/var/lib/mysql/data:Z --env=MYSQL_ROOT_PASSWORD=root --env=MYSQL_USER=joe --env=MYSQL_PASSWORD=joe --env=MYSQL_DATABASE=db registry.redhat.io/rhel8/mysql-80
 
-
 podman pod start my1p
 podman pod start my2p
 podman pod start my3p
 podman pod start my4p
 podman pod start my5p
-
 
 until podman healthcheck run my1c </dev/null; do sleep 5; done
 until podman healthcheck run my2c </dev/null; do sleep 5; done
@@ -250,13 +239,11 @@ until podman healthcheck run my3c </dev/null; do sleep 5; done
 until podman healthcheck run my4c </dev/null; do sleep 5; done
 until podman healthcheck run my5c </dev/null; do sleep 5; done
 
-
 podman wait my1c --condition=running
 podman wait my2c --condition=running
 podman wait my3c --condition=running
 podman wait my4c --condition=running
 podman wait my5c --condition=running
-
 
 podman volume inspect my1dbdata
 podman volume inspect my2dbdata
@@ -271,28 +258,28 @@ podman network ls
 podman volume ls
 podman pod ls
 
+until podman exec --env=MYSQL_PWD=joe my1c mysql --host=my1p --user=joe --execute 'SHOW DATABASES'; do sleep 5; done
+until podman exec --env=MYSQL_PWD=joe my2c mysql --host=my2p --user=joe --execute 'SHOW DATABASES'; do sleep 5; done
+until podman exec --env=MYSQL_PWD=joe my3c mysql --host=my3p --user=joe --execute 'SHOW DATABASES'; do sleep 5; done
+until podman exec --env=MYSQL_PWD=joe my4c mysql --host=my4p --user=joe --execute 'SHOW DATABASES'; do sleep 5; done
+until podman exec --env=MYSQL_PWD=joe my5c mysql --host=my5p --user=joe --execute 'SHOW DATABASES'; do sleep 5; done
 
+until podman exec --env=MYSQL_PWD=root my1c mysql --host=my1p --user=root --execute 'SHOW DATABASES'; do sleep 5; done
+until podman exec --env=MYSQL_PWD=root my2c mysql --host=my2p --user=root --execute 'SHOW DATABASES'; do sleep 5; done
+until podman exec --env=MYSQL_PWD=root my3c mysql --host=my3p --user=root --execute 'SHOW DATABASES'; do sleep 5; done
+until podman exec --env=MYSQL_PWD=root my4c mysql --host=my4p --user=root --execute 'SHOW DATABASES'; do sleep 5; done
+until podman exec --env=MYSQL_PWD=root my5c mysql --host=my5p --user=root --execute 'SHOW DATABASES'; do sleep 5; done
 
-until podman exec --env=MYSQL_PWD=joe my1c mysql --host=my1p --user=joe --execute 'SHOW DATABASES'; do sleep 5; done;
-until podman exec --env=MYSQL_PWD=joe my2c mysql --host=my2p --user=joe --execute 'SHOW DATABASES'; do sleep 5; done;
-until podman exec --env=MYSQL_PWD=joe my3c mysql --host=my3p --user=joe --execute 'SHOW DATABASES'; do sleep 5; done;
-until podman exec --env=MYSQL_PWD=joe my4c mysql --host=my4p --user=joe --execute 'SHOW DATABASES'; do sleep 5; done;
-until podman exec --env=MYSQL_PWD=joe my5c mysql --host=my5p --user=joe --execute 'SHOW DATABASES'; do sleep 5; done;
-
-
-until podman exec --env=MYSQL_PWD=root my1c mysql --host=my1p --user=root --execute 'SHOW DATABASES'; do sleep 5; done;
-until podman exec --env=MYSQL_PWD=root my2c mysql --host=my2p --user=root --execute 'SHOW DATABASES'; do sleep 5; done;
-until podman exec --env=MYSQL_PWD=root my3c mysql --host=my3p --user=root --execute 'SHOW DATABASES'; do sleep 5; done;
-until podman exec --env=MYSQL_PWD=root my4c mysql --host=my4p --user=root --execute 'SHOW DATABASES'; do sleep 5; done;
-until podman exec --env=MYSQL_PWD=root my5c mysql --host=my5p --user=root --execute 'SHOW DATABASES'; do sleep 5; done;
-
-
-ip1=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); echo $ip1
-ip2=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); echo $ip2
-ip3=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); echo $ip3
-ip4=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); echo $ip4
-ip5=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}'); echo $ip5
-
+ip1=$(podman inspect my1c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
+echo $ip1
+ip2=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
+echo $ip2
+ip3=$(podman inspect my3c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
+echo $ip3
+ip4=$(podman inspect my4c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
+echo $ip4
+ip5=$(podman inspect my5c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
+echo $ip5
 
 # mysqladmin --port=3306 --host=$ip1 --user=joe --password=joe password ''
 # mysqladmin --port=3306 --host=$ip2 --user=joe --password=joe password ''
@@ -311,7 +298,6 @@ MYSQL_PWD=joe mysql --port=3306 --host=$ip5 --user=joe --execute 'SHOW DATABASES
 # FIXME: NoneNoneNoneNoneNone
 
 # dns test
-
 
 time podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW DATABASES'
 time podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW DATABASES'
@@ -446,13 +432,11 @@ podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p --execute 'F
 podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p --execute 'FLUSH TABLES WITH READ LOCK'
 podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p --execute 'FLUSH TABLES WITH READ LOCK'
 
-
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'UNLOCK TABLES'
 podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p --execute 'UNLOCK TABLES'
 podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p --execute 'UNLOCK TABLES'
 podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p --execute 'UNLOCK TABLES'
 podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p --execute 'UNLOCK TABLES'
-
 
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'CREATE DATABASE IF NOT EXISTS dummy'
 podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p --execute 'CREATE DATABASE IF NOT EXISTS dummy'
@@ -527,13 +511,11 @@ CREATE TABLE IF NOT EXISTS user
 INSERT INTO user (fn, ln, age) VALUES ('tom', 'mccormick', 40);
 __eot__
 
-
 # podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql'
 # podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql'
 # podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql'
 # podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql'
 # podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'SOURCE /tmp/extra2/extra2.sql'
-
 
 mkdir -p reptest/my1c/extra
 replica_ip=$(podman inspect my2c --format '{{.NetworkSettings.Networks.replication.IPAddress}}')
@@ -566,13 +548,11 @@ cat <<'__eot__' >reptest/my5c/extra/extra.sql
 __eot__
 # cat reptest/my5c/extra/extra.sql
 
-
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
 podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
 podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
 podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
 podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
-
 
 # podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
 # podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
@@ -580,35 +560,32 @@ podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman -
 # podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
 # podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'SOURCE /tmp/extra/extra.sql'
 
-
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
 podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
 podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
 podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
 podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'SELECT User, Host from mysql.user ORDER BY user'
-position=$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p --execute 'SHOW MASTER STATUS\G'|sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
+position=$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
 echo target:my1c source:my5c position:$position
 podman exec --env=MYSQL_PWD=root my1c mysql --host=my1p --user=root --execute "CHANGE MASTER TO MASTER_HOST='my5p.dns.podman',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
-position=$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'SHOW MASTER STATUS\G'|sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
+position=$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
 echo target:my2c source:my1c position:$position
 podman exec --env=MYSQL_PWD=root my2c mysql --host=my2p --user=root --execute "CHANGE MASTER TO MASTER_HOST='my1p.dns.podman',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
-position=$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p --execute 'SHOW MASTER STATUS\G'|sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
+position=$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
 echo target:my3c source:my2c position:$position
 podman exec --env=MYSQL_PWD=root my3c mysql --host=my3p --user=root --execute "CHANGE MASTER TO MASTER_HOST='my2p.dns.podman',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
-position=$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p --execute 'SHOW MASTER STATUS\G'|sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
+position=$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
 echo target:my4c source:my3c position:$position
 podman exec --env=MYSQL_PWD=root my4c mysql --host=my4p --user=root --execute "CHANGE MASTER TO MASTER_HOST='my3p.dns.podman',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
-position=$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p --execute 'SHOW MASTER STATUS\G'|sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
+position=$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
 echo target:my5c source:my4c position:$position
 podman exec --env=MYSQL_PWD=root my5c mysql --host=my5p --user=root --execute "CHANGE MASTER TO MASTER_HOST='my4p.dns.podman',MASTER_USER='repl',MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
-
 
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
-
 
 podman exec --env=MYSQL_PWD=root my1c bash -c "mysql --user=root --host=my1p.dns.podman --execute 'SHOW SLAVE STATUS\G' |grep -iE 'Slave_IO_Running|Slave_SQL_Running|Seconds_Behind_Master'"
 podman exec --env=MYSQL_PWD=root my2c bash -c "mysql --user=root --host=my2p.dns.podman --execute 'SHOW SLAVE STATUS\G' |grep -iE 'Slave_IO_Running|Slave_SQL_Running|Seconds_Behind_Master'"
@@ -703,28 +680,27 @@ __eot__
 sudo bats test_replication_is_stopped.bats
 
 # i guess positions have increased, yes?
-position=$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p --execute 'SHOW MASTER STATUS\G'|sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
+position=$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my5p --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
 echo target:my1c source:my5c position:$position
-position=$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'SHOW MASTER STATUS\G'|sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
+position=$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
 echo target:my2c source:my1c position:$position
-position=$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p --execute 'SHOW MASTER STATUS\G'|sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
+position=$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my2p --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
 echo target:my3c source:my2c position:$position
-position=$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p --execute 'SHOW MASTER STATUS\G'|sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
+position=$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my3p --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
 echo target:my4c source:my3c position:$position
-position=$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p --execute 'SHOW MASTER STATUS\G'|sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
+position=$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my4p --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g')
 echo target:my5c source:my4c position:$position
 
-
-until grep --silent 'Slave_IO_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my1p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my1p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_IO_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_IO_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my3p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my3p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_IO_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my4p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my4p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_IO_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my5p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
-until grep --silent 'Slave_SQL_Running: Yes' <<< "$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my5p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done;
+until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my1p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done
+until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my5c mysql --user=root --host=my1p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done
+until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done
+until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done
+until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my3p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done
+until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my2c mysql --user=root --host=my3p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done
+until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my4p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done
+until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my3c mysql --user=root --host=my4p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done
+until grep --silent 'Slave_IO_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my5p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done
+until grep --silent 'Slave_SQL_Running: Yes' <<<"$(podman exec --env=MYSQL_PWD=root my4c mysql --user=root --host=my5p.dns.podman --execute 'SHOW SLAVE STATUS\G')"; do sleep 5; done
 
 cat <<'__eot__' >replication_ok.bats
 @test 'user table replicated ok' {
