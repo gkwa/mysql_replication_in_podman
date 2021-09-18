@@ -86,8 +86,7 @@ podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }} >
 {%- set pods=manifest['pods'] %}
 echo create pods
 {%- for pod in pods %}
-podman pod exists {{ pod.name }} ||
-podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} --network={{ global.network }} >/dev/null
+podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} --network={{ global.network }} >/dev/null
 {%- endfor %}
 {%- endmacro -%}
 
