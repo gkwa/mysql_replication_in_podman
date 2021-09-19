@@ -247,7 +247,7 @@ loop2 healthcheck_fn {{ pods[0].containers[0].name }} $sleep $tries
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] -%}
-{{ mysql_from_jump() }} --execute 'CREATE DATABASE ptest'
+{{ mysql_from_jump() }} --execute 'CREATE DATABASE IF NOT EXIST ptest'
 {{ mysql_from_jump() }} --database=ptest --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
 {{ mysql_from_jump() }} --database=ptest --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 {%- endmacro -%}
