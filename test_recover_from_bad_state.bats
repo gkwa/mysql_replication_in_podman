@@ -146,13 +146,13 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE'
 
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --execute 'CREATE DATABASE IF NOT EXIST ptest'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --execute 'CREATE DATABASE IF NOT EXISTS ptest'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=ptest1 --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=ptest1 --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --execute 'CREATE DATABASE IF NOT EXIST ptest'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --execute 'CREATE DATABASE IF NOT EXISTS ptest'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --database=ptest2 --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'

@@ -276,7 +276,7 @@ loop2 healthcheck_fn {{ pods[0].containers[0].name }} $sleep $tries
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] -%}
-{{ mysql_jump() }} --execute 'CREATE DATABASE IF NOT EXIST ptest'
+{{ mysql_jump() }} --execute 'CREATE DATABASE IF NOT EXISTS ptest'
 {{ mysql_jump() }} --database=ptest --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
 {{ mysql_jump() }} --database=ptest --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 {%- endmacro -%}
@@ -427,7 +427,7 @@ healthcheck_fn() {
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] -%}
-echo 'check data directory is larger than 90MB (tends to be ~97MB)'
+echo 'check data directory is larger than 80MB (tends to be ~97MB)'
 {%- for pod in pods %}
 size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -gt 80000 ]]

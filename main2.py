@@ -1,3 +1,4 @@
+import os
 import pathlib
 import stat
 
@@ -5,6 +6,8 @@ import jinja2
 import yaml
 
 manifest_path = pathlib.Path(__file__).parent.resolve() / "manifest.yml"
+
+
 
 with open(manifest_path, "r") as stream:
     try:
@@ -14,6 +17,7 @@ with open(manifest_path, "r") as stream:
 
 env = jinja2.Environment()
 env.loader = jinja2.FileSystemLoader("templates")
+os.chdir(manifest_path.parent) # to find templates
 
 tmpl = env.get_template("setup.j2")
 path = pathlib.Path("setup.sh")

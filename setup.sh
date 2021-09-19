@@ -314,7 +314,7 @@ loop2 healthcheck_fn my1c $sleep $tries
 loop2 healthcheck_fn my1c $sleep $tries
 loop2 healthcheck_fn my1c $sleep $tries
 
-echo 'check data directory is larger than 90MB (tends to be ~97MB)'
+echo 'check data directory is larger than 80MB (tends to be ~97MB)'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
@@ -411,8 +411,3 @@ loop1 repcheck my1c my2p.dns.podman $sleep $tries
 loop1 repcheck my1c my3p.dns.podman $sleep $tries
 loop1 repcheck my1c my4p.dns.podman $sleep $tries
 loop1 repcheck my1c my5p.dns.podman $sleep $tries
-
-# sudo time ./test_statement_based_binlog_format.bats
-sudo time ./test_percona_checksums.bats
-# sudo time ./test_fart.bats
-# sudo time ./test_recover_from_bad_state.bats

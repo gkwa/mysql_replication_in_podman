@@ -22,19 +22,13 @@ run {{ macros.mysql_jump() }} --host=my4p --execute 'USE ptest'
 
 {{ macros.mysql_create_database_ptest() }} --host={{ pods[0].name }}
 
-result=$({{ macros.mysql_jump() }} --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="a"')
+result=$({{ macros.mysql_jump() }} --host=my4p --database=ptest --skip-column-names --execute 'SELECT id FROM dummy WHERE name="a"')
 [ $result -eq 1 ]
 
-result=$({{ macros.mysql_jump() }} --host=my4p --database=ptest --execute 'SELECT id FROM dummy WHERE name="c"')
+result=$({{ macros.mysql_jump() }} --host=my4p --database=ptest --skip-column-names --execute 'SELECT id FROM dummy WHERE name="c"')
 [ "$result" == "" ]
 
 {{ macros.percona_checksum() }}
-
-
-
-
-
-
 
 
 }
