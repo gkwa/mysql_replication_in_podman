@@ -10,6 +10,8 @@ set -o errexit
 {{ macros.import_common_functions() }}
 
 
+
+
 {{ macros.podman_stop_containers() }}
 {{ macros.podman_stop_pods() }}
 {{ macros.podman_rm_containers() }}
@@ -25,7 +27,6 @@ set -o errexit
 {{ macros.podman_create_pods() }}
 {{ macros.podman_create_containers() }}
 {{ macros.podman_start_pods() }}
-{{ macros.mysql_setup_replication() }}
 
 # repeat
 {{ macros.podman_stop_containers() }}
@@ -45,6 +46,7 @@ set -o errexit
 {{ macros.podman_start_pods() }}
 
 {{ macros.mysql_setup_replication() }}
+
 
 epoch=$(date +%s)
 
@@ -91,13 +93,6 @@ bats $bats
 
 {{ macros.podman_container_volume_setup() }}
 {{ macros.podman_create_network() }}
-
-
-
-
-
-
-
 
 {{ macros.podman_create_pods() }}
 {{ macros.podman_create_containers() }}
