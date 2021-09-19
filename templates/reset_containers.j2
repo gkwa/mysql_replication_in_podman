@@ -105,6 +105,7 @@ cat <<'__eot__' >$bats
 __eot__
 bats $bats
 
+{{ macros.mysql_setup_replication() }}
 
 # cycle start
 
@@ -133,32 +134,7 @@ cat <<'__eot__' >$bats
 __eot__
 bats $bats
 
-# cycle start
-
-{{ macros.podman_stop_containers() }}
-{{ macros.podman_stop_pods() }}
-{{ macros.podman_rm_containers() }}
-{{ macros.podman_rm_pods() }}
-
-{{ macros.podman_list_pods() }}
-
-{{ macros.podman_container_volume_setup() }}
-{{ macros.podman_create_network() }}
-
-{{ macros.podman_create_pods() }}
-{{ macros.podman_create_containers() }}
-{{ macros.podman_start_pods() }}
-
-macro=mysql_check_ptest1_exists_everywhere
-bats=${macro}_${epoch}.bats
-cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
-
-{{ macros.mysql_check_ptest1_exists_everywhere() }}
-
-}
-__eot__
-bats $bats
+{{ macros.mysql_setup_replication() }}
 
 # cycle start
 
@@ -187,32 +163,7 @@ cat <<'__eot__' >$bats
 __eot__
 bats $bats
 
-# cycle start
-
-{{ macros.podman_stop_containers() }}
-{{ macros.podman_stop_pods() }}
-{{ macros.podman_rm_containers() }}
-{{ macros.podman_rm_pods() }}
-
-{{ macros.podman_list_pods() }}
-
-{{ macros.podman_container_volume_setup() }}
-{{ macros.podman_create_network() }}
-
-{{ macros.podman_create_pods() }}
-{{ macros.podman_create_containers() }}
-{{ macros.podman_start_pods() }}
-
-macro=mysql_check_ptest1_exists_everywhere
-bats=${macro}_${epoch}.bats
-cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
-
-{{ macros.mysql_check_ptest1_exists_everywhere() }}
-
-}
-__eot__
-bats $bats
+{{ macros.mysql_setup_replication() }}
 
 # cycle start
 
@@ -241,32 +192,7 @@ cat <<'__eot__' >$bats
 __eot__
 bats $bats
 
-# cycle start
-
-{{ macros.podman_stop_containers() }}
-{{ macros.podman_stop_pods() }}
-{{ macros.podman_rm_containers() }}
-{{ macros.podman_rm_pods() }}
-
-{{ macros.podman_list_pods() }}
-
-{{ macros.podman_container_volume_setup() }}
-{{ macros.podman_create_network() }}
-
-{{ macros.podman_create_pods() }}
-{{ macros.podman_create_containers() }}
-{{ macros.podman_start_pods() }}
-
-macro=mysql_check_ptest1_exists_everywhere
-bats=${macro}_${epoch}.bats
-cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
-
-{{ macros.mysql_check_ptest1_exists_everywhere() }}
-
-}
-__eot__
-bats $bats
+{{ macros.mysql_setup_replication() }}
 
 # cycle start
 
@@ -294,3 +220,93 @@ cat <<'__eot__' >$bats
 }
 __eot__
 bats $bats
+
+{{ macros.mysql_setup_replication() }}
+
+# cycle start
+
+{{ macros.podman_stop_containers() }}
+{{ macros.podman_stop_pods() }}
+{{ macros.podman_rm_containers() }}
+{{ macros.podman_rm_pods() }}
+
+{{ macros.podman_list_pods() }}
+
+{{ macros.podman_container_volume_setup() }}
+{{ macros.podman_create_network() }}
+
+{{ macros.podman_create_pods() }}
+{{ macros.podman_create_containers() }}
+{{ macros.podman_start_pods() }}
+
+macro=mysql_check_ptest1_exists_everywhere
+bats=${macro}_${epoch}.bats
+cat <<'__eot__' >$bats
+@test "mysql_check_ptest1_exists_everywhere" {
+
+{{ macros.mysql_check_ptest1_exists_everywhere() }}
+
+}
+__eot__
+bats $bats
+
+{{ macros.mysql_setup_replication() }}
+
+# cycle start
+
+{{ macros.podman_stop_containers() }}
+{{ macros.podman_stop_pods() }}
+{{ macros.podman_rm_containers() }}
+{{ macros.podman_rm_pods() }}
+
+{{ macros.podman_list_pods() }}
+
+{{ macros.podman_container_volume_setup() }}
+{{ macros.podman_create_network() }}
+
+{{ macros.podman_create_pods() }}
+{{ macros.podman_create_containers() }}
+{{ macros.podman_start_pods() }}
+
+macro=mysql_check_ptest1_exists_everywhere
+bats=${macro}_${epoch}.bats
+cat <<'__eot__' >$bats
+@test "mysql_check_ptest1_exists_everywhere" {
+
+{{ macros.mysql_check_ptest1_exists_everywhere() }}
+
+}
+__eot__
+bats $bats
+
+{{ macros.mysql_setup_replication() }}
+
+# cycle start
+
+{{ macros.podman_stop_containers() }}
+{{ macros.podman_stop_pods() }}
+{{ macros.podman_rm_containers() }}
+{{ macros.podman_rm_pods() }}
+
+{{ macros.podman_list_pods() }}
+
+{{ macros.podman_container_volume_setup() }}
+{{ macros.podman_create_network() }}
+
+{{ macros.podman_create_pods() }}
+{{ macros.podman_create_containers() }}
+{{ macros.podman_start_pods() }}
+
+macro=mysql_check_ptest1_exists_everywhere
+bats=${macro}_${epoch}.bats
+cat <<'__eot__' >$bats
+@test "mysql_check_ptest1_exists_everywhere" {
+
+{{ macros.mysql_check_ptest1_exists_everywhere() }}
+
+}
+__eot__
+bats $bats
+
+{{ macros.mysql_setup_replication() }}
+
