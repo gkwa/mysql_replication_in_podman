@@ -364,11 +364,11 @@ loop1 repcheck my1c my3p.dns.podman $sleep $tries
 loop1 repcheck my1c my4p.dns.podman $sleep $tries
 loop1 repcheck my1c my5p.dns.podman $sleep $tries
 
-sudo time ./test_replication_is_running.bats
-sudo time ./test_statement_based_binlog_format.bats
-sudo time ./test_percona_checksums.bats
-sudo time ./test_fart.bats
-sudo time ./test_recover_from_bad_state.bats
+# sudo time ./test_replication_is_running.bats
+# sudo time ./test_statement_based_binlog_format.bats
+# sudo time ./test_percona_checksums.bats
+# sudo time ./test_fart.bats
+# sudo time ./test_recover_from_bad_state.bats
 
 set +o errexit
 podman container stop --log-level debug --ignore my1c my2c my3c my4c my5c
