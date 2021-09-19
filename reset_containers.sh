@@ -621,6 +621,12 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
+macro=mysql_check_ptest1_exists_everywhere
+bats=${macro}_${epoch}.bats
+cat <<'__eot__' >$bats
+@test "mysql_check_ptest1_exists_everywhere" {
+
+
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
 [ "$status" == 0 ]
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest1'
@@ -631,3 +637,7 @@ run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podm
 [ "$status" == 0 ]
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest1'
 [ "$status" == 0 ]
+
+}
+__eot__
+bats $bats
