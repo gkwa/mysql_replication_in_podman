@@ -17,6 +17,7 @@ install:
 
 test_script:
 - sudo time bash reset_containers.sh
+- sudo time bash reset_containers.sh
 
 # - sudo time bash reset_data.sh
 # - sudo time bash reset_data.sh
