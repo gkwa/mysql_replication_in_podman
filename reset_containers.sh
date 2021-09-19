@@ -411,6 +411,14 @@ loop1 repcheck my1c my3p.dns.podman $sleep $tries
 loop1 repcheck my1c my4p.dns.podman $sleep $tries
 loop1 repcheck my1c my5p.dns.podman $sleep $tries
 
+epoch=$(date +%s)
+
+macro=mysql_check_ptest1_does_not_exist
+bats=${macro}_${epoch}.bats
+cat <<__eot__ >$bats
+@test "$macro" {
+
+
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest1'
@@ -421,9 +429,29 @@ run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podm
 [ "$status" == 1 ]
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
+
+}
+__eot__
+bats $bats
+
+macro=macros.mysql_create_database_ptest1
+bats=${macro}_${epoch}.bats
+cat <<__eot__ >$bats
+@test "$macro" {
+
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'CREATE DATABASE IF NOT EXISTS ptest1'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest1 --host=my1p --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest1 --host=my1p --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+
+}
+__eot__
+bats $bats
+
+macro=macros.mysql_check_ptest1_exists_everywhere
+bats=${macro}_${epoch}.bats
+cat <<__eot__ >$bats
+@test "$macro" {
+
 
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
 [ "$status" == 0 ]
@@ -435,6 +463,10 @@ run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podm
 [ "$status" == 0 ]
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest1'
 [ "$status" == 0 ]
+
+}
+__eot__
+bats $bats
 
 set +o errexit
 podman container stop --ignore my1c my2c my3c my4c my5c 2>podman_stop_containers_$(date +%s).log >/dev/null
