@@ -133,6 +133,16 @@ podman pod exists my5p && podman pod rm --force my5p --ignore my5p
 
 podman pod ls
 
+echo create volumes
+podman volume exists my1dbdata || podman volume create my1dbdata >/dev/null
+podman volume exists my2dbdata || podman volume create my2dbdata >/dev/null
+podman volume exists my3dbdata || podman volume create my3dbdata >/dev/null
+podman volume exists my4dbdata || podman volume create my4dbdata >/dev/null
+podman volume exists my5dbdata || podman volume create my5dbdata >/dev/null
+
+echo create network
+podman network exists replication || podman network create replication >/dev/null
+
 mkdir -p reptest
 
 cat <<'__eot__' >reptest/my1c_my.cnf
@@ -200,16 +210,6 @@ cat reptest/my2c_my.cnf && echo
 cat reptest/my3c_my.cnf && echo
 cat reptest/my4c_my.cnf && echo
 cat reptest/my5c_my.cnf && echo
-
-echo create volumes
-podman volume exists my1dbdata || podman volume create my1dbdata >/dev/null
-podman volume exists my2dbdata || podman volume create my2dbdata >/dev/null
-podman volume exists my3dbdata || podman volume create my3dbdata >/dev/null
-podman volume exists my4dbdata || podman volume create my4dbdata >/dev/null
-podman volume exists my5dbdata || podman volume create my5dbdata >/dev/null
-
-echo create network
-podman network exists replication || podman network create replication >/dev/null
 
 echo create pods
 podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null

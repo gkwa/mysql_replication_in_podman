@@ -1,3 +1,31 @@
+{% macro system_setup() -%}
+{%- set global=manifest['global'] -%}
+{%- set replication=manifest['replication'] -%}
+{%- set pods=manifest['pods'] %}
+{{ import_common_functions() }}
+{{ podman_pull_images() }}
+
+{{ podman_stop_containers() }}
+{{ podman_stop_pods() }}
+
+{{ podman_rm_containers() }}
+{{ podman_rm_pods() }}
+
+{{ podman_list_pods() }}
+
+{{ podman_container_volume_setup() }}
+{{ podman_create_network() }}
+
+{{ mysql_conf_setup() }}
+{{ podman_create_pods() }}
+{{ podman_create_containers() }}
+{{ podman_start_pods() }}
+
+{{ mysql_setup_replication() }}
+{%- endmacro -%}
+
+
+
 {% macro podman_status() -%}
 podman ps
 podman ps --pod
@@ -18,32 +46,6 @@ podman pod ls
 {{ remove_mysql_data_but_keep_container_volume() }}
 {{ podman_start_pods() }}
 podman pod ls
-
-{{ mysql_setup_replication() }}
-{%- endmacro -%}
-
-{% macro system_setup() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] %}
-{{ import_common_functions() }}
-{{ podman_pull_images() }}
-
-{{ podman_stop_containers() }}
-{{ podman_stop_pods() }}
-{{ podman_rm_containers() }}
-{{ podman_rm_pods() }}
-
-{{ podman_list_pods() }}
-
-
-{{ mysql_conf_setup() }}
-{{ podman_container_volume_setup() }}
-{{ podman_create_network() }}
-{{ podman_create_pods() }}
-{{ podman_create_containers() }}
-{# {{ remove_mysql_data_but_keep_container_volume() }} #}
-{{ podman_start_pods() }}
 
 {{ mysql_setup_replication() }}
 {%- endmacro -%}
