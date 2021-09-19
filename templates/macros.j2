@@ -135,6 +135,9 @@ size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
+set +o errexit
+podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
+set -o errexit
 podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
 
 {{ healthcheck() }}
@@ -167,6 +170,11 @@ podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --log-level d
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
+set +o errexit
+{% for pod in pods %}
+podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} 
+{%- endfor %}
+set -o errexit
 {% for pod in pods %}
 podman pod exists {{ pod.name }} && podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} 
 {%- endfor %}

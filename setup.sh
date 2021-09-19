@@ -89,6 +89,15 @@ podman container rm --force --ignore my3c
 podman container rm --force --ignore my4c
 podman container rm --force --ignore my5c
 
+set +o errexit
+
+podman pod rm --force my1p --ignore my1p
+podman pod rm --force my2p --ignore my2p
+podman pod rm --force my3p --ignore my3p
+podman pod rm --force my4p --ignore my4p
+podman pod rm --force my5p --ignore my5p
+set -o errexit
+
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p
 podman pod exists my3p && podman pod rm --force my3p --ignore my3p
@@ -264,6 +273,9 @@ podman container exists my5c || podman container create \
     --env=MYSQL_DATABASE=db \
     registry.redhat.io/rhel8/mysql-80 >/dev/null
 
+set +o errexit
+podman pod start my1p my2p my3p my4p my5p >/dev/null
+set -o errexit
 podman pod start my1p my2p my3p my4p my5p >/dev/null
 
 echo 'wait for container healthcheck(s)'
@@ -391,6 +403,15 @@ podman container rm --force --ignore my3c
 podman container rm --force --ignore my4c
 podman container rm --force --ignore my5c
 
+set +o errexit
+
+podman pod rm --force my1p --ignore my1p
+podman pod rm --force my2p --ignore my2p
+podman pod rm --force my3p --ignore my3p
+podman pod rm --force my4p --ignore my4p
+podman pod rm --force my5p --ignore my5p
+set -o errexit
+
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p
 podman pod exists my3p && podman pod rm --force my3p --ignore my3p
@@ -486,6 +507,9 @@ podman container exists my5c || podman container create \
     --env=MYSQL_DATABASE=db \
     registry.redhat.io/rhel8/mysql-80 >/dev/null
 
+set +o errexit
+podman pod start my1p my2p my3p my4p my5p >/dev/null
+set -o errexit
 podman pod start my1p my2p my3p my4p my5p >/dev/null
 
 echo 'wait for container healthcheck(s)'
