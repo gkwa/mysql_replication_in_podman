@@ -104,11 +104,11 @@ podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
 
-podman pod exists my1p && podman pod stop my1p --ignore my1p
-podman pod exists my2p && podman pod stop my2p --ignore my2p
-podman pod exists my3p && podman pod stop my3p --ignore my3p
-podman pod exists my4p && podman pod stop my4p --ignore my4p
-podman pod exists my5p && podman pod stop my5p --ignore my5p
+podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
+podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
+podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
+podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
+podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
 
 podman container rm --force --ignore my1c
 podman container rm --force --ignore my2c
