@@ -200,7 +200,7 @@ size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] %}
 set +o errexit
-podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
+podman pod start {{ pods |map(attribute='name') |join(' ') }}
 set -o errexit
 podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
 
@@ -227,7 +227,7 @@ podman network exists {{ global.network}} || podman network create {{ global.net
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] -%}
 {% for pod in pods %}
-podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --log-level debug --ignore {{ pod.name }}
+podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --ignore {{ pod.name }}
 {%- endfor %}
 {%- endmacro -%}
 
@@ -237,7 +237,7 @@ podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --log-level d
 {%- set pods=manifest['pods'] %}
 set +o errexit
 {% for pod in pods %}
-podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} 
+podman pod rm --force {{ pod.name }} --ignore {{ pod.name }}
 {%- endfor %}
 set -o errexit
 {% for pod in pods %}
@@ -264,10 +264,10 @@ podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
 set +o errexit
-podman container stop --log-level debug --ignore {{ containers_as_single_line() }}
+podman container stop --ignore {{ containers_as_single_line() }}
 set -o errexit
 {%- for pod in pods %}
-podman container exists {{ pod.containers[0].name }} && podman container stop --log-level debug --ignore {{ pod.containers[0].name }}
+podman container exists {{ pod.containers[0].name }} && podman container stop --ignore {{ pod.containers[0].name }}
 {%- endfor %}
 {%- endmacro -%}
 
@@ -288,7 +288,7 @@ echo 'wait for container healthcheck(s)'
 sleep=4
 tries=20
 {%- for pod in pods %}
-loop2 healthcheck_fn {{ pods[0].containers[0].name }} $sleep $tries
+loop2 healthcheck {{ pods[0].containers[0].name }} $sleep $tries
 {%- endfor %}
 {%- endmacro -%}
 

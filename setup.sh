@@ -96,19 +96,19 @@ podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
 podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 
 set +o errexit
-podman container stop --log-level debug --ignore my1c my2c my3c my4c my5c
+podman container stop --ignore my1c my2c my3c my4c my5c
 set -o errexit
-podman container exists my1c && podman container stop --log-level debug --ignore my1c
-podman container exists my2c && podman container stop --log-level debug --ignore my2c
-podman container exists my3c && podman container stop --log-level debug --ignore my3c
-podman container exists my4c && podman container stop --log-level debug --ignore my4c
-podman container exists my5c && podman container stop --log-level debug --ignore my5c
+podman container exists my1c && podman container stop --ignore my1c
+podman container exists my2c && podman container stop --ignore my2c
+podman container exists my3c && podman container stop --ignore my3c
+podman container exists my4c && podman container stop --ignore my4c
+podman container exists my5c && podman container stop --ignore my5c
 
-podman pod exists my1p && podman pod stop my1p --log-level debug --ignore my1p
-podman pod exists my2p && podman pod stop my2p --log-level debug --ignore my2p
-podman pod exists my3p && podman pod stop my3p --log-level debug --ignore my3p
-podman pod exists my4p && podman pod stop my4p --log-level debug --ignore my4p
-podman pod exists my5p && podman pod stop my5p --log-level debug --ignore my5p
+podman pod exists my1p && podman pod stop my1p --ignore my1p
+podman pod exists my2p && podman pod stop my2p --ignore my2p
+podman pod exists my3p && podman pod stop my3p --ignore my3p
+podman pod exists my4p && podman pod stop my4p --ignore my4p
+podman pod exists my5p && podman pod stop my5p --ignore my5p
 
 podman container rm --force --ignore my1c
 podman container rm --force --ignore my2c
@@ -301,18 +301,18 @@ podman container exists my5c || podman container create \
     registry.redhat.io/rhel8/mysql-80 >/dev/null
 
 set +o errexit
-podman pod start my1p my2p my3p my4p my5p >/dev/null
+podman pod start my1p my2p my3p my4p my5p
 set -o errexit
 podman pod start my1p my2p my3p my4p my5p >/dev/null
 
 echo 'wait for container healthcheck(s)'
 sleep=4
 tries=20
-loop2 healthcheck_fn my1c $sleep $tries
-loop2 healthcheck_fn my1c $sleep $tries
-loop2 healthcheck_fn my1c $sleep $tries
-loop2 healthcheck_fn my1c $sleep $tries
-loop2 healthcheck_fn my1c $sleep $tries
+loop2 healthcheck my1c $sleep $tries
+loop2 healthcheck my1c $sleep $tries
+loop2 healthcheck my1c $sleep $tries
+loop2 healthcheck my1c $sleep $tries
+loop2 healthcheck my1c $sleep $tries
 
 echo 'check data directory is larger than 80MB, ~97MB expected size'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
