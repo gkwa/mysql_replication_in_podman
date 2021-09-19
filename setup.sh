@@ -96,13 +96,13 @@ podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
 podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 
 set +o errexit
-podman container stop --ignore my1c my2c my3c my4c my5c
+podman container stop --ignore my1c my2c my3c my4c my5c >/dev/null
 set -o errexit
-podman container exists my1c && podman container stop --ignore my1c
-podman container exists my2c && podman container stop --ignore my2c
-podman container exists my3c && podman container stop --ignore my3c
-podman container exists my4c && podman container stop --ignore my4c
-podman container exists my5c && podman container stop --ignore my5c
+podman container exists my1c && podman container stop --ignore my1c >/dev/null
+podman container exists my2c && podman container stop --ignore my2c >/dev/null
+podman container exists my3c && podman container stop --ignore my3c >/dev/null
+podman container exists my4c && podman container stop --ignore my4c >/dev/null
+podman container exists my5c && podman container stop --ignore my5c >/dev/null
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p
 podman pod exists my2p && podman pod stop my2p --ignore my2p
@@ -118,18 +118,18 @@ podman container rm --force --ignore my5c
 
 set +o errexit
 
-podman pod rm --force my1p --ignore my1p
-podman pod rm --force my2p --ignore my2p
-podman pod rm --force my3p --ignore my3p
-podman pod rm --force my4p --ignore my4p
-podman pod rm --force my5p --ignore my5p
+podman pod rm --force my1p --ignore my1p >/dev/null
+podman pod rm --force my2p --ignore my2p >/dev/null
+podman pod rm --force my3p --ignore my3p >/dev/null
+podman pod rm --force my4p --ignore my4p >/dev/null
+podman pod rm --force my5p --ignore my5p >/dev/null
 set -o errexit
 
-podman pod exists my1p && podman pod rm --force my1p --ignore my1p
-podman pod exists my2p && podman pod rm --force my2p --ignore my2p
-podman pod exists my3p && podman pod rm --force my3p --ignore my3p
-podman pod exists my4p && podman pod rm --force my4p --ignore my4p
-podman pod exists my5p && podman pod rm --force my5p --ignore my5p
+podman pod exists my1p && podman pod rm --force my1p --ignore my1p >/dev/null
+podman pod exists my2p && podman pod rm --force my2p --ignore my2p >/dev/null
+podman pod exists my3p && podman pod rm --force my3p --ignore my3p >/dev/null
+podman pod exists my4p && podman pod rm --force my4p --ignore my4p >/dev/null
+podman pod exists my5p && podman pod rm --force my5p --ignore my5p >/dev/null
 
 podman pod ls
 
@@ -301,7 +301,7 @@ podman container exists my5c || podman container create \
     registry.redhat.io/rhel8/mysql-80 >/dev/null
 
 set +o errexit
-podman pod start my1p my2p my3p my4p my5p
+podman pod start my1p my2p my3p my4p my5p >/dev/null
 set -o errexit
 podman pod start my1p my2p my3p my4p my5p >/dev/null
 
