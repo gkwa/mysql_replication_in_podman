@@ -49,6 +49,24 @@ repcheck() {
     [ $r1 -eq 0 ] && [ $r2 -eq 0 ]
 }
 
+loop2() {
+    func=$1
+    container=$2
+    sleep=$3
+    maxcalls=$4
+
+    count=1
+    while ! ($func $container); do
+        echo trying $func... $count
+        sleep $sleep
+        let count+=1
+
+        if [[ $count -ge $maxcalls ]]; then
+            return 1
+        fi
+    done
+}
+
 loop1() {
     func=$1
     jump_container=$2
@@ -67,20 +85,15 @@ loop1() {
         fi
     done
 }
-# healthcheck_fn() {
-#     jump_container=$1
-#     target_host=$2
-# 
-#     result=$(podman exec --env=MYSQL_PWD=root $jump_container mysql --user=root --host=$target_host --execute 'SHOW SLAVE STATUS\G')
-# 
-#     grep --silent 'Slave_IO_Running: Yes' <<<"$result"
-#     r1=$?
-# 
-#     grep --silent 'Slave_SQL_Running: Yes' <<<"$result"
-#     r2=$?
-# 
-#     [ $r1 -eq 0 ] && [ $r2 -eq 0 ]
-# }
+
+healthcheck_fn() {
+    container=$1
+
+    podman healthcheck run $container </dev/null
+    r1=$?
+
+    [ $r1 -eq 0 ]
+}
 
 @test 'test_replication_is_running' {
 

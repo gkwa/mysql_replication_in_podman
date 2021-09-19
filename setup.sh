@@ -47,6 +47,24 @@ repcheck() {
     [ $r1 -eq 0 ] && [ $r2 -eq 0 ]
 }
 
+loop2() {
+    func=$1
+    container=$2
+    sleep=$3
+    maxcalls=$4
+
+    count=1
+    while ! ($func $container); do
+        echo trying $func... $count
+        sleep $sleep
+        let count+=1
+
+        if [[ $count -ge $maxcalls ]]; then
+            return 1
+        fi
+    done
+}
+
 loop1() {
     func=$1
     jump_container=$2
@@ -65,20 +83,15 @@ loop1() {
         fi
     done
 }
-# healthcheck_fn() {
-#     jump_container=$1
-#     target_host=$2
-#
-#     result=$(podman exec --env=MYSQL_PWD=root $jump_container mysql --user=root --host=$target_host --execute 'SHOW SLAVE STATUS\G')
-#
-#     grep --silent 'Slave_IO_Running: Yes' <<<"$result"
-#     r1=$?
-#
-#     grep --silent 'Slave_SQL_Running: Yes' <<<"$result"
-#     r2=$?
-#
-#     [ $r1 -eq 0 ] && [ $r2 -eq 0 ]
-# }
+
+healthcheck_fn() {
+    container=$1
+
+    podman healthcheck run $container </dev/null
+    r1=$?
+
+    [ $r1 -eq 0 ]
+}
 podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
 podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 
@@ -293,11 +306,13 @@ set -o errexit
 podman pod start my1p my2p my3p my4p my5p >/dev/null
 
 echo 'wait for container healthcheck(s)'
-until podman healthcheck run my1c </dev/null; do sleep 3; done
-until podman healthcheck run my2c </dev/null; do sleep 3; done
-until podman healthcheck run my3c </dev/null; do sleep 3; done
-until podman healthcheck run my4c </dev/null; do sleep 3; done
-until podman healthcheck run my5c </dev/null; do sleep 3; done
+sleep=2
+tries=40
+loop2 healthcheck_fn my1c $sleep $tries
+loop2 healthcheck_fn my1c $sleep $tries
+loop2 healthcheck_fn my1c $sleep $tries
+loop2 healthcheck_fn my1c $sleep $tries
+loop2 healthcheck_fn my1c $sleep $tries
 
 echo 'check data directory is larger than 90MB (tends to be ~97MB)'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
@@ -539,11 +554,13 @@ set -o errexit
 podman pod start my1p my2p my3p my4p my5p >/dev/null
 
 echo 'wait for container healthcheck(s)'
-until podman healthcheck run my1c </dev/null; do sleep 3; done
-until podman healthcheck run my2c </dev/null; do sleep 3; done
-until podman healthcheck run my3c </dev/null; do sleep 3; done
-until podman healthcheck run my4c </dev/null; do sleep 3; done
-until podman healthcheck run my5c </dev/null; do sleep 3; done
+sleep=2
+tries=40
+loop2 healthcheck_fn my1c $sleep $tries
+loop2 healthcheck_fn my1c $sleep $tries
+loop2 healthcheck_fn my1c $sleep $tries
+loop2 healthcheck_fn my1c $sleep $tries
+loop2 healthcheck_fn my1c $sleep $tries
 
 echo 'check data directory is larger than 90MB (tends to be ~97MB)'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
