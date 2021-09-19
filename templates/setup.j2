@@ -2,34 +2,14 @@
 set -o errexit
 {%- import "macros.j2" as macros with context %}
 
-{{ macros.import_common_functions() }}
-{{ macros.podman_pull_images() }}
-
-{{ macros.podman_stop_containers() }}
-{{ macros.podman_stop_pods() }}
-{{ macros.podman_rm_containers() }}
-{{ macros.podman_rm_pods() }}
-
-{{ macros.podman_list_pods() }}
-
-
-{{ macros.mysql_conf_setup() }}
-{{ macros.podman_container_volume_setup() }}
-{{ macros.podman_create_network() }}
-{{ macros.podman_create_pods() }}
-{{ macros.podman_create_containers() }}
-{# {{ macros.remove_mysql_data_but_keep_container_volume() }} #}
-{{ macros.podman_start_pods() }}
-
-{{ macros.mysql_create_mysql_user_repl() }}
-{{ macros.mysql_change_master_to_master_host() }}
-{{ macros.mysql_start_slave() }}
-{{ macros.mysql_wait_for_replication() }}
+{{ macros.system_setup() }}
 
 # sudo time ./test_statement_based_binlog_format.bats
-# sudo time ./test_percona_checksums.bats
+sudo time ./test_percona_checksums.bats
 # sudo time ./test_fart.bats
 # sudo time ./test_recover_from_bad_state.bats
+  
+{#
 
 {{ macros.podman_stop_containers() }}
 {{ macros.podman_stop_pods() }}
@@ -49,6 +29,7 @@ sudo time ./test_percona_checksums.bats
 sudo time ./test_fart.bats
 sudo time ./test_recover_from_bad_state.bats
 
+#}
 
 
 {# keep newline at end of file please but only for aesthetics #}

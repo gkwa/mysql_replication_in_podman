@@ -7,6 +7,35 @@ podman volume ls
 podman pod ls
 {%- endmacro -%}
 
+{% macro system_setup() -%}
+{%- set global=manifest['global'] -%}
+{%- set replication=manifest['replication'] -%}
+{%- set pods=manifest['pods'] %}
+{{ import_common_functions() }}
+{{ podman_pull_images() }}
+
+{{ podman_stop_containers() }}
+{{ podman_stop_pods() }}
+{{ podman_rm_containers() }}
+{{ podman_rm_pods() }}
+
+{{ podman_list_pods() }}
+
+
+{{ mysql_conf_setup() }}
+{{ podman_container_volume_setup() }}
+{{ podman_create_network() }}
+{{ podman_create_pods() }}
+{{ podman_create_containers() }}
+{# {{ remove_mysql_data_but_keep_container_volume() }} #}
+{{ podman_start_pods() }}
+
+{{ mysql_create_mysql_user_repl() }}
+{{ mysql_change_master_to_master_host() }}
+{{ mysql_start_slave() }}
+{{ mysql_wait_for_replication() }}
+{%- endmacro -%}
+
 {% macro mysql_jump() -%}
 {%- set global=manifest['global'] -%}
 {%- set pods=manifest['pods'] -%}
