@@ -264,7 +264,7 @@ podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
 set +o errexit
-podman container stop --ignore {{ containers_as_single_line() }} >/dev/null
+podman container stop --ignore {{ containers_as_single_line() }} 2>podman_stop_containers.log >/dev/null
 set -o errexit
 {%- for pod in pods %}
 podman container exists {{ pod.containers[0].name }} && podman container stop --ignore {{ pod.containers[0].name }} >/dev/null

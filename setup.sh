@@ -96,7 +96,7 @@ podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
 podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 
 set +o errexit
-podman container stop --ignore my1c my2c my3c my4c my5c >/dev/null
+podman container stop --ignore my1c my2c my3c my4c my5c 2>podman_stop_containers.log >/dev/null
 set -o errexit
 podman container exists my1c && podman container stop --ignore my1c >/dev/null
 podman container exists my2c && podman container stop --ignore my2c >/dev/null
