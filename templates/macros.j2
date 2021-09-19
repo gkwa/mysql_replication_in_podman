@@ -200,7 +200,7 @@ size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] %}
 set +o errexit
-podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
+podman pod start {{ pods |map(attribute='name') |join(' ') }} 2>podman_start_pods.log >/dev/null
 set -o errexit
 podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
 

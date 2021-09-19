@@ -301,7 +301,7 @@ podman container exists my5c || podman container create \
     registry.redhat.io/rhel8/mysql-80 >/dev/null
 
 set +o errexit
-podman pod start my1p my2p my3p my4p my5p >/dev/null
+podman pod start my1p my2p my3p my4p my5p 2>podman_start_pods.log >/dev/null
 set -o errexit
 podman pod start my1p my2p my3p my4p my5p >/dev/null
 

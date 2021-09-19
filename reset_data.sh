@@ -130,7 +130,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 [[ $size -le 8 ]]
 
 set +o errexit
-podman pod start my1p my2p my3p my4p my5p >/dev/null
+podman pod start my1p my2p my3p my4p my5p 2>podman_start_pods.log >/dev/null
 set -o errexit
 podman pod start my1p my2p my3p my4p my5p >/dev/null
 
