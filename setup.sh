@@ -316,15 +316,15 @@ loop2 healthcheck_fn my1c $sleep $tries
 
 echo 'check data directory is larger than 90MB (tends to be ~97MB)'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
-[[ $size -gt 90000 ]]
+[[ $size -gt 80000 ]]
 size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
-[[ $size -gt 90000 ]]
+[[ $size -gt 80000 ]]
 size=$(du -s $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
-[[ $size -gt 90000 ]]
+[[ $size -gt 80000 ]]
 size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
-[[ $size -gt 90000 ]]
+[[ $size -gt 80000 ]]
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
-[[ $size -gt 90000 ]]
+[[ $size -gt 80000 ]]
 
 echo mysql: add user repl
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute \
@@ -558,15 +558,15 @@ loop2 healthcheck_fn my1c $sleep $tries
 
 echo 'check data directory is larger than 90MB (tends to be ~97MB)'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
-[[ $size -gt 90000 ]]
+[[ $size -gt 80000 ]]
 size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
-[[ $size -gt 90000 ]]
+[[ $size -gt 80000 ]]
 size=$(du -s $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
-[[ $size -gt 90000 ]]
+[[ $size -gt 80000 ]]
 size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
-[[ $size -gt 90000 ]]
+[[ $size -gt 80000 ]]
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
-[[ $size -gt 90000 ]]
+[[ $size -gt 80000 ]]
 
 echo mysql: start replication
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
