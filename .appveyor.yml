@@ -20,3 +20,10 @@ test_script:
 - sudo time ./test_percona_checksums.bats
 - sudo time ./test_fart.bats
 - sudo time ./test_recover_from_bad_state.bats
+
+- sudo time bash ./refresh_data.sh
+
+- sudo time ./test_statement_based_binlog_format.bats
+- sudo time ./test_percona_checksums.bats
+- sudo time ./test_fart.bats
+- sudo time ./test_recover_from_bad_state.bats

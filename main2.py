@@ -50,7 +50,7 @@ expanded = tmpl.render(manifest=manifest, test_name=path.stem)
 path.write_text(expanded)
 path.chmod(path.stat().st_mode | stat.S_IEXEC)
 
-path = pathlib.Path("stop_pods_delete_data_start_replication.sh")
+path = pathlib.Path("refresh_data.sh")
 tmpl = env.get_template(f"{path.stem}.j2")
 expanded = tmpl.render(manifest=manifest, test_name=path.stem)
 path.write_text(expanded)

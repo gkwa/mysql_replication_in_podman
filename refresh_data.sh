@@ -134,15 +134,15 @@ set -o errexit
 podman pod start my1p my2p my3p my4p my5p >/dev/null
 
 echo 'wait for container healthcheck(s)'
-sleep=2
-tries=40
+sleep=4
+tries=20
 loop2 healthcheck_fn my1c $sleep $tries
 loop2 healthcheck_fn my1c $sleep $tries
 loop2 healthcheck_fn my1c $sleep $tries
 loop2 healthcheck_fn my1c $sleep $tries
 loop2 healthcheck_fn my1c $sleep $tries
 
-echo 'check data directory is larger than 80MB (tends to be ~97MB)'
+echo 'check data directory is larger than 80MB, ~97MB expected size'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
