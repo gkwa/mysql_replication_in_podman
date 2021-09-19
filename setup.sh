@@ -314,7 +314,7 @@ loop2 healthcheck my1c $sleep $tries
 loop2 healthcheck my1c $sleep $tries
 loop2 healthcheck my1c $sleep $tries
 
-echo 'check data directory is larger than 80MB, ~97MB expected size'
+echo 'check data directory is larger than 80MB, ~97MB is expected size'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')

@@ -497,7 +497,7 @@ healthcheck() {
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] -%}
-echo 'check data directory is larger than 80MB, ~97MB expected size'
+echo 'check data directory is larger than 80MB, ~97MB is expected size'
 {%- for pod in pods %}
 size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -gt 80000 ]]

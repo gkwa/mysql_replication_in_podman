@@ -313,7 +313,7 @@ loop2 healthcheck my1c $sleep $tries
 loop2 healthcheck my1c $sleep $tries
 loop2 healthcheck my1c $sleep $tries
 
-echo 'check data directory is larger than 80MB, ~97MB expected size'
+echo 'check data directory is larger than 80MB, ~97MB is expected size'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
@@ -415,8 +415,8 @@ epoch=$(date +%s)
 
 macro=mysql_check_ptest1_does_not_exist
 bats=${macro}_${epoch}.bats
-cat <<__eot__ >$bats
-@test "$macro" {
+cat <<'__eot__' >$bats
+@test "mysql_check_ptest1_does_not_exist" {
 
 
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -436,8 +436,8 @@ bats $bats
 
 macro=macros.mysql_create_database_ptest1
 bats=${macro}_${epoch}.bats
-cat <<__eot__ >$bats
-@test "$macro" {
+cat <<'__eot__' >$bats
+@test "mysql_create_database_ptest1" {
 
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'CREATE DATABASE IF NOT EXISTS ptest1'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest1 --host=my1p --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
@@ -449,8 +449,8 @@ bats $bats
 
 macro=macros.mysql_check_ptest1_exists_everywhere
 bats=${macro}_${epoch}.bats
-cat <<__eot__ >$bats
-@test "$macro" {
+cat <<'__eot__' >$bats
+@test "mysql_check_ptest1_exists_everywhere" {
 
 
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -609,7 +609,7 @@ loop2 healthcheck my1c $sleep $tries
 loop2 healthcheck my1c $sleep $tries
 loop2 healthcheck my1c $sleep $tries
 
-echo 'check data directory is larger than 80MB, ~97MB expected size'
+echo 'check data directory is larger than 80MB, ~97MB is expected size'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
