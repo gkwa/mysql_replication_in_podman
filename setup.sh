@@ -65,6 +65,20 @@ loop1() {
         fi
     done
 }
+# healthcheck_fn() {
+#     jump_container=$1
+#     target_host=$2
+#
+#     result=$(podman exec --env=MYSQL_PWD=root $jump_container mysql --user=root --host=$target_host --execute 'SHOW SLAVE STATUS\G')
+#
+#     grep --silent 'Slave_IO_Running: Yes' <<<"$result"
+#     r1=$?
+#
+#     grep --silent 'Slave_SQL_Running: Yes' <<<"$result"
+#     r2=$?
+#
+#     [ $r1 -eq 0 ] && [ $r2 -eq 0 ]
+# }
 podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
 podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 
