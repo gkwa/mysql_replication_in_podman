@@ -281,6 +281,15 @@ loop2 healthcheck_fn {{ pods[0].containers[0].name }} $sleep $tries
 {{ mysql_jump() }} --database=ptest --host={{ host }} --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 {%- endmacro -%}
 
+{% macro mysql_create_database_ptest1(host) -%}
+{%- set global=manifest['global'] -%}
+{%- set replication=manifest['replication'] -%}
+{%- set pods=manifest['pods'] -%}
+{{ mysql_jump() }} --host={{ host }} --execute 'CREATE DATABASE IF NOT EXISTS ptest1'
+{{ mysql_jump() }} --database=ptest1 --host={{ host }} --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+{{ mysql_jump() }} --database=ptest1 --host={{ host }} --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+{%- endmacro -%}
+
 {% macro percona_checksum() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] %}

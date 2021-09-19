@@ -16,7 +16,7 @@
 
 {{ macros.mysql_stop_slave() }}
 
-{{ macros.mysql_create_database_ptest() }}
+{{ macros.mysql_create_database_ptest('{{ pods[0].name }}') }}
 
 result=$({{ macros.mysql_jump() }} --host={{ pods[0].name }} --database=ptest --execute 'SELECT id FROM dummy WHERE name="a"')
 [ "$result" == 1 ]

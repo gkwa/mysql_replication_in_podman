@@ -33,13 +33,9 @@ run {{ macros.mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE pt
 {{ macros.mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'STOP SLAVE'
 {%- endfor %}
 
-{{ macros.mysql_create_database_ptest() }}
-{{ macros.mysql_jump() }} --host={{ pods[0].name }} --database=ptest1 --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
-{{ macros.mysql_jump() }} --host={{ pods[0].name }} --database=ptest1 --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+{{ macros.mysql_create_database_ptest1(pods[0].name) }}
 
-{{ macros.mysql_create_database_ptest() }}
-{{ macros.mysql_jump() }} --host={{ pods[1].name }} --database=ptest2 --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
-{{ macros.mysql_jump() }} --host={{ pods[1].name }} --database=ptest2 --execute 'INSERT INTO dummy (name) VALUES ("c"), ("d")'
+{{ macros.mysql_create_database_ptest1(pods[1].name) }}
 
 run {{ macros.mysql_jump() }} --host={{ pods[0].name }}.dns.podman --execute 'USE ptest1'
 [ "$status" == 0 ]
