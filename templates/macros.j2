@@ -7,6 +7,25 @@ podman volume ls
 podman pod ls
 {%- endmacro -%}
 
+{% macro stop_pods_remove_data_start_pods() -%}
+{%- set global=manifest['global'] -%}
+{%- set replication=manifest['replication'] -%}
+{%- set pods=manifest['pods'] %}
+{{ import_common_functions() }}
+{{ podman_stop_containers() }}
+{{ podman_stop_pods() }}
+podman pod ls
+{{ remove_mysql_data_but_keep_container_volume() }}
+{{ podman_start_pods() }}
+podman pod ls
+
+{{ mysql_create_mysql_user_repl() }}
+{{ mysql_change_master_to_master_host() }}
+{{ mysql_start_slave() }}
+{{ mysql_wait_for_replication() }}
+
+{%- endmacro -%}
+
 {% macro system_setup() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
@@ -152,14 +171,15 @@ podman container exists {{ pod.containers[0].name }} || podman container create 
 {% macro remove_mysql_data_but_keep_container_volume() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set pods=manifest['pods'] %}
+
 echo remove data from volume, but leaving volume in place
 {%- for pod in pods %}
 rm -rf --preserve-root $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/*
 {%- endfor %}
 
 echo check data directory is cleaned out
-{%- for pod in pods -%}
+{%- for pod in pods %}
 size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -le 8 ]]
 {%- endfor -%}
@@ -180,6 +200,7 @@ podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
 {%- endmacro -%}
 
 {% macro podman_list_pods() -%}
+{# newline #}
 podman pod ls
 {%- endmacro -%}
 

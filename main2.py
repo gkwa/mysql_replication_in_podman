@@ -50,6 +50,12 @@ expanded = tmpl.render(manifest=manifest, test_name=path.stem)
 path.write_text(expanded)
 path.chmod(path.stat().st_mode | stat.S_IEXEC)
 
+path = pathlib.Path("stop_pods_delete_data_start_replication.sh")
+tmpl = env.get_template(f"{path.stem}.j2")
+expanded = tmpl.render(manifest=manifest, test_name=path.stem)
+path.write_text(expanded)
+path.chmod(path.stat().st_mode | stat.S_IEXEC)
+
 cmd = ["shfmt", "-w", "-s", "-i", "4", "*.sh"]
 cmd = ' '.join(cmd)
 

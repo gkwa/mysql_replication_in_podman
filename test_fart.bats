@@ -123,7 +123,7 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'C
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest --host=my1p --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest --host=my1p --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 
-result=$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=ptest --execute 'SELECT id FROM dummy WHERE name="a"')
+result=$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --skip-column-names --database=ptest --execute 'SELECT id FROM dummy WHERE name="a"')
 [ "$result" == 1 ]
 
 # ensure these fail
