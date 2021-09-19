@@ -37,7 +37,7 @@ repcheck() {
     jump_container=$1
     target_host=$2
 
-    result=$(podman exec --env=MYSQL_PWD=root $jump_container mysql --user=root --host=$target_host --execute 'SHOW SLAVE STATUS\G')
+    result=$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=$target_host --execute 'SHOW SLAVE STATUS\G')
 
     grep --silent 'Slave_IO_Running: Yes' <<<"$result"
     r1=$?
@@ -100,6 +100,7 @@ healthcheck_fn() {
 
 
 
+
 echo mysql: wait for replication to be ready
 sleep=2; tries=60
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
@@ -108,87 +109,89 @@ loop1 repcheck my1c my3p.dns.podman $sleep $tries
 loop1 repcheck my1c my4p.dns.podman $sleep $tries
 loop1 repcheck my1c my5p.dns.podman $sleep $tries
 
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest1'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest2'
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my1p.dns.podman --execute 'USE ptest1'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest1'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest2'
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my1p.dns.podman --execute 'USE ptest2'
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest2'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my2p.dns.podman --execute 'USE ptest1'
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my2p.dns.podman --execute 'USE ptest2'
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest2'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my3p.dns.podman --execute 'USE ptest1'
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my3p.dns.podman --execute 'USE ptest2'
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'USE ptest2'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p.dns.podman --execute 'USE ptest1'
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p.dns.podman --execute 'USE ptest2'
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'USE ptest2'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my5p.dns.podman --execute 'USE ptest1'
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my5p.dns.podman --execute 'USE ptest2'
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest2'
 [ "$status" == 1 ]
 
 
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my1p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my2p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my3p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my5p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
 
 
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my1p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my2p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my3p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my5p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE'
 
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --execute 'CREATE DATABASE ptest'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --database=ptest --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --database=ptest --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my1p --database=ptest1 --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my1p --database=ptest1 --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --execute 'CREATE DATABASE ptest'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=ptest1 --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --database=ptest1 --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --execute 'CREATE DATABASE ptest'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --database=ptest --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --database=ptest --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my2p --database=ptest2 --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my2p --database=ptest2 --execute 'INSERT INTO dummy (name) VALUES ("c"), ("d")'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --execute 'CREATE DATABASE ptest'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --database=ptest2 --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --database=ptest2 --execute 'INSERT INTO dummy (name) VALUES ("c"), ("d")'
 
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my1p.dns.podman --execute 'USE ptest1'
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
 [ "$status" == 0 ]
 
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my2p.dns.podman --execute 'USE ptest2'
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest2'
 [ "$status" == 0 ]
 
 
 
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my2p.dns.podman --execute 'USE ptest1' #2
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest1' #2
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my3p.dns.podman --execute 'USE ptest1' #3
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'USE ptest1' #3
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p.dns.podman --execute 'USE ptest1' #4
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'USE ptest1' #4
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my5p.dns.podman --execute 'USE ptest1' #5
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest1' #5
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my1p.dns.podman --execute 'USE ptest2' #1
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest2' #1
 [ "$status" == 1 ]
 
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my3p.dns.podman --execute 'USE ptest2' #3
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'USE ptest2' #3
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p.dns.podman --execute 'USE ptest2' #4
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'USE ptest2' #4
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my5p.dns.podman --execute 'USE ptest2' #5
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest2' #5
 [ "$status" == 1 ]
+
 
 echo mysql: start replication
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my2p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
+
 echo mysql: wait for replication to be ready
 sleep=2; tries=60
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
@@ -198,25 +201,25 @@ loop1 repcheck my1c my4p.dns.podman $sleep $tries
 loop1 repcheck my1c my5p.dns.podman $sleep $tries
 
 
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my1p.dns.podman --execute 'USE ptest1' #1
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1' #1
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my1p.dns.podman --execute 'USE ptest2' #1
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest2' #1
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my2p.dns.podman --execute 'USE ptest1' #2
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest1' #2
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my2p.dns.podman --execute 'USE ptest2' #2
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest2' #2
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my3p.dns.podman --execute 'USE ptest1' #3
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'USE ptest1' #3
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my3p.dns.podman --execute 'USE ptest2' #3
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'USE ptest2' #3
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p.dns.podman --execute 'USE ptest1' #4
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'USE ptest1' #4
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my4p.dns.podman --execute 'USE ptest2' #4
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'USE ptest2' #4
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my5p.dns.podman --execute 'USE ptest1' #5
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest1' #5
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=root my1c mysql --skip-column-names --user=root --host=my5p.dns.podman --execute 'USE ptest2' #5
+run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest2' #5
 [ "$status" == 0 ]
 
 

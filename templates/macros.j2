@@ -10,13 +10,13 @@ podman pod ls
 {% macro mysql_from_jump() -%}
 {%- set global=manifest['global'] -%}
 {%- set pods=manifest['pods'] -%}
-podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --skip-column-names --user={{ global.user_root }}
+podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }}
 {%- endmacro -%}
 
 {% macro mysql_wait_for_replication() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set pods=manifest['pods'] %}
 echo mysql: wait for replication to be ready
 sleep=2; tries=60
 {%- for pod in pods %}
@@ -27,7 +27,7 @@ loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.name }}.dns.podman $sleep
 {% macro mysql_start_slave() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set pods=manifest['pods'] %}
 echo mysql: start replication
 {%- for pod in pods %}
 {{ mysql_from_jump() }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE USER="{{ global.user_replication }}" PASSWORD="{{ global.user_replication_pass }}"'
@@ -37,15 +37,15 @@ echo mysql: start replication
 {% macro mysql_change_master_to_master_host() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set pods=manifest['pods'] %}
 echo mysql: setup replication
 {{ mysql_stop_slave() }}
 {%- for block in replication %}
 position=$(
-  {{ mysql_from_jump() }} --host={{ block.source.pod }} --execute 'SHOW MASTER STATUS\G' |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+  {{ mysql_from_jump() }} --host={{ block.source.pod }}.dns.podman --execute 'SHOW MASTER STATUS\G' |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 {#- echo target:{{ block.instance.container }} source:{{ block.source.container }} position:$position #}
-podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ block.instance.container }} mysql --host={{ block.instance.pod }} --user={{ global.user_root }} --execute \
+{{ mysql_from_jump() }} --host={{ block.instance.pod }} --user={{ global.user_root }} --execute \
 "CHANGE MASTER TO MASTER_HOST='{{ block.source.pod }}.dns.podman',MASTER_USER='{{ global.user_replication }}',\
 MASTER_PASSWORD='{{ global.user_replication_pass }}',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
 {%- endfor -%}
@@ -78,8 +78,7 @@ cat reptest/{{ pod.containers[0].name }}_my.cnf && echo
 {% macro podman_container_volume_setup() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
-{% import "macros.j2" as macros -%}
+{%- set pods=manifest['pods'] %}
 echo create volumes
 {%- for pod in pods %}
 podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }} >/dev/null
@@ -89,7 +88,7 @@ podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }} >
 {% macro podman_create_pods() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set pods=manifest['pods'] %}
 echo create pods
 {%- for pod in pods %}
 podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} --network={{ global.network }} >/dev/null
@@ -99,7 +98,7 @@ podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --pu
 {% macro podman_create_containers() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set pods=manifest['pods'] %}
 echo create containers
 {%- for pod in pods %}
 podman container exists {{ pod.containers[0].name }} || podman container create \
@@ -140,7 +139,7 @@ size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')
 {% macro podman_start_pods() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set pods=manifest['pods'] %}
 set +o errexit
 podman pod start {{ pods |map(attribute='name') |join(' ') }} >/dev/null
 set -o errexit
@@ -158,7 +157,7 @@ podman pod ls
 {% macro podman_create_network() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set pods=manifest['pods'] %}
 echo create network
 podman network exists {{ global.network}} || podman network create {{ global.network }} >/dev/null
 {%- endmacro -%}
@@ -175,7 +174,7 @@ podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --log-level d
 {% macro podman_rm_pods() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set pods=manifest['pods'] %}
 set +o errexit
 {% for pod in pods %}
 podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} 
@@ -203,7 +202,7 @@ podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 {% macro podman_stop_containers() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] %}
-{%- set pods=manifest['pods'] -%}
+{%- set pods=manifest['pods'] %}
 set +o errexit
 podman container stop --log-level debug --ignore {{ containers_as_single_line() }}
 set -o errexit
@@ -232,9 +231,9 @@ loop2 healthcheck_fn {{ pods[0].containers[0].name }} $sleep $tries
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro mysql_stop_slave() -%}
+{%- macro mysql_stop_slave() -%}
 {%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] %}
+{%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] -%}
 {%- for pod in pods %}
 {{ mysql_from_jump() }} --host={{ pod.name }}.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
@@ -337,7 +336,7 @@ repcheck() {
     jump_container=$1
     target_host=$2
 
-    result=$(podman exec --env=MYSQL_PWD=root $jump_container mysql --user=root --host=$target_host --execute 'SHOW SLAVE STATUS\G')
+    result=$({{ mysql_from_jump() }} --host=$target_host --execute 'SHOW SLAVE STATUS\G')
 
     grep --silent 'Slave_IO_Running: Yes' <<<"$result"
     r1=$?
