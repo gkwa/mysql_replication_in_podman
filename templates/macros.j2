@@ -168,7 +168,7 @@ podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --log-level d
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
 {% for pod in pods %}
-podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} 
+podman pod exists {{ pod.name }} && podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} 
 {%- endfor %}
 {%- endmacro -%}
 

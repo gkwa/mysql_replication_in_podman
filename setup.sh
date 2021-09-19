@@ -89,11 +89,11 @@ podman container rm --force --ignore my3c
 podman container rm --force --ignore my4c
 podman container rm --force --ignore my5c
 
-podman pod rm --force my1p --ignore my1p
-podman pod rm --force my2p --ignore my2p
-podman pod rm --force my3p --ignore my3p
-podman pod rm --force my4p --ignore my4p
-podman pod rm --force my5p --ignore my5p
+podman pod exists my1p && podman pod rm --force my1p --ignore my1p
+podman pod exists my2p && podman pod rm --force my2p --ignore my2p
+podman pod exists my3p && podman pod rm --force my3p --ignore my3p
+podman pod exists my4p && podman pod rm --force my4p --ignore my4p
+podman pod exists my5p && podman pod rm --force my5p --ignore my5p
 
 podman pod ls
 
@@ -391,11 +391,11 @@ podman container rm --force --ignore my3c
 podman container rm --force --ignore my4c
 podman container rm --force --ignore my5c
 
-podman pod rm --force my1p --ignore my1p
-podman pod rm --force my2p --ignore my2p
-podman pod rm --force my3p --ignore my3p
-podman pod rm --force my4p --ignore my4p
-podman pod rm --force my5p --ignore my5p
+podman pod exists my1p && podman pod rm --force my1p --ignore my1p
+podman pod exists my2p && podman pod rm --force my2p --ignore my2p
+podman pod exists my3p && podman pod rm --force my3p --ignore my3p
+podman pod exists my4p && podman pod rm --force my4p --ignore my4p
+podman pod exists my5p && podman pod rm --force my5p --ignore my5p
 
 echo create pods
 podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
