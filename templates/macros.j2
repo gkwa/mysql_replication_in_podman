@@ -159,7 +159,7 @@ podman network exists {{ global.network}} || podman network create {{ global.net
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
 {% for pod in pods %}
-podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --log-level debug --ignore {{ pod.name }}
+podman pod exist {{ pod.name }} && podman pod stop {{ pod.name }} --log-level debug --ignore {{ pod.name }}
 {%- endfor %}
 {%- endmacro -%}
 

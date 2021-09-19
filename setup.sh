@@ -77,11 +77,11 @@ podman container stop --log-level debug --ignore my3c
 podman container stop --log-level debug --ignore my4c
 podman container stop --log-level debug --ignore my5c
 
-podman pod exists my1p && podman pod stop my1p --log-level debug --ignore my1p
-podman pod exists my2p && podman pod stop my2p --log-level debug --ignore my2p
-podman pod exists my3p && podman pod stop my3p --log-level debug --ignore my3p
-podman pod exists my4p && podman pod stop my4p --log-level debug --ignore my4p
-podman pod exists my5p && podman pod stop my5p --log-level debug --ignore my5p
+podman pod exist my1p && podman pod stop my1p --log-level debug --ignore my1p
+podman pod exist my2p && podman pod stop my2p --log-level debug --ignore my2p
+podman pod exist my3p && podman pod stop my3p --log-level debug --ignore my3p
+podman pod exist my4p && podman pod stop my4p --log-level debug --ignore my4p
+podman pod exist my5p && podman pod stop my5p --log-level debug --ignore my5p
 
 podman container rm --force --ignore my1c
 podman container rm --force --ignore my2c
@@ -379,11 +379,11 @@ podman container stop --log-level debug --ignore my3c
 podman container stop --log-level debug --ignore my4c
 podman container stop --log-level debug --ignore my5c
 
-podman pod exists my1p && podman pod stop my1p --log-level debug --ignore my1p
-podman pod exists my2p && podman pod stop my2p --log-level debug --ignore my2p
-podman pod exists my3p && podman pod stop my3p --log-level debug --ignore my3p
-podman pod exists my4p && podman pod stop my4p --log-level debug --ignore my4p
-podman pod exists my5p && podman pod stop my5p --log-level debug --ignore my5p
+podman pod exist my1p && podman pod stop my1p --log-level debug --ignore my1p
+podman pod exist my2p && podman pod stop my2p --log-level debug --ignore my2p
+podman pod exist my3p && podman pod stop my3p --log-level debug --ignore my3p
+podman pod exist my4p && podman pod stop my4p --log-level debug --ignore my4p
+podman pod exist my5p && podman pod stop my5p --log-level debug --ignore my5p
 
 podman container rm --force --ignore my1c
 podman container rm --force --ignore my2c
