@@ -390,6 +390,92 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
+echo mysql: add user repl
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute \
+    "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute \
+    "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute \
+    "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute \
+    "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute \
+    "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
+
+echo mysql: grant repl user replication permission
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
+
+echo mysql: flush privileges
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'FLUSH PRIVILEGES'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'FLUSH PRIVILEGES'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'FLUSH PRIVILEGES'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'FLUSH PRIVILEGES'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'FLUSH PRIVILEGES'
+
+echo mysql: setup replication
+
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
+
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE'
+position=$(
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+)
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root --execute \
+    "CHANGE MASTER TO MASTER_HOST='my5p.dns.podman',MASTER_USER='repl',\
+MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
+position=$(
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+)
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root --execute \
+    "CHANGE MASTER TO MASTER_HOST='my1p.dns.podman',MASTER_USER='repl',\
+MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
+position=$(
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+)
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root --execute \
+    "CHANGE MASTER TO MASTER_HOST='my2p.dns.podman',MASTER_USER='repl',\
+MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
+position=$(
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+)
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root --execute \
+    "CHANGE MASTER TO MASTER_HOST='my3p.dns.podman',MASTER_USER='repl',\
+MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
+position=$(
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+)
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --user=root --execute \
+    "CHANGE MASTER TO MASTER_HOST='my4p.dns.podman',MASTER_USER='repl',\
+MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
+
+echo mysql: start replication
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
+
+echo mysql: wait for replication to be ready
+sleep=2
+tries=60
+loop1 repcheck my1c my1p.dns.podman $sleep $tries
+loop1 repcheck my1c my2p.dns.podman $sleep $tries
+loop1 repcheck my1c my3p.dns.podman $sleep $tries
+loop1 repcheck my1c my4p.dns.podman $sleep $tries
+loop1 repcheck my1c my5p.dns.podman $sleep $tries
+
 # repeat
 
 set +o errexit

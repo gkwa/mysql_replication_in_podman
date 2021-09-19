@@ -25,6 +25,7 @@ set -o errexit
 {{ macros.podman_create_pods() }}
 {{ macros.podman_create_containers() }}
 {{ macros.podman_start_pods() }}
+{{ macros.mysql_setup_replication() }}
 
 # repeat
 {{ macros.podman_stop_containers() }}
