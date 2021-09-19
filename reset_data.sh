@@ -94,7 +94,7 @@ healthcheck() {
 }
 
 set +o errexit
-podman container stop --ignore my1c my2c my3c my4c my5c 2>podman_stop_containers.log >/dev/null
+podman container stop --ignore my1c my2c my3c my4c my5c 2>podman_stop_containers_$(date +%s).log >/dev/null
 set -o errexit
 podman container exists my1c && podman container stop --ignore my1c >/dev/null
 podman container exists my2c && podman container stop --ignore my2c >/dev/null
@@ -130,7 +130,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 [[ $size -le 8 ]]
 
 set +o errexit
-podman pod start my1p my2p my3p my4p my5p 2>podman_start_pods.log >/dev/null
+podman pod start my1p my2p my3p my4p my5p 2>podman_start_pods_$(date +%s).log >/dev/null
 set -o errexit
 podman pod start my1p my2p my3p my4p my5p >/dev/null
 
