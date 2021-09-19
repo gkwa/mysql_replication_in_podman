@@ -107,6 +107,7 @@ podman pod exists my2p && podman pod stop my2p --log-level debug --ignore my2p
 podman pod exists my3p && podman pod stop my3p --log-level debug --ignore my3p
 podman pod exists my4p && podman pod stop my4p --log-level debug --ignore my4p
 podman pod exists my5p && podman pod stop my5p --log-level debug --ignore my5p
+
 podman pod ls
 
 echo remove data from volume, but leaving volume in place
@@ -153,6 +154,7 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 [[ $size -gt 80000 ]]
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
+
 podman pod ls
 
 echo mysql: add user repl

@@ -39,13 +39,18 @@ podman pod ls
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] %}
+
 {{ import_common_functions() }}
+
 {{ podman_stop_containers() }}
 {{ podman_stop_pods() }}
-podman pod ls
+
+{{ podman_list_pods() }}
+
 {{ remove_mysql_data_but_keep_container_volume() }}
 {{ podman_start_pods() }}
-podman pod ls
+
+{{ podman_list_pods() }}
 
 {{ mysql_setup_replication() }}
 {%- endmacro -%}
