@@ -10,7 +10,9 @@ cleanall() {
     podman volume rm --all --force
     for network in $(podman network ls --format json | jq -r '.[].Name'); do
         if [[ $network != "podman" ]]; then
-            podman network exists $network && podman network rm $network
+            if podman network exists $network; then
+                podman network rm $network
+            fi
         fi
     done
     podman pod stop --ignore --all
@@ -21,7 +23,9 @@ cleanall() {
     podman volume rm --all --force
     for network in $(podman network ls --format json | jq -r '.[].Name'); do
         if [[ $network != "podman" ]]; then
-            podman network exists $network && podman network rm $network
+            if podman network exists $network; then
+                podman network rm $network
+            fi
         fi
     done
     podman ps
@@ -96,17 +100,37 @@ healthcheck() {
 set +o errexit
 podman container stop --ignore my1c my2c my3c my4c my5c 2>podman_stop_containers_$(date +%s).log >/dev/null
 set -o errexit
-podman container exists my1c && podman container stop --ignore my1c >/dev/null
-podman container exists my2c && podman container stop --ignore my2c >/dev/null
-podman container exists my3c && podman container stop --ignore my3c >/dev/null
-podman container exists my4c && podman container stop --ignore my4c >/dev/null
-podman container exists my5c && podman container stop --ignore my5c >/dev/null
+if podman container exists my1c; then
+    podman container stop --ignore my1c >/dev/null
+fi
+if podman container exists my2c; then
+    podman container stop --ignore my2c >/dev/null
+fi
+if podman container exists my3c; then
+    podman container stop --ignore my3c >/dev/null
+fi
+if podman container exists my4c; then
+    podman container stop --ignore my4c >/dev/null
+fi
+if podman container exists my5c; then
+    podman container stop --ignore my5c >/dev/null
+fi
 
-podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
-podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
-podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
-podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
-podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
+if podman pod exists my1p; then
+    podman pod stop my1p --ignore my1p >/dev/null
+fi
+if podman pod exists my2p; then
+    podman pod stop my2p --ignore my2p >/dev/null
+fi
+if podman pod exists my3p; then
+    podman pod stop my3p --ignore my3p >/dev/null
+fi
+if podman pod exists my4p; then
+    podman pod stop my4p --ignore my4p >/dev/null
+fi
+if podman pod exists my5p; then
+    podman pod stop my5p --ignore my5p >/dev/null
+fi
 
 podman pod ls
 

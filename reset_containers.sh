@@ -10,7 +10,9 @@ cleanall() {
     podman volume rm --all --force
     for network in $(podman network ls --format json | jq -r '.[].Name'); do
         if [[ $network != "podman" ]]; then
-            podman network exists $network && podman network rm $network
+            if podman network exists $network; then
+                podman network rm $network
+            fi
         fi
     done
     podman pod stop --ignore --all
@@ -21,7 +23,9 @@ cleanall() {
     podman volume rm --all --force
     for network in $(podman network ls --format json | jq -r '.[].Name'); do
         if [[ $network != "podman" ]]; then
-            podman network exists $network && podman network rm $network
+            if podman network exists $network; then
+                podman network rm $network
+            fi
         fi
     done
     podman ps
@@ -96,17 +100,37 @@ healthcheck() {
 set +o errexit
 podman container stop --ignore my1c my2c my3c my4c my5c 2>podman_stop_containers_$(date +%s).log >/dev/null
 set -o errexit
-podman container exists my1c && podman container stop --ignore my1c >/dev/null
-podman container exists my2c && podman container stop --ignore my2c >/dev/null
-podman container exists my3c && podman container stop --ignore my3c >/dev/null
-podman container exists my4c && podman container stop --ignore my4c >/dev/null
-podman container exists my5c && podman container stop --ignore my5c >/dev/null
+if podman container exists my1c; then
+    podman container stop --ignore my1c >/dev/null
+fi
+if podman container exists my2c; then
+    podman container stop --ignore my2c >/dev/null
+fi
+if podman container exists my3c; then
+    podman container stop --ignore my3c >/dev/null
+fi
+if podman container exists my4c; then
+    podman container stop --ignore my4c >/dev/null
+fi
+if podman container exists my5c; then
+    podman container stop --ignore my5c >/dev/null
+fi
 
-podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
-podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
-podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
-podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
-podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
+if podman pod exists my1p; then
+    podman pod stop my1p --ignore my1p >/dev/null
+fi
+if podman pod exists my2p; then
+    podman pod stop my2p --ignore my2p >/dev/null
+fi
+if podman pod exists my3p; then
+    podman pod stop my3p --ignore my3p >/dev/null
+fi
+if podman pod exists my4p; then
+    podman pod stop my4p --ignore my4p >/dev/null
+fi
+if podman pod exists my5p; then
+    podman pod stop my5p --ignore my5p >/dev/null
+fi
 
 podman container rm --force --ignore my1c
 podman container rm --force --ignore my2c
@@ -123,23 +147,45 @@ podman pod rm --force my4p --ignore my4p >/dev/null
 podman pod rm --force my5p --ignore my5p >/dev/null
 set -o errexit
 
-podman pod exists my1p && podman pod rm --force my1p --ignore my1p >/dev/null
-podman pod exists my2p && podman pod rm --force my2p --ignore my2p >/dev/null
-podman pod exists my3p && podman pod rm --force my3p --ignore my3p >/dev/null
-podman pod exists my4p && podman pod rm --force my4p --ignore my4p >/dev/null
-podman pod exists my5p && podman pod rm --force my5p --ignore my5p >/dev/null
+if podman pod exists my1p; then
+    podman pod rm --force my1p --ignore my1p >/dev/null
+fi
+if podman pod exists my2p; then
+    podman pod rm --force my2p --ignore my2p >/dev/null
+fi
+if podman pod exists my3p; then
+    podman pod rm --force my3p --ignore my3p >/dev/null
+fi
+if podman pod exists my4p; then
+    podman pod rm --force my4p --ignore my4p >/dev/null
+fi
+if podman pod exists my5p; then
+    podman pod rm --force my5p --ignore my5p >/dev/null
+fi
 
 podman pod ls
 
 echo create volumes
-podman volume exists my1dbdata || podman volume create my1dbdata >/dev/null
-podman volume exists my2dbdata || podman volume create my2dbdata >/dev/null
-podman volume exists my3dbdata || podman volume create my3dbdata >/dev/null
-podman volume exists my4dbdata || podman volume create my4dbdata >/dev/null
-podman volume exists my5dbdata || podman volume create my5dbdata >/dev/null
+if ! podman volume exists my1dbdata; then
+    podman volume create my1dbdata >/dev/null
+fi
+if ! podman volume exists my2dbdata; then
+    podman volume create my2dbdata >/dev/null
+fi
+if ! podman volume exists my3dbdata; then
+    podman volume create my3dbdata >/dev/null
+fi
+if ! podman volume exists my4dbdata; then
+    podman volume create my4dbdata >/dev/null
+fi
+if ! podman volume exists my5dbdata; then
+    podman volume create my5dbdata >/dev/null
+fi
 
-echo create network
-podman network exists replication || podman network create replication >/dev/null
+if ! podman network exists replication; then
+    echo create network
+    podman network create replication >/dev/null
+fi
 
 mkdir -p reptest
 
@@ -210,93 +256,113 @@ cat reptest/my4c_my.cnf && echo
 cat reptest/my5c_my.cnf && echo
 
 echo create pods
-podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
-podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
-podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
-podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
-podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+if ! podman pod exists my1p; then
+    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
+fi
+if ! podman pod exists my2p; then
+    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
+fi
+if ! podman pod exists my3p; then
+    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
+fi
+if ! podman pod exists my4p; then
+    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
+fi
+if ! podman pod exists my5p; then
+    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+fi
 
 echo create containers
-podman container exists my1c || podman container create \
-    --name=my1c \
-    --pod=my1p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my1p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my1c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my1dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
-podman container exists my2c || podman container create \
-    --name=my2c \
-    --pod=my2p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my2p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my2c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my2dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
-podman container exists my3c || podman container create \
-    --name=my3c \
-    --pod=my3p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my3p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my3c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my3dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
-podman container exists my4c || podman container create \
-    --name=my4c \
-    --pod=my4p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my4p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my4c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my4dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
-podman container exists my5c || podman container create \
-    --name=my5c \
-    --pod=my5p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my5p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my5c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my5dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
+if ! podman container exists my1c; then
+    podman container create \
+        --name=my1c \
+        --pod=my1p \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my1p --execute "USE mysql" || exit 1' \
+        --volume=./reptest/my1c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+        --volume=my1dbdata:/var/lib/mysql/data:Z \
+        --env=MYSQL_ROOT_PASSWORD=root \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joe \
+        --env=MYSQL_DATABASE=db \
+        registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi
+if ! podman container exists my2c; then
+    podman container create \
+        --name=my2c \
+        --pod=my2p \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my2p --execute "USE mysql" || exit 1' \
+        --volume=./reptest/my2c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+        --volume=my2dbdata:/var/lib/mysql/data:Z \
+        --env=MYSQL_ROOT_PASSWORD=root \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joe \
+        --env=MYSQL_DATABASE=db \
+        registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi
+if ! podman container exists my3c; then
+    podman container create \
+        --name=my3c \
+        --pod=my3p \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my3p --execute "USE mysql" || exit 1' \
+        --volume=./reptest/my3c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+        --volume=my3dbdata:/var/lib/mysql/data:Z \
+        --env=MYSQL_ROOT_PASSWORD=root \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joe \
+        --env=MYSQL_DATABASE=db \
+        registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi
+if ! podman container exists my4c; then
+    podman container create \
+        --name=my4c \
+        --pod=my4p \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my4p --execute "USE mysql" || exit 1' \
+        --volume=./reptest/my4c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+        --volume=my4dbdata:/var/lib/mysql/data:Z \
+        --env=MYSQL_ROOT_PASSWORD=root \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joe \
+        --env=MYSQL_DATABASE=db \
+        registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi
+if ! podman container exists my5c; then
+    podman container create \
+        --name=my5c \
+        --pod=my5p \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my5p --execute "USE mysql" || exit 1' \
+        --volume=./reptest/my5c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+        --volume=my5dbdata:/var/lib/mysql/data:Z \
+        --env=MYSQL_ROOT_PASSWORD=root \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joe \
+        --env=MYSQL_DATABASE=db \
+        registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi
 
 set +o errexit
 podman pod start my1p my2p my3p my4p my5p 2>podman_start_pods_$(date +%s).log >/dev/null
@@ -329,17 +395,37 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 set +o errexit
 podman container stop --ignore my1c my2c my3c my4c my5c 2>podman_stop_containers_$(date +%s).log >/dev/null
 set -o errexit
-podman container exists my1c && podman container stop --ignore my1c >/dev/null
-podman container exists my2c && podman container stop --ignore my2c >/dev/null
-podman container exists my3c && podman container stop --ignore my3c >/dev/null
-podman container exists my4c && podman container stop --ignore my4c >/dev/null
-podman container exists my5c && podman container stop --ignore my5c >/dev/null
+if podman container exists my1c; then
+    podman container stop --ignore my1c >/dev/null
+fi
+if podman container exists my2c; then
+    podman container stop --ignore my2c >/dev/null
+fi
+if podman container exists my3c; then
+    podman container stop --ignore my3c >/dev/null
+fi
+if podman container exists my4c; then
+    podman container stop --ignore my4c >/dev/null
+fi
+if podman container exists my5c; then
+    podman container stop --ignore my5c >/dev/null
+fi
 
-podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
-podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
-podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
-podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
-podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
+if podman pod exists my1p; then
+    podman pod stop my1p --ignore my1p >/dev/null
+fi
+if podman pod exists my2p; then
+    podman pod stop my2p --ignore my2p >/dev/null
+fi
+if podman pod exists my3p; then
+    podman pod stop my3p --ignore my3p >/dev/null
+fi
+if podman pod exists my4p; then
+    podman pod stop my4p --ignore my4p >/dev/null
+fi
+if podman pod exists my5p; then
+    podman pod stop my5p --ignore my5p >/dev/null
+fi
 
 podman container rm --force --ignore my1c
 podman container rm --force --ignore my2c
@@ -356,23 +442,45 @@ podman pod rm --force my4p --ignore my4p >/dev/null
 podman pod rm --force my5p --ignore my5p >/dev/null
 set -o errexit
 
-podman pod exists my1p && podman pod rm --force my1p --ignore my1p >/dev/null
-podman pod exists my2p && podman pod rm --force my2p --ignore my2p >/dev/null
-podman pod exists my3p && podman pod rm --force my3p --ignore my3p >/dev/null
-podman pod exists my4p && podman pod rm --force my4p --ignore my4p >/dev/null
-podman pod exists my5p && podman pod rm --force my5p --ignore my5p >/dev/null
+if podman pod exists my1p; then
+    podman pod rm --force my1p --ignore my1p >/dev/null
+fi
+if podman pod exists my2p; then
+    podman pod rm --force my2p --ignore my2p >/dev/null
+fi
+if podman pod exists my3p; then
+    podman pod rm --force my3p --ignore my3p >/dev/null
+fi
+if podman pod exists my4p; then
+    podman pod rm --force my4p --ignore my4p >/dev/null
+fi
+if podman pod exists my5p; then
+    podman pod rm --force my5p --ignore my5p >/dev/null
+fi
 
 podman pod ls
 
 echo create volumes
-podman volume exists my1dbdata || podman volume create my1dbdata >/dev/null
-podman volume exists my2dbdata || podman volume create my2dbdata >/dev/null
-podman volume exists my3dbdata || podman volume create my3dbdata >/dev/null
-podman volume exists my4dbdata || podman volume create my4dbdata >/dev/null
-podman volume exists my5dbdata || podman volume create my5dbdata >/dev/null
+if ! podman volume exists my1dbdata; then
+    podman volume create my1dbdata >/dev/null
+fi
+if ! podman volume exists my2dbdata; then
+    podman volume create my2dbdata >/dev/null
+fi
+if ! podman volume exists my3dbdata; then
+    podman volume create my3dbdata >/dev/null
+fi
+if ! podman volume exists my4dbdata; then
+    podman volume create my4dbdata >/dev/null
+fi
+if ! podman volume exists my5dbdata; then
+    podman volume create my5dbdata >/dev/null
+fi
 
-echo create network
-podman network exists replication || podman network create replication >/dev/null
+if ! podman network exists replication; then
+    echo create network
+    podman network create replication >/dev/null
+fi
 
 mkdir -p reptest
 
@@ -443,93 +551,113 @@ cat reptest/my4c_my.cnf && echo
 cat reptest/my5c_my.cnf && echo
 
 echo create pods
-podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
-podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
-podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
-podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
-podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+if ! podman pod exists my1p; then
+    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
+fi
+if ! podman pod exists my2p; then
+    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
+fi
+if ! podman pod exists my3p; then
+    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
+fi
+if ! podman pod exists my4p; then
+    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
+fi
+if ! podman pod exists my5p; then
+    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+fi
 
 echo create containers
-podman container exists my1c || podman container create \
-    --name=my1c \
-    --pod=my1p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my1p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my1c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my1dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
-podman container exists my2c || podman container create \
-    --name=my2c \
-    --pod=my2p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my2p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my2c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my2dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
-podman container exists my3c || podman container create \
-    --name=my3c \
-    --pod=my3p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my3p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my3c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my3dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
-podman container exists my4c || podman container create \
-    --name=my4c \
-    --pod=my4p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my4p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my4c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my4dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
-podman container exists my5c || podman container create \
-    --name=my5c \
-    --pod=my5p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my5p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my5c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my5dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
+if ! podman container exists my1c; then
+    podman container create \
+        --name=my1c \
+        --pod=my1p \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my1p --execute "USE mysql" || exit 1' \
+        --volume=./reptest/my1c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+        --volume=my1dbdata:/var/lib/mysql/data:Z \
+        --env=MYSQL_ROOT_PASSWORD=root \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joe \
+        --env=MYSQL_DATABASE=db \
+        registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi
+if ! podman container exists my2c; then
+    podman container create \
+        --name=my2c \
+        --pod=my2p \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my2p --execute "USE mysql" || exit 1' \
+        --volume=./reptest/my2c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+        --volume=my2dbdata:/var/lib/mysql/data:Z \
+        --env=MYSQL_ROOT_PASSWORD=root \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joe \
+        --env=MYSQL_DATABASE=db \
+        registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi
+if ! podman container exists my3c; then
+    podman container create \
+        --name=my3c \
+        --pod=my3p \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my3p --execute "USE mysql" || exit 1' \
+        --volume=./reptest/my3c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+        --volume=my3dbdata:/var/lib/mysql/data:Z \
+        --env=MYSQL_ROOT_PASSWORD=root \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joe \
+        --env=MYSQL_DATABASE=db \
+        registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi
+if ! podman container exists my4c; then
+    podman container create \
+        --name=my4c \
+        --pod=my4p \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my4p --execute "USE mysql" || exit 1' \
+        --volume=./reptest/my4c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+        --volume=my4dbdata:/var/lib/mysql/data:Z \
+        --env=MYSQL_ROOT_PASSWORD=root \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joe \
+        --env=MYSQL_DATABASE=db \
+        registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi
+if ! podman container exists my5c; then
+    podman container create \
+        --name=my5c \
+        --pod=my5p \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my5p --execute "USE mysql" || exit 1' \
+        --volume=./reptest/my5c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+        --volume=my5dbdata:/var/lib/mysql/data:Z \
+        --env=MYSQL_ROOT_PASSWORD=root \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joe \
+        --env=MYSQL_DATABASE=db \
+        registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi
 
 set +o errexit
 podman pod start my1p my2p my3p my4p my5p 2>podman_start_pods_$(date +%s).log >/dev/null
@@ -703,17 +831,37 @@ bats $bats
 set +o errexit
 podman container stop --ignore my1c my2c my3c my4c my5c 2>podman_stop_containers_$(date +%s).log >/dev/null
 set -o errexit
-podman container exists my1c && podman container stop --ignore my1c >/dev/null
-podman container exists my2c && podman container stop --ignore my2c >/dev/null
-podman container exists my3c && podman container stop --ignore my3c >/dev/null
-podman container exists my4c && podman container stop --ignore my4c >/dev/null
-podman container exists my5c && podman container stop --ignore my5c >/dev/null
+if podman container exists my1c; then
+    podman container stop --ignore my1c >/dev/null
+fi
+if podman container exists my2c; then
+    podman container stop --ignore my2c >/dev/null
+fi
+if podman container exists my3c; then
+    podman container stop --ignore my3c >/dev/null
+fi
+if podman container exists my4c; then
+    podman container stop --ignore my4c >/dev/null
+fi
+if podman container exists my5c; then
+    podman container stop --ignore my5c >/dev/null
+fi
 
-podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
-podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
-podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
-podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
-podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
+if podman pod exists my1p; then
+    podman pod stop my1p --ignore my1p >/dev/null
+fi
+if podman pod exists my2p; then
+    podman pod stop my2p --ignore my2p >/dev/null
+fi
+if podman pod exists my3p; then
+    podman pod stop my3p --ignore my3p >/dev/null
+fi
+if podman pod exists my4p; then
+    podman pod stop my4p --ignore my4p >/dev/null
+fi
+if podman pod exists my5p; then
+    podman pod stop my5p --ignore my5p >/dev/null
+fi
 
 podman container rm --force --ignore my1c
 podman container rm --force --ignore my2c
@@ -730,112 +878,154 @@ podman pod rm --force my4p --ignore my4p >/dev/null
 podman pod rm --force my5p --ignore my5p >/dev/null
 set -o errexit
 
-podman pod exists my1p && podman pod rm --force my1p --ignore my1p >/dev/null
-podman pod exists my2p && podman pod rm --force my2p --ignore my2p >/dev/null
-podman pod exists my3p && podman pod rm --force my3p --ignore my3p >/dev/null
-podman pod exists my4p && podman pod rm --force my4p --ignore my4p >/dev/null
-podman pod exists my5p && podman pod rm --force my5p --ignore my5p >/dev/null
+if podman pod exists my1p; then
+    podman pod rm --force my1p --ignore my1p >/dev/null
+fi
+if podman pod exists my2p; then
+    podman pod rm --force my2p --ignore my2p >/dev/null
+fi
+if podman pod exists my3p; then
+    podman pod rm --force my3p --ignore my3p >/dev/null
+fi
+if podman pod exists my4p; then
+    podman pod rm --force my4p --ignore my4p >/dev/null
+fi
+if podman pod exists my5p; then
+    podman pod rm --force my5p --ignore my5p >/dev/null
+fi
 
 podman pod ls
 
 echo create volumes
-podman volume exists my1dbdata || podman volume create my1dbdata >/dev/null
-podman volume exists my2dbdata || podman volume create my2dbdata >/dev/null
-podman volume exists my3dbdata || podman volume create my3dbdata >/dev/null
-podman volume exists my4dbdata || podman volume create my4dbdata >/dev/null
-podman volume exists my5dbdata || podman volume create my5dbdata >/dev/null
+if ! podman volume exists my1dbdata; then
+    podman volume create my1dbdata >/dev/null
+fi
+if ! podman volume exists my2dbdata; then
+    podman volume create my2dbdata >/dev/null
+fi
+if ! podman volume exists my3dbdata; then
+    podman volume create my3dbdata >/dev/null
+fi
+if ! podman volume exists my4dbdata; then
+    podman volume create my4dbdata >/dev/null
+fi
+if ! podman volume exists my5dbdata; then
+    podman volume create my5dbdata >/dev/null
+fi
 
-echo create network
-podman network exists replication || podman network create replication >/dev/null
+if ! podman network exists replication; then
+    echo create network
+    podman network create replication >/dev/null
+fi
 
 echo create pods
-podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
-podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
-podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
-podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
-podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+if ! podman pod exists my1p; then
+    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
+fi
+if ! podman pod exists my2p; then
+    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
+fi
+if ! podman pod exists my3p; then
+    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
+fi
+if ! podman pod exists my4p; then
+    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
+fi
+if ! podman pod exists my5p; then
+    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+fi
 
 echo create containers
-podman container exists my1c || podman container create \
-    --name=my1c \
-    --pod=my1p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my1p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my1c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my1dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
-podman container exists my2c || podman container create \
-    --name=my2c \
-    --pod=my2p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my2p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my2c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my2dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
-podman container exists my3c || podman container create \
-    --name=my3c \
-    --pod=my3p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my3p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my3c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my3dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
-podman container exists my4c || podman container create \
-    --name=my4c \
-    --pod=my4p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my4p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my4c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my4dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
-podman container exists my5c || podman container create \
-    --name=my5c \
-    --pod=my5p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my5p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my5c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my5dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
+if ! podman container exists my1c; then
+    podman container create \
+        --name=my1c \
+        --pod=my1p \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my1p --execute "USE mysql" || exit 1' \
+        --volume=./reptest/my1c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+        --volume=my1dbdata:/var/lib/mysql/data:Z \
+        --env=MYSQL_ROOT_PASSWORD=root \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joe \
+        --env=MYSQL_DATABASE=db \
+        registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi
+if ! podman container exists my2c; then
+    podman container create \
+        --name=my2c \
+        --pod=my2p \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my2p --execute "USE mysql" || exit 1' \
+        --volume=./reptest/my2c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+        --volume=my2dbdata:/var/lib/mysql/data:Z \
+        --env=MYSQL_ROOT_PASSWORD=root \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joe \
+        --env=MYSQL_DATABASE=db \
+        registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi
+if ! podman container exists my3c; then
+    podman container create \
+        --name=my3c \
+        --pod=my3p \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my3p --execute "USE mysql" || exit 1' \
+        --volume=./reptest/my3c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+        --volume=my3dbdata:/var/lib/mysql/data:Z \
+        --env=MYSQL_ROOT_PASSWORD=root \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joe \
+        --env=MYSQL_DATABASE=db \
+        registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi
+if ! podman container exists my4c; then
+    podman container create \
+        --name=my4c \
+        --pod=my4p \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my4p --execute "USE mysql" || exit 1' \
+        --volume=./reptest/my4c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+        --volume=my4dbdata:/var/lib/mysql/data:Z \
+        --env=MYSQL_ROOT_PASSWORD=root \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joe \
+        --env=MYSQL_DATABASE=db \
+        registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi
+if ! podman container exists my5c; then
+    podman container create \
+        --name=my5c \
+        --pod=my5p \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my5p --execute "USE mysql" || exit 1' \
+        --volume=./reptest/my5c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+        --volume=my5dbdata:/var/lib/mysql/data:Z \
+        --env=MYSQL_ROOT_PASSWORD=root \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joe \
+        --env=MYSQL_DATABASE=db \
+        registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi
 
 set +o errexit
 podman pod start my1p my2p my3p my4p my5p 2>podman_start_pods_$(date +%s).log >/dev/null

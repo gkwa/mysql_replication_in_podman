@@ -17,6 +17,7 @@
 {{ podman_create_network() }}
 
 {{ mysql_conf_setup() }}
+
 {{ podman_create_pods() }}
 {{ podman_create_containers() }}
 {{ podman_start_pods() }}
@@ -139,7 +140,10 @@ cat reptest/{{ pod.containers[0].name }}_my.cnf && echo
 {%- set pods=manifest['pods'] %}
 echo create volumes
 {%- for pod in pods %}
-podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }} >/dev/null
+if ! podman volume exists {{ pod.volume }}
+then
+    podman volume create {{ pod.volume }} >/dev/null
+fi
 {%- endfor %}
 {%- endmacro -%}
 
@@ -149,7 +153,10 @@ podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }} >
 {%- set pods=manifest['pods'] %}
 echo create pods
 {%- for pod in pods %}
-podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} --network={{ global.network }} >/dev/null
+if ! podman pod exists {{ pod.name }}
+then
+    podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} --network={{ global.network }} >/dev/null
+fi
 {%- endfor %}
 {%- endmacro -%}
 
@@ -159,22 +166,25 @@ podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --pu
 {%- set pods=manifest['pods'] %}
 echo create containers
 {%- for pod in pods %}
-podman container exists {{ pod.containers[0].name }} || podman container create \
-    --name={{ pod.containers[0].name }} \
-    --pod={{ pod.name }} \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user={{ global.user_root }} --password="{{ global.user_root_pass }}" --host={{ pod.name }} --execute "USE mysql" || exit 1' \
-    --volume=./reptest/{{ pod.containers[0].name }}_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume={{ pod.volume }}:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} \
-    --env=MYSQL_USER={{ global.user_non_root }} \
-    --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
+if ! podman container exists {{ pod.containers[0].name }}
+then
+    podman container create \
+        --name={{ pod.containers[0].name }} \
+        --pod={{ pod.name }} \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL mysql --user={{ global.user_root }} --password="{{ global.user_root_pass }}" --host={{ pod.name }} --execute "USE mysql" || exit 1' \
+        --volume=./reptest/{{ pod.containers[0].name }}_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+        --volume={{ pod.volume }}:/var/lib/mysql/data:Z \
+        --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} \
+        --env=MYSQL_USER={{ global.user_non_root }} \
+        --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} \
+        --env=MYSQL_DATABASE=db \
+        registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi        
 {%- endfor %}
 {%- endmacro -%}
 
@@ -218,8 +228,11 @@ podman pod ls
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] %}
-echo create network
-podman network exists {{ global.network}} || podman network create {{ global.network }} >/dev/null
+if ! podman network exists {{ global.network}}
+then
+     echo create network
+     podman network create {{ global.network }} >/dev/null
+fi
 {%- endmacro -%}
 
 {% macro podman_stop_pods() -%}
@@ -227,7 +240,10 @@ podman network exists {{ global.network}} || podman network create {{ global.net
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] -%}
 {% for pod in pods %}
-podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --ignore {{ pod.name }} >/dev/null
+if podman pod exists {{ pod.name }}
+then
+    podman pod stop {{ pod.name }} --ignore {{ pod.name }} >/dev/null
+fi
 {%- endfor %}
 {%- endmacro -%}
 
@@ -241,7 +257,10 @@ podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} >/dev/null
 {%- endfor %}
 set -o errexit
 {% for pod in pods %}
-podman pod exists {{ pod.name }} && podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} >/dev/null
+if podman pod exists {{ pod.name }}
+then
+     podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} >/dev/null
+fi
 {%- endfor %}
 {%- endmacro -%}
 
@@ -267,7 +286,10 @@ set +o errexit
 podman container stop --ignore {{ containers_as_single_line() }} 2>podman_stop_containers_$(date +%s).log >/dev/null
 set -o errexit
 {%- for pod in pods %}
-podman container exists {{ pod.containers[0].name }} && podman container stop --ignore {{ pod.containers[0].name }} >/dev/null
+if podman container exists {{ pod.containers[0].name }}
+then
+    podman container stop --ignore {{ pod.containers[0].name }} >/dev/null
+fi
 {%- endfor %}
 {%- endmacro -%}
 
@@ -409,7 +431,10 @@ cleanall() {
     podman volume rm --all --force
     for network in $(podman network ls --format json | jq -r '.[].Name'); do
         if [[ $network != "podman" ]]; then
-            podman network exists $network && podman network rm $network
+            if podman network exists $network
+            then
+                podman network rm $network
+            fi
         fi
     done
     podman pod stop --ignore --all
@@ -420,7 +445,10 @@ cleanall() {
     podman volume rm --all --force
     for network in $(podman network ls --format json | jq -r '.[].Name'); do
         if [[ $network != "podman" ]]; then
-            podman network exists $network && podman network rm $network
+            if podman network exists $network
+            then
+                podman network rm $network
+            fi
         fi
     done
     podman ps

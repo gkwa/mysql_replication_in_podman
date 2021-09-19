@@ -11,7 +11,10 @@ cleanall() {
     podman volume rm --all --force
     for network in $(podman network ls --format json | jq -r '.[].Name'); do
         if [[ $network != "podman" ]]; then
-            podman network exists $network && podman network rm $network
+            if podman network exists $network
+            then
+                podman network rm $network
+            fi
         fi
     done
     podman pod stop --ignore --all
@@ -22,7 +25,10 @@ cleanall() {
     podman volume rm --all --force
     for network in $(podman network ls --format json | jq -r '.[].Name'); do
         if [[ $network != "podman" ]]; then
-            podman network exists $network && podman network rm $network
+            if podman network exists $network
+            then
+                podman network rm $network
+            fi
         fi
     done
     podman ps
