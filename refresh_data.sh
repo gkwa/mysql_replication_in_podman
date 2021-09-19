@@ -84,7 +84,7 @@ loop1() {
     done
 }
 
-healthcheck_fn() {
+healthcheck() {
     container=$1
 
     podman healthcheck run $container </dev/null
