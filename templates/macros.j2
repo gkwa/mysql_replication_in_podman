@@ -104,6 +104,7 @@ position=$(
   {{ mysql_jump() }} --host={{ block.source.pod }}.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 {#- echo target:{{ block.instance.container }} source:{{ block.source.container }} position:$position #}
+{{ mysql_jump() }} --host={{ block.instance.pod }} --user={{ global.user_root }} --execute 'SHOW MASTER STATUS\G'
 {{ mysql_jump() }} --host={{ block.instance.pod }} --user={{ global.user_root }} --execute \
 "CHANGE MASTER TO MASTER_HOST='{{ block.source.pod }}.dns.podman',MASTER_USER='{{ global.user_replication }}',\
 MASTER_PASSWORD='{{ global.user_replication_pass }}',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
