@@ -1,6 +1,7 @@
 #!/bin/bash
 set -o errexit
 
+
 cleanall() {
     podman pod stop --ignore --all
     podman images prune
@@ -95,6 +96,7 @@ healthcheck_fn() {
 podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
 podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 
+
 set +o errexit
 podman container stop --log-level debug --ignore my1c my2c my3c my4c my5c
 set -o errexit
@@ -132,6 +134,7 @@ podman pod exists my4p && podman pod rm --force my4p --ignore my4p
 podman pod exists my5p && podman pod rm --force my5p --ignore my5p
 
 podman pod ls
+
 
 mkdir -p reptest
 
@@ -195,6 +198,8 @@ sync_binlog                    = 1
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 
+
+
 cat reptest/my1c_my.cnf && echo
 cat reptest/my2c_my.cnf && echo
 cat reptest/my3c_my.cnf && echo
@@ -220,85 +225,86 @@ podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --n
 
 echo create containers
 podman container exists my1c || podman container create \
-    --name=my1c \
-    --pod=my1p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my1p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my1c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my1dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
+  --name=my1c \
+  --pod=my1p \
+  --log-driver=journald \
+  --healthcheck-interval=0 \
+  --health-retries=10 \
+  --health-timeout=30s \
+  --health-start-period=80s \
+  --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my1p --execute "USE mysql" || exit 1' \
+  --volume=./reptest/my1c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+  --volume=my1dbdata:/var/lib/mysql/data:Z \
+  --env=MYSQL_ROOT_PASSWORD=root \
+  --env=MYSQL_USER=joe \
+  --env=MYSQL_PASSWORD=joe \
+  --env=MYSQL_DATABASE=db \
+  registry.redhat.io/rhel8/mysql-80 >/dev/null
 podman container exists my2c || podman container create \
-    --name=my2c \
-    --pod=my2p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my2p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my2c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my2dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
+  --name=my2c \
+  --pod=my2p \
+  --log-driver=journald \
+  --healthcheck-interval=0 \
+  --health-retries=10 \
+  --health-timeout=30s \
+  --health-start-period=80s \
+  --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my2p --execute "USE mysql" || exit 1' \
+  --volume=./reptest/my2c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+  --volume=my2dbdata:/var/lib/mysql/data:Z \
+  --env=MYSQL_ROOT_PASSWORD=root \
+  --env=MYSQL_USER=joe \
+  --env=MYSQL_PASSWORD=joe \
+  --env=MYSQL_DATABASE=db \
+  registry.redhat.io/rhel8/mysql-80 >/dev/null
 podman container exists my3c || podman container create \
-    --name=my3c \
-    --pod=my3p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my3p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my3c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my3dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
+  --name=my3c \
+  --pod=my3p \
+  --log-driver=journald \
+  --healthcheck-interval=0 \
+  --health-retries=10 \
+  --health-timeout=30s \
+  --health-start-period=80s \
+  --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my3p --execute "USE mysql" || exit 1' \
+  --volume=./reptest/my3c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+  --volume=my3dbdata:/var/lib/mysql/data:Z \
+  --env=MYSQL_ROOT_PASSWORD=root \
+  --env=MYSQL_USER=joe \
+  --env=MYSQL_PASSWORD=joe \
+  --env=MYSQL_DATABASE=db \
+  registry.redhat.io/rhel8/mysql-80 >/dev/null
 podman container exists my4c || podman container create \
-    --name=my4c \
-    --pod=my4p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my4p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my4c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my4dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
+  --name=my4c \
+  --pod=my4p \
+  --log-driver=journald \
+  --healthcheck-interval=0 \
+  --health-retries=10 \
+  --health-timeout=30s \
+  --health-start-period=80s \
+  --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my4p --execute "USE mysql" || exit 1' \
+  --volume=./reptest/my4c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+  --volume=my4dbdata:/var/lib/mysql/data:Z \
+  --env=MYSQL_ROOT_PASSWORD=root \
+  --env=MYSQL_USER=joe \
+  --env=MYSQL_PASSWORD=joe \
+  --env=MYSQL_DATABASE=db \
+  registry.redhat.io/rhel8/mysql-80 >/dev/null
 podman container exists my5c || podman container create \
-    --name=my5c \
-    --pod=my5p \
-    --log-driver=journald \
-    --healthcheck-interval=0 \
-    --health-retries=10 \
-    --health-timeout=30s \
-    --health-start-period=80s \
-    --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my5p --execute "USE mysql" || exit 1' \
-    --volume=./reptest/my5c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-    --volume=my5dbdata:/var/lib/mysql/data:Z \
-    --env=MYSQL_ROOT_PASSWORD=root \
-    --env=MYSQL_USER=joe \
-    --env=MYSQL_PASSWORD=joe \
-    --env=MYSQL_DATABASE=db \
-    registry.redhat.io/rhel8/mysql-80 >/dev/null
+  --name=my5c \
+  --pod=my5p \
+  --log-driver=journald \
+  --healthcheck-interval=0 \
+  --health-retries=10 \
+  --health-timeout=30s \
+  --health-start-period=80s \
+  --healthcheck-command 'CMD-SHELL mysql --user=root --password="root" --host=my5p --execute "USE mysql" || exit 1' \
+  --volume=./reptest/my5c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+  --volume=my5dbdata:/var/lib/mysql/data:Z \
+  --env=MYSQL_ROOT_PASSWORD=root \
+  --env=MYSQL_USER=joe \
+  --env=MYSQL_PASSWORD=joe \
+  --env=MYSQL_DATABASE=db \
+  registry.redhat.io/rhel8/mysql-80 >/dev/null
+
 
 set +o errexit
 podman pod start my1p my2p my3p my4p my5p >/dev/null
@@ -306,8 +312,7 @@ set -o errexit
 podman pod start my1p my2p my3p my4p my5p >/dev/null
 
 echo 'wait for container healthcheck(s)'
-sleep=2
-tries=40
+sleep=2; tries=40
 loop2 healthcheck_fn my1c $sleep $tries
 loop2 healthcheck_fn my1c $sleep $tries
 loop2 healthcheck_fn my1c $sleep $tries
@@ -315,28 +320,28 @@ loop2 healthcheck_fn my1c $sleep $tries
 loop2 healthcheck_fn my1c $sleep $tries
 
 echo 'check data directory is larger than 80MB (tends to be ~97MB)'
-size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
+size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -gt 80000 ]]
-size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
+size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -gt 80000 ]]
-size=$(du -s $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
+size=$(du -s $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -gt 80000 ]]
-size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
+size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -gt 80000 ]]
-size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
+size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -gt 80000 ]]
 
 echo mysql: add user repl
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute \
-    "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
+"CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute \
-    "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
+"CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute \
-    "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
+"CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute \
-    "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
+"CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute \
-    "CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
+"CREATE USER IF NOT EXISTS 'repl'@'%' IDENTIFIED WITH mysql_native_password BY 'repl'"
 
 echo mysql: grant repl user replication permission
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'"
@@ -366,34 +371,34 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE'
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root --execute \
-    "CHANGE MASTER TO MASTER_HOST='my5p.dns.podman',MASTER_USER='repl',\
+"CHANGE MASTER TO MASTER_HOST='my5p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root --execute \
-    "CHANGE MASTER TO MASTER_HOST='my1p.dns.podman',MASTER_USER='repl',\
+"CHANGE MASTER TO MASTER_HOST='my1p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root --execute \
-    "CHANGE MASTER TO MASTER_HOST='my2p.dns.podman',MASTER_USER='repl',\
+"CHANGE MASTER TO MASTER_HOST='my2p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root --execute \
-    "CHANGE MASTER TO MASTER_HOST='my3p.dns.podman',MASTER_USER='repl',\
+"CHANGE MASTER TO MASTER_HOST='my3p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+  podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --user=root --execute \
-    "CHANGE MASTER TO MASTER_HOST='my4p.dns.podman',MASTER_USER='repl',\
+"CHANGE MASTER TO MASTER_HOST='my4p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='repl',MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=$position"
 
 echo mysql: start replication
@@ -404,10 +409,10 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
 
 echo mysql: wait for replication to be ready
-sleep=2
-tries=60
+sleep=2; tries=60
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
 loop1 repcheck my1c my2p.dns.podman $sleep $tries
 loop1 repcheck my1c my3p.dns.podman $sleep $tries
 loop1 repcheck my1c my4p.dns.podman $sleep $tries
 loop1 repcheck my1c my5p.dns.podman $sleep $tries
+

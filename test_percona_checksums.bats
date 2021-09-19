@@ -118,9 +118,9 @@ run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execut
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --execute 'USE ptest'
 [ "$status" -eq 1 ]
 
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --execute 'CREATE DATABASE IF NOT EXISTS ptest'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")' --host=my1p
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --execute 'CREATE DATABASE IF NOT EXISTS ptest'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest --host=my4p --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest --host=my4p --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 
 result=$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --database=ptest --skip-column-names --execute 'SELECT id FROM dummy WHERE name="a"')
 [ $result -eq 1 ]
