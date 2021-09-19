@@ -13,7 +13,7 @@ install:
 - sudo bash setup_debian.sh >/dev/null
 - sudo bash create_setup.sh
 - sudo podman info --debug
-- sudo bash setup.sh
+# - sudo bash setup.sh
 
 test_script:
 - sudo time bash ./reset_containers.sh
