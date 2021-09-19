@@ -50,7 +50,7 @@ expanded = tmpl.render(manifest=manifest, test_name=path.stem)
 path.write_text(expanded)
 path.chmod(path.stat().st_mode | stat.S_IEXEC)
 
-path = pathlib.Path("refresh_data.sh")
+path = pathlib.Path("data_reset.sh")
 tmpl = env.get_template(f"{path.stem}.j2")
 expanded = tmpl.render(manifest=manifest, test_name=path.stem)
 path.write_text(expanded)

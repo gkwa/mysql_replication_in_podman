@@ -1,0 +1,5 @@
+#!/bin/bash
+set -o errexit
+{%- import "macros.j2" as macros with context %}
+
+{{ macros.stop_pods_remove_data_start_pods() }}
