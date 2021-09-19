@@ -56,7 +56,7 @@ loop1() {
 
     count=1
     while ! ($func $jump_container $target_host); do
-        echo trying... $count
+        echo trying $func... $count
         sleep $sleep
         let count+=1
 
