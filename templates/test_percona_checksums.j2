@@ -9,6 +9,8 @@
 
 @test '{{ test_name }}' {
 
+{{ macros.mysql_start_slave() }}
+{{ macros.mysql_wait_for_replication() }}
 
 
 {{ macros.mysql_jump() }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest'
