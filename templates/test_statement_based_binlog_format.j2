@@ -14,7 +14,7 @@
 
 
 {% for pod in pods %}
-result=$({{ macros.mysql_from_jump() }} --host={{ pod.name }} --execute 'SHOW VARIABLES LIKE "binlog_format"')
+result=$({{ macros.mysql_jump() }} --host={{ pod.name }} --execute 'SHOW VARIABLES LIKE "binlog_format"')
 run grep --silent -E 'binlog_format.*STATEMENT' <<<"$result"
 [ "$status" -eq 0 ]
 {% endfor %}

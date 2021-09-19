@@ -12,19 +12,19 @@
 
 {{ macros.mysql_wait_for_replication() }}
 
-{{ macros.mysql_from_jump() }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest'
+{{ macros.mysql_jump() }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest'
 
 {{ macros.mysql_stop_slave() }}
 
 {{ macros.mysql_create_database_ptest() }}
 
-result=$({{ macros.mysql_from_jump() }} --host={{ pods[0].name }} --database=ptest --execute 'SELECT id FROM dummy WHERE name="a"')
+result=$({{ macros.mysql_jump() }} --host={{ pods[0].name }} --database=ptest --execute 'SELECT id FROM dummy WHERE name="a"')
 [ "$result" == 1 ]
 
 # ensure these fail
 {%- for pod in pods %}
 {% if not loop.first -%}
-run {{ macros.mysql_from_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE ptest'
+run {{ macros.mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE ptest'
 [ "$status" == 1 ]
 {%- endif %}
 {%- endfor %}
