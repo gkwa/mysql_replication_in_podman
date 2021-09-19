@@ -350,6 +350,26 @@ run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE ptest'
 {%- endfor %}
 {%- endmacro -%}
 
+{% macro mysql_check_ptest1_exists_everywhere() -%}
+{%- set global=manifest['global'] -%}
+{%- set replication=manifest['replication'] %}
+{%- set pods=manifest['pods'] -%}
+{%- for pod in pods %}
+run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE ptest1'
+[ "$status" == 0 ]
+{%- endfor %}
+{%- endmacro -%}
+
+{% macro mysql_check_ptest1_does_not_exist() -%}
+{%- set global=manifest['global'] -%}
+{%- set replication=manifest['replication'] %}
+{%- set pods=manifest['pods'] -%}
+{%- for pod in pods %}
+run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE ptest1'
+[ "$status" == 1 ]
+{%- endfor %}
+{%- endmacro -%}
+
 {% macro mysql_create_mysql_user_repl() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] %}
