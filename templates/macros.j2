@@ -71,7 +71,7 @@ echo mysql: setup replication
 {{ mysql_stop_slave() }}
 {%- for block in replication %}
 position=$(
-  {{ mysql_jump() }} --host={{ block.source.pod }}.dns.podman --execute 'SHOW MASTER STATUS\G' |sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+  {{ mysql_jump() }} --host={{ block.source.pod }}.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 {#- echo target:{{ block.instance.container }} source:{{ block.source.container }} position:$position #}
 {{ mysql_jump() }} --host={{ block.instance.pod }} --user={{ global.user_root }} --execute \
@@ -131,21 +131,21 @@ podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --pu
 echo create containers
 {%- for pod in pods %}
 podman container exists {{ pod.containers[0].name }} || podman container create \
-  --name={{ pod.containers[0].name }} \
-  --pod={{ pod.name }} \
-  --log-driver=journald \
-  --healthcheck-interval=0 \
-  --health-retries=10 \
-  --health-timeout=30s \
-  --health-start-period=80s \
-  --healthcheck-command 'CMD-SHELL mysql --user={{ global.user_root }} --password="{{ global.user_root_pass }}" --host={{ pod.name }} --execute "USE mysql" || exit 1' \
-  --volume=./reptest/{{ pod.containers[0].name }}_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
-  --volume={{ pod.volume }}:/var/lib/mysql/data:Z \
-  --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} \
-  --env=MYSQL_USER={{ global.user_non_root }} \
-  --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} \
-  --env=MYSQL_DATABASE=db \
-  registry.redhat.io/rhel8/mysql-80 >/dev/null
+    --name={{ pod.containers[0].name }} \
+    --pod={{ pod.name }} \
+    --log-driver=journald \
+    --healthcheck-interval=0 \
+    --health-retries=10 \
+    --health-timeout=30s \
+    --health-start-period=80s \
+    --healthcheck-command 'CMD-SHELL mysql --user={{ global.user_root }} --password="{{ global.user_root_pass }}" --host={{ pod.name }} --execute "USE mysql" || exit 1' \
+    --volume=./reptest/{{ pod.containers[0].name }}_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
+    --volume={{ pod.volume }}:/var/lib/mysql/data:Z \
+    --env=MYSQL_ROOT_PASSWORD={{ global.user_root_pass }} \
+    --env=MYSQL_USER={{ global.user_non_root }} \
+    --env=MYSQL_PASSWORD={{ global.user_non_root_pass }} \
+    --env=MYSQL_DATABASE=db \
+    registry.redhat.io/rhel8/mysql-80 >/dev/null
 {%- endfor %}
 {%- endmacro -%}
 
@@ -160,7 +160,7 @@ rm -rf --preserve-root $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mo
 
 echo check data directory is cleaned out
 {%- for pod in pods -%}
-size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
+size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -le 8 ]]
 {%- endfor -%}
 {%- endmacro -%}
@@ -254,7 +254,8 @@ podman container rm --force --ignore {{ pod.containers[0].name }}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] -%}
 echo 'wait for container healthcheck(s)'
-sleep=2; tries=40
+sleep=2
+tries=40
 {%- for pod in pods %}
 loop2 healthcheck_fn {{ pods[0].containers[0].name }} $sleep $tries
 {%- endfor %}
@@ -288,6 +289,15 @@ loop2 healthcheck_fn {{ pods[0].containers[0].name }} $sleep $tries
 {{ mysql_jump() }} --host={{ host }} --execute 'CREATE DATABASE IF NOT EXISTS ptest1'
 {{ mysql_jump() }} --database=ptest1 --host={{ host }} --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
 {{ mysql_jump() }} --database=ptest1 --host={{ host }} --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+{%- endmacro -%}
+
+{% macro mysql_create_database_ptest2(host) -%}
+{%- set global=manifest['global'] -%}
+{%- set replication=manifest['replication'] -%}
+{%- set pods=manifest['pods'] -%}
+{{ mysql_jump() }} --host={{ host }} --execute 'CREATE DATABASE IF NOT EXISTS ptest2'
+{{ mysql_jump() }} --database=ptest2 --host={{ host }} --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+{{ mysql_jump() }} --database=ptest2 --host={{ host }} --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 {%- endmacro -%}
 
 {% macro percona_checksum() -%}

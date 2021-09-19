@@ -35,7 +35,7 @@ run {{ macros.mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE pt
 
 {{ macros.mysql_create_database_ptest1(pods[0].name) }}
 
-{{ macros.mysql_create_database_ptest1(pods[1].name) }}
+{{ macros.mysql_create_database_ptest2(pods[1].name) }}
 
 run {{ macros.mysql_jump() }} --host={{ pods[0].name }}.dns.podman --execute 'USE ptest1'
 [ "$status" == 0 ]
