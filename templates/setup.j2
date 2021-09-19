@@ -12,6 +12,7 @@ set -o errexit
 
 {{ macros.podman_list_pods() }}
 
+
 {{ macros.mysql_conf_setup() }}
 {{ macros.podman_container_volume_setup() }}
 {{ macros.podman_create_network() }}
