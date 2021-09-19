@@ -12,7 +12,7 @@ podman pod ls
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] %}
 echo mysql: wait for replication to be ready
-sleep=2; tries=40
+sleep=2; tries=60
 {%- for pod in pods %}
 loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.name }}.dns.podman $sleep $tries
 {%- endfor %}

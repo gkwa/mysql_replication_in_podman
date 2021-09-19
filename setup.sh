@@ -395,7 +395,7 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman -
 
 echo mysql: wait for replication to be ready
 sleep=2
-tries=40
+tries=60
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
 loop1 repcheck my1c my2p.dns.podman $sleep $tries
 loop1 repcheck my1c my3p.dns.podman $sleep $tries
@@ -566,7 +566,7 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman -
 
 echo mysql: wait for replication to be ready
 sleep=2
-tries=40
+tries=60
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
 loop1 repcheck my1c my2p.dns.podman $sleep $tries
 loop1 repcheck my1c my3p.dns.podman $sleep $tries
