@@ -434,7 +434,7 @@ run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podm
 __eot__
 bats $bats
 
-macro=macros.mysql_create_database_ptest1
+macro=mysql_create_database_ptest1
 bats=${macro}_${epoch}.bats
 cat <<'__eot__' >$bats
 @test "mysql_create_database_ptest1" {
@@ -447,7 +447,7 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --database=ptest1 --host
 __eot__
 bats $bats
 
-macro=macros.mysql_check_ptest1_exists_everywhere
+macro=mysql_check_ptest1_exists_everywhere
 bats=${macro}_${epoch}.bats
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_exists_everywhere" {
