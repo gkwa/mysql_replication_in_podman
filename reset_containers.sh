@@ -460,30 +460,17 @@ bats='mysql_check_ptest1_does_not_exist.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_does_not_exist" {
 
+set -x
 
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'USE mysql'
-[ "$status" == 0 ]
 
 run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'USE mysql'
-[ "$status" == 0 ]
-
 run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'USE mysql'
-[ "$status" == 0 ]
-
 run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'USE mysql'
-[ "$status" == 0 ]
-
 run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'USE mysql'
-[ "$status" == 0 ]
-
 run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
 

@@ -13,6 +13,8 @@ bats='mysql_check_ptest1_does_not_exist.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_does_not_exist" {
 
+set -x
+
 {{ macros.mysql_check_ptest1_does_not_exist() }}
 
 }
