@@ -460,7 +460,7 @@ bats='mysql_check_ptest1_does_not_exist.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_does_not_exist" {
 
-set -x
+set -o xtrace
 
 
 run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -475,6 +475,7 @@ run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.
 [ "$status" == 1 ]
 
 }
+
 __eot__
 bats $bats
 
