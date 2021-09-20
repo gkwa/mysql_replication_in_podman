@@ -463,14 +463,8 @@ cat <<'__eot__' >$bats
 
 run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
 [ "$status" -ne 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest1'
-[ "$status" -ne 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'USE ptest1'
-[ "$status" -ne 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'USE ptest1'
-[ "$status" -ne 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest1'
-[ "$status" -ne 0 ]
+
+
 
 }
 
