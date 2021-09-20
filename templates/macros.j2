@@ -101,7 +101,8 @@ echo mysql: setup replication
 {{ mysql_stop_slave() }}
 {%- for block in replication %}
 master_log_file=$(
-  {{ mysql_jump() }} --host={{ block.source.pod }}.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
+  {{ mysql_jump() }} --host={{ block.source.pod }}.dns.podman --execute 'SHOW MASTER STATUS\G' |
+  sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
 [[ ! -z "$master_log_file" ]] # assert not empty
 position=$(
@@ -123,13 +124,13 @@ mkdir -p reptest
 {% for pod in pods %}
 cat <<'__eot__' >reptest/{{ pod.containers[0].name }}_my.cnf
 [mysqld]
+innodb_flush_log_at_trx_commit = 1 
+sync_binlog                    = 1
 server_id                      = {{ loop.index }}
 auto_increment_offset          = {{ loop.index }}
 bind-address                   = {{ pod.name }}.dns.podman
 log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
-innodb_flush_log_at_trx_commit = 1 
-sync_binlog                    = 1
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 {% endfor %}
@@ -156,8 +157,7 @@ podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }} >
 echo create pods
 {%- for pod in pods %}
 podman pod exists {{ pod.name }} ||
-podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} \
-    --network={{ global.network }} >/dev/null
+podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} --network={{ global.network }} >/dev/null
 {%- endfor %}
 {%- endmacro -%}
 

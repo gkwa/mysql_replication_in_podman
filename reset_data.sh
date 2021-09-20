@@ -201,7 +201,8 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE'
 master_log_file=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
@@ -212,7 +213,8 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root 
     "CHANGE MASTER TO MASTER_HOST='my5p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='repl',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 master_log_file=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
@@ -223,7 +225,8 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root 
     "CHANGE MASTER TO MASTER_HOST='my1p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='repl',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 master_log_file=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
@@ -234,7 +237,8 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root 
     "CHANGE MASTER TO MASTER_HOST='my2p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='repl',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 master_log_file=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
@@ -245,7 +249,8 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root 
     "CHANGE MASTER TO MASTER_HOST='my3p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='repl',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 master_log_file=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
