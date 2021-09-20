@@ -103,11 +103,11 @@ podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
 podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
 podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
 
-podman container rm --force --ignore my1c
-podman container rm --force --ignore my2c
-podman container rm --force --ignore my3c
-podman container rm --force --ignore my4c
-podman container rm --force --ignore my5c
+podman container rm --force --ignore my1c >/dev/null
+podman container rm --force --ignore my2c >/dev/null
+podman container rm --force --ignore my3c >/dev/null
+podman container rm --force --ignore my4c >/dev/null
+podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
 
@@ -511,11 +511,11 @@ podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
 podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
 podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
 
-podman container rm --force --ignore my1c
-podman container rm --force --ignore my2c
-podman container rm --force --ignore my3c
-podman container rm --force --ignore my4c
-podman container rm --force --ignore my5c
+podman container rm --force --ignore my1c >/dev/null
+podman container rm --force --ignore my2c >/dev/null
+podman container rm --force --ignore my3c >/dev/null
+podman container rm --force --ignore my4c >/dev/null
+podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
 
@@ -830,11 +830,11 @@ podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
 podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
 podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
 
-podman container rm --force --ignore my1c
-podman container rm --force --ignore my2c
-podman container rm --force --ignore my3c
-podman container rm --force --ignore my4c
-podman container rm --force --ignore my5c
+podman container rm --force --ignore my1c >/dev/null
+podman container rm --force --ignore my2c >/dev/null
+podman container rm --force --ignore my3c >/dev/null
+podman container rm --force --ignore my4c >/dev/null
+podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
 
@@ -1149,11 +1149,11 @@ podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
 podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
 podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
 
-podman container rm --force --ignore my1c
-podman container rm --force --ignore my2c
-podman container rm --force --ignore my3c
-podman container rm --force --ignore my4c
-podman container rm --force --ignore my5c
+podman container rm --force --ignore my1c >/dev/null
+podman container rm --force --ignore my2c >/dev/null
+podman container rm --force --ignore my3c >/dev/null
+podman container rm --force --ignore my4c >/dev/null
+podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
 
@@ -1468,11 +1468,11 @@ podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
 podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
 podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
 
-podman container rm --force --ignore my1c
-podman container rm --force --ignore my2c
-podman container rm --force --ignore my3c
-podman container rm --force --ignore my4c
-podman container rm --force --ignore my5c
+podman container rm --force --ignore my1c >/dev/null
+podman container rm --force --ignore my2c >/dev/null
+podman container rm --force --ignore my3c >/dev/null
+podman container rm --force --ignore my4c >/dev/null
+podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
 
@@ -1787,11 +1787,11 @@ podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
 podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
 podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
 
-podman container rm --force --ignore my1c
-podman container rm --force --ignore my2c
-podman container rm --force --ignore my3c
-podman container rm --force --ignore my4c
-podman container rm --force --ignore my5c
+podman container rm --force --ignore my1c >/dev/null
+podman container rm --force --ignore my2c >/dev/null
+podman container rm --force --ignore my3c >/dev/null
+podman container rm --force --ignore my4c >/dev/null
+podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
 
@@ -2106,11 +2106,11 @@ podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
 podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
 podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
 
-podman container rm --force --ignore my1c
-podman container rm --force --ignore my2c
-podman container rm --force --ignore my3c
-podman container rm --force --ignore my4c
-podman container rm --force --ignore my5c
+podman container rm --force --ignore my1c >/dev/null
+podman container rm --force --ignore my2c >/dev/null
+podman container rm --force --ignore my3c >/dev/null
+podman container rm --force --ignore my4c >/dev/null
+podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
 
@@ -2303,11 +2303,11 @@ podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
 podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
 podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
 
-podman container rm --force --ignore my1c
-podman container rm --force --ignore my2c
-podman container rm --force --ignore my3c
-podman container rm --force --ignore my4c
-podman container rm --force --ignore my5c
+podman container rm --force --ignore my1c >/dev/null
+podman container rm --force --ignore my2c >/dev/null
+podman container rm --force --ignore my3c >/dev/null
+podman container rm --force --ignore my4c >/dev/null
+podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
 
@@ -2500,11 +2500,11 @@ podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
 podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
 podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
 
-podman container rm --force --ignore my1c
-podman container rm --force --ignore my2c
-podman container rm --force --ignore my3c
-podman container rm --force --ignore my4c
-podman container rm --force --ignore my5c
+podman container rm --force --ignore my1c >/dev/null
+podman container rm --force --ignore my2c >/dev/null
+podman container rm --force --ignore my3c >/dev/null
+podman container rm --force --ignore my4c >/dev/null
+podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
 
@@ -2697,11 +2697,11 @@ podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
 podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
 podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
 
-podman container rm --force --ignore my1c
-podman container rm --force --ignore my2c
-podman container rm --force --ignore my3c
-podman container rm --force --ignore my4c
-podman container rm --force --ignore my5c
+podman container rm --force --ignore my1c >/dev/null
+podman container rm --force --ignore my2c >/dev/null
+podman container rm --force --ignore my3c >/dev/null
+podman container rm --force --ignore my4c >/dev/null
+podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
 
@@ -2894,11 +2894,11 @@ podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
 podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
 podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
 
-podman container rm --force --ignore my1c
-podman container rm --force --ignore my2c
-podman container rm --force --ignore my3c
-podman container rm --force --ignore my4c
-podman container rm --force --ignore my5c
+podman container rm --force --ignore my1c >/dev/null
+podman container rm --force --ignore my2c >/dev/null
+podman container rm --force --ignore my3c >/dev/null
+podman container rm --force --ignore my4c >/dev/null
+podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
 

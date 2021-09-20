@@ -282,7 +282,7 @@ podman container wait --condition=stopped {{ containers_as_single_line() }} || t
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] -%}
 {%- for pod in pods %}
-podman container rm --force --ignore {{ pod.containers[0].name }}
+podman container rm --force --ignore {{ pod.containers[0].name }} >/dev/null
 {%- endfor %}
 {%- endmacro -%}
 
