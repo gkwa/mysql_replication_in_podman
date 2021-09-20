@@ -23,7 +23,6 @@ curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/instal
 
 curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -
 run ./appveyor-tools/secure-file
-[ grep --quiet USAGE <<"$output" ]
-
+[[ $output =~ USAGE ]]
 
 }
