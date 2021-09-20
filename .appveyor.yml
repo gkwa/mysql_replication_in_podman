@@ -22,9 +22,9 @@ test_script:
 - sudo time bash reset_data.sh
 - sudo time bash reset_data.sh
 
-- sudo time test_statement_based_binlog_format.bats
-- sudo time test_percona_checksums.bats
-- sudo time test_fart.bats
-- sudo time test_recover_from_bad_state.bats
+- sudo time bats test_statement_based_binlog_format.bats
+- sudo time bats test_percona_checksums.bats
+- sudo time bats test_fart.bats
+- sudo time bats test_recover_from_bad_state.bats
 
 

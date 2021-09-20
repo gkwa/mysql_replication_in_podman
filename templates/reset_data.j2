@@ -2,4 +2,16 @@
 set -o errexit
 {%- import "macros.j2" as macros with context %}
 
-{{ macros.stop_pods_remove_data_start_pods() }}
+{{ macros.import_common_functions() }}
+
+{{ macros.podman_stop_containers() }}
+{{ macros.podman_stop_pods() }}
+
+{{ macros.podman_list_pods() }}
+
+{{ macros.remove_mysql_data_but_keep_container_volume() }}
+{{ macros.podman_start_pods() }}
+
+{{ macros.podman_list_pods() }}
+
+{{ macros.mysql_setup_replication() }}
