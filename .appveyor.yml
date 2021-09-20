@@ -1,6 +1,5 @@
 environment:
   APPVEYOR_SSH_KEY: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFp48yQviDu3U2mGdwv7CO3O84IAj4LJUXzyGbs6mT0q taylor.monacelli@streambox.com
-  APPVEYOR_SSH_BLOCK: true
 
 image: Ubuntu2004
 build: off
@@ -20,6 +19,7 @@ install:
 - sudo bats containers.bats
 
 test_script:
+- sh: sleep 60m
 - sudo time bats reset_data.bats
 - sudo time bash reset_containers.sh
 
