@@ -654,7 +654,8 @@ podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execut
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --database=ptest1 --host=my1p --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --database=ptest1 --host=my1p --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 
-cat <<'__eot__' >mysql_check_db_ptest1_exists_everywhere.bats
+bats=mysql_check_db_ptest1_exists_everywhere.bats
+cat <<'__eot__' >$bats
 @test "mysql_check_db_exists_everywhere" {
 
 
