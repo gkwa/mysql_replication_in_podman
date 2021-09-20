@@ -145,10 +145,7 @@ cat reptest/{{ pod.containers[0].name }}_my.cnf && echo
 {%- set pods=manifest['pods'] %}
 echo create volumes
 {%- for pod in pods %}
-if ! podman volume exists {{ pod.volume }}
-then
-    podman volume create {{ pod.volume }} >/dev/null
-fi
+podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }} >/dev/null
 {%- endfor %}
 {%- endmacro -%}
 
@@ -158,10 +155,11 @@ fi
 {%- set pods=manifest['pods'] %}
 echo create pods
 {%- for pod in pods %}
-if ! podman pod exists {{ pod.name }}
-then
-    podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} --network={{ global.network }} >/dev/null
-fi
+podman pod exists {{ pod.name }} ||
+podman pod create \
+    --name={{ pod.name }} \
+    --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} \
+    --network={{ global.network }} >/dev/null
 {%- endfor %}
 {%- endmacro -%}
 
@@ -245,10 +243,7 @@ fi
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] -%}
 {% for pod in pods %}
-if podman pod exists {{ pod.name }}
-then
-    podman pod stop {{ pod.name }} --ignore {{ pod.name }} >/dev/null
-fi
+podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --ignore {{ pod.name }} >/dev/null
 {%- endfor %}
 {%- endmacro -%}
 
@@ -256,16 +251,8 @@ fi
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] %}
-set +o errexit
 {% for pod in pods %}
 podman pod exists {{ pod.name }} && podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} >/dev/null
-{%- endfor %}
-set -o errexit
-{% for pod in pods %}
-if podman pod exists {{ pod.name }}
-then
-     podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} >/dev/null
-fi
 {%- endfor %}
 {%- endmacro -%}
 
@@ -291,10 +278,7 @@ set +o errexit
 podman container stop --ignore {{ containers_as_single_line() }} 2>podman_stop_containers_$(date +%s).log >/dev/null
 set -o errexit
 {%- for pod in pods %}
-if podman container exists {{ pod.containers[0].name }}
-then
-    podman container stop --ignore {{ pod.containers[0].name }} >/dev/null
-fi
+podman container exists {{ pod.containers[0].name }} && podman container stop --ignore {{ pod.containers[0].name }} >/dev/null
 {%- endfor %}
 {%- endmacro -%}
 
