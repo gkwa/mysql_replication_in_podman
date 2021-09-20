@@ -361,7 +361,7 @@ echo mysql: add and grant user {{ global.user_replication }}
 {%- for pod in pods %}
 {%- set user = "`" ~ global.user_replication ~ "`" ~ "@" ~ '"' ~ '%' ~ '"' -%}
 {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO {{ user }}'
-{%- endfor %}
+{% endfor %}
 
 echo mysql: add and grant user {{ global.user_percona }}
 {% for pod in pods %}
