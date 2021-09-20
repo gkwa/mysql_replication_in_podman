@@ -273,9 +273,7 @@ set -o errexit
 {%- for pod in pods %}
 podman container exists {{ pod.containers[0].name }} && podman container stop --ignore {{ pod.containers[0].name }} >/dev/null
 {%- endfor %}
-set +o errexit
-podman container wait --condition=stopped {{ containers_as_single_line() }}
-set -o errexit
+podman container wait --condition=stopped {{ containers_as_single_line() }} || true
 {%- endmacro -%}
 
 {% macro podman_rm_containers() -%}
