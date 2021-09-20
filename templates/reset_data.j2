@@ -1,10 +1,15 @@
-#!/bin/bash
-set -o errexit
+#!/usr/bin/env bats
+
 {%- import "macros.j2" as macros with context %}
 
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] %}
+
+@test "reset_data" {
+
+
+set -o errexit
 
 {{ macros.start_over() }}
 
@@ -20,12 +25,10 @@ set -o errexit
 
 {{ macros.mysql_create_db_on_host('ptest1', pods[0].name) }}
 
-bats=mysql_check_db_ptest1_exists_everywhere.bats
-cat <<'__eot__' >$bats
-@test "mysql_check_db_exists_everywhere" {
-
 {{ macros.mysql_check_db_exists_everywhere('ptest1') }}
 
+
+
+
+
 }
-__eot__
-bats $bats
