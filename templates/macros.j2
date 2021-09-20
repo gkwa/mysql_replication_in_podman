@@ -100,10 +100,10 @@ echo mysql: start replication
 echo mysql: setup replication
 {{ mysql_stop_slave() }}
 {%- for block in replication %}
-file=$(
+master_log_file=$(
   {{ mysql_jump() }} --host={{ block.source.pod }}.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
-[[ ! -z "$file" ]] # assert not empty
+[[ ! -z "$master_log_file" ]] # assert not empty
 position=$(
   {{ mysql_jump() }} --host={{ block.source.pod }}.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
@@ -111,7 +111,7 @@ position=$(
 {{ mysql_jump() }} --host={{ block.instance.pod }} --user={{ global.user_root }} --execute 'SHOW MASTER STATUS\G'
 {{ mysql_jump() }} --host={{ block.instance.pod }} --user={{ global.user_root }} --execute \
 "CHANGE MASTER TO MASTER_HOST='{{ block.source.pod }}.dns.podman',MASTER_USER='{{ global.user_replication }}',\
-MASTER_PASSWORD='{{ global.user_replication_pass }}',MASTER_LOG_FILE='"$file"',MASTER_LOG_POS=$position"
+MASTER_PASSWORD='{{ global.user_replication_pass }}',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 {%- endfor -%}
 {%- endmacro -%}
 
@@ -315,7 +315,7 @@ echo 'wait for container healthcheck(s)'
 sleep=4
 tries=20
 {%- for pod in pods %}
-loop2 healthcheck {{ pods[0].containers[0].name }} $sleep $tries
+loop2 healthcheck {{ pod.containers[0].name }} $sleep $tries
 {%- endfor %}
 {%- endmacro -%}
 

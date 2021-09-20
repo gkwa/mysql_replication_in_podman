@@ -373,10 +373,10 @@ echo 'wait for container healthcheck(s)'
 sleep=4
 tries=20
 loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
+loop2 healthcheck my2c $sleep $tries
+loop2 healthcheck my3c $sleep $tries
+loop2 healthcheck my4c $sleep $tries
+loop2 healthcheck my5c $sleep $tries
 
 echo 'check data directory is larger than 80MB, ~97MB is expected size'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
@@ -668,10 +668,10 @@ echo 'wait for container healthcheck(s)'
 sleep=4
 tries=20
 loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
+loop2 healthcheck my2c $sleep $tries
+loop2 healthcheck my3c $sleep $tries
+loop2 healthcheck my4c $sleep $tries
+loop2 healthcheck my5c $sleep $tries
 
 echo 'check data directory is larger than 80MB, ~97MB is expected size'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
@@ -724,61 +724,61 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE'
-file=$(
+master_log_file=$(
     podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
-[[ -n $file ]] # assert not empty
+[[ -n $master_log_file ]] # assert not empty
 position=$(
     podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root --execute \
     "CHANGE MASTER TO MASTER_HOST='my5p.dns.podman',MASTER_USER='repl',\
-MASTER_PASSWORD='repl',MASTER_LOG_FILE='"$file"',MASTER_LOG_POS=$position"
-file=$(
+MASTER_PASSWORD='repl',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
+master_log_file=$(
     podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
-[[ -n $file ]] # assert not empty
+[[ -n $master_log_file ]] # assert not empty
 position=$(
     podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root --execute \
     "CHANGE MASTER TO MASTER_HOST='my1p.dns.podman',MASTER_USER='repl',\
-MASTER_PASSWORD='repl',MASTER_LOG_FILE='"$file"',MASTER_LOG_POS=$position"
-file=$(
+MASTER_PASSWORD='repl',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
+master_log_file=$(
     podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
-[[ -n $file ]] # assert not empty
+[[ -n $master_log_file ]] # assert not empty
 position=$(
     podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root --execute \
     "CHANGE MASTER TO MASTER_HOST='my2p.dns.podman',MASTER_USER='repl',\
-MASTER_PASSWORD='repl',MASTER_LOG_FILE='"$file"',MASTER_LOG_POS=$position"
-file=$(
+MASTER_PASSWORD='repl',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
+master_log_file=$(
     podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
-[[ -n $file ]] # assert not empty
+[[ -n $master_log_file ]] # assert not empty
 position=$(
     podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root --execute \
     "CHANGE MASTER TO MASTER_HOST='my3p.dns.podman',MASTER_USER='repl',\
-MASTER_PASSWORD='repl',MASTER_LOG_FILE='"$file"',MASTER_LOG_POS=$position"
-file=$(
+MASTER_PASSWORD='repl',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
+master_log_file=$(
     podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
-[[ -n $file ]] # assert not empty
+[[ -n $master_log_file ]] # assert not empty
 position=$(
     podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --user=root --execute \
     "CHANGE MASTER TO MASTER_HOST='my4p.dns.podman',MASTER_USER='repl',\
-MASTER_PASSWORD='repl',MASTER_LOG_FILE='"$file"',MASTER_LOG_POS=$position"
+MASTER_PASSWORD='repl',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 
 echo mysql: start replication
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="repl"'
@@ -1063,10 +1063,10 @@ echo 'wait for container healthcheck(s)'
 sleep=4
 tries=20
 loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
+loop2 healthcheck my2c $sleep $tries
+loop2 healthcheck my3c $sleep $tries
+loop2 healthcheck my4c $sleep $tries
+loop2 healthcheck my5c $sleep $tries
 
 echo 'check data directory is larger than 80MB, ~97MB is expected size'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
@@ -1311,10 +1311,10 @@ echo 'wait for container healthcheck(s)'
 sleep=4
 tries=20
 loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
+loop2 healthcheck my2c $sleep $tries
+loop2 healthcheck my3c $sleep $tries
+loop2 healthcheck my4c $sleep $tries
+loop2 healthcheck my5c $sleep $tries
 
 echo 'check data directory is larger than 80MB, ~97MB is expected size'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
@@ -1559,10 +1559,10 @@ echo 'wait for container healthcheck(s)'
 sleep=4
 tries=20
 loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
+loop2 healthcheck my2c $sleep $tries
+loop2 healthcheck my3c $sleep $tries
+loop2 healthcheck my4c $sleep $tries
+loop2 healthcheck my5c $sleep $tries
 
 echo 'check data directory is larger than 80MB, ~97MB is expected size'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
@@ -1807,10 +1807,10 @@ echo 'wait for container healthcheck(s)'
 sleep=4
 tries=20
 loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
+loop2 healthcheck my2c $sleep $tries
+loop2 healthcheck my3c $sleep $tries
+loop2 healthcheck my4c $sleep $tries
+loop2 healthcheck my5c $sleep $tries
 
 echo 'check data directory is larger than 80MB, ~97MB is expected size'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
@@ -2055,10 +2055,10 @@ echo 'wait for container healthcheck(s)'
 sleep=4
 tries=20
 loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
+loop2 healthcheck my2c $sleep $tries
+loop2 healthcheck my3c $sleep $tries
+loop2 healthcheck my4c $sleep $tries
+loop2 healthcheck my5c $sleep $tries
 
 echo 'check data directory is larger than 80MB, ~97MB is expected size'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
@@ -2303,10 +2303,10 @@ echo 'wait for container healthcheck(s)'
 sleep=4
 tries=20
 loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
+loop2 healthcheck my2c $sleep $tries
+loop2 healthcheck my3c $sleep $tries
+loop2 healthcheck my4c $sleep $tries
+loop2 healthcheck my5c $sleep $tries
 
 echo 'check data directory is larger than 80MB, ~97MB is expected size'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
@@ -2551,10 +2551,10 @@ echo 'wait for container healthcheck(s)'
 sleep=4
 tries=20
 loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
+loop2 healthcheck my2c $sleep $tries
+loop2 healthcheck my3c $sleep $tries
+loop2 healthcheck my4c $sleep $tries
+loop2 healthcheck my5c $sleep $tries
 
 echo 'check data directory is larger than 80MB, ~97MB is expected size'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
@@ -2799,10 +2799,10 @@ echo 'wait for container healthcheck(s)'
 sleep=4
 tries=20
 loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
-loop2 healthcheck my1c $sleep $tries
+loop2 healthcheck my2c $sleep $tries
+loop2 healthcheck my3c $sleep $tries
+loop2 healthcheck my4c $sleep $tries
+loop2 healthcheck my5c $sleep $tries
 
 echo 'check data directory is larger than 80MB, ~97MB is expected size'
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
