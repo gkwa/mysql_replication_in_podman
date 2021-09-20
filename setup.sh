@@ -210,29 +210,19 @@ cat reptest/my5c_my.cnf && echo
 
 echo create pods
 podman pod exists my1p ||
-    podman pod create \
-        --name=my1p \
-        --publish=33061:3306 \
+    podman pod create --name=my1p --publish=33061:3306 \
         --network=replication >/dev/null
 podman pod exists my2p ||
-    podman pod create \
-        --name=my2p \
-        --publish=33062:3306 \
+    podman pod create --name=my2p --publish=33062:3306 \
         --network=replication >/dev/null
 podman pod exists my3p ||
-    podman pod create \
-        --name=my3p \
-        --publish=33063:3306 \
+    podman pod create --name=my3p --publish=33063:3306 \
         --network=replication >/dev/null
 podman pod exists my4p ||
-    podman pod create \
-        --name=my4p \
-        --publish=33064:3306 \
+    podman pod create --name=my4p --publish=33064:3306 \
         --network=replication >/dev/null
 podman pod exists my5p ||
-    podman pod create \
-        --name=my5p \
-        --publish=33065:3306 \
+    podman pod create --name=my5p --publish=33065:3306 \
         --network=replication >/dev/null
 
 echo create containers
