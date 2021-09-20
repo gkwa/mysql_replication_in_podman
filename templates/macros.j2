@@ -328,7 +328,7 @@ podman run --pod={{ pods[0].name }} --env=PTDEBUG=0 --env=MYSQL_PWD={{ global.us
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro mysql_check_db_exists_everywhere(db) -%}
+{% macro bats_test_mysql_check_db_exists_everywhere(db) -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] -%}
@@ -338,7 +338,7 @@ run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE {{ db }}'
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro mysql_check_ptest1_does_not_exist() -%}
+{% macro bats_test_mysql_check_ptest1_does_not_exist() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] -%}
@@ -348,7 +348,7 @@ run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE ptest1'
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro test_can_connect_to_mysql_db() -%}
+{% macro bats_test_test_can_connect_to_mysql_db() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] -%}

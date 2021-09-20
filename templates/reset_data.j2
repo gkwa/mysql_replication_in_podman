@@ -25,7 +25,7 @@ set -o errexit
 
 {{ macros.mysql_create_db_on_host('ptest1', pods[0].name) }}
 
-{{ macros.mysql_check_db_exists_everywhere('ptest1') }}
+{{ macros.bats_test_mysql_check_db_exists_everywhere('ptest1') }}
 
 
 

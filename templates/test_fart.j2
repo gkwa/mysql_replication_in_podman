@@ -33,7 +33,7 @@ run {{ macros.mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE pt
 
 {{ macros.mysql_wait_for_replication() }}
 
-{{ macros.mysql_check_db_exists_everywhere('ptest') }}
+{{ macros.bats_test_mysql_check_db_exists_everywhere('ptest') }}
 
 
 }
