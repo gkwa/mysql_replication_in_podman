@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-@test "create $HOME/.docker/config.json to enable podman to pull iamges from redhat registry" {
+@test "deploy redhat key" {
 
 uid=$(id -u)
 gid=$(id -g)
