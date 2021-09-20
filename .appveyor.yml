@@ -7,7 +7,7 @@ install:
 
 # https://ci.appveyor.com/project/TaylorMonacelli/mysql-replication-in-podman/builds/40699358
 
-- sudo install_bats.sh
+- sudo bash install_bats.sh
 
 - sudo bats setup_debian.bats
 - sudo podman info --debug
