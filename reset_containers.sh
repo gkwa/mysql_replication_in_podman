@@ -194,7 +194,6 @@ cat <<'__eot__' >reptest/my1c_my.cnf
 server_id                      = 1
 auto_increment_offset          = 1
 bind-address                   = my1p.dns.podman
-log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 innodb_flush_log_at_trx_commit = 1 
 sync_binlog                    = 1
@@ -206,7 +205,6 @@ cat <<'__eot__' >reptest/my2c_my.cnf
 server_id                      = 2
 auto_increment_offset          = 2
 bind-address                   = my2p.dns.podman
-log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 innodb_flush_log_at_trx_commit = 1 
 sync_binlog                    = 1
@@ -218,7 +216,6 @@ cat <<'__eot__' >reptest/my3c_my.cnf
 server_id                      = 3
 auto_increment_offset          = 3
 bind-address                   = my3p.dns.podman
-log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 innodb_flush_log_at_trx_commit = 1 
 sync_binlog                    = 1
@@ -230,7 +227,6 @@ cat <<'__eot__' >reptest/my4c_my.cnf
 server_id                      = 4
 auto_increment_offset          = 4
 bind-address                   = my4p.dns.podman
-log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 innodb_flush_log_at_trx_commit = 1 
 sync_binlog                    = 1
@@ -242,7 +238,6 @@ cat <<'__eot__' >reptest/my5c_my.cnf
 server_id                      = 5
 auto_increment_offset          = 5
 bind-address                   = my5p.dns.podman
-log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 innodb_flush_log_at_trx_commit = 1 
 sync_binlog                    = 1
@@ -489,7 +484,6 @@ cat <<'__eot__' >reptest/my1c_my.cnf
 server_id                      = 1
 auto_increment_offset          = 1
 bind-address                   = my1p.dns.podman
-log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 innodb_flush_log_at_trx_commit = 1 
 sync_binlog                    = 1
@@ -501,7 +495,6 @@ cat <<'__eot__' >reptest/my2c_my.cnf
 server_id                      = 2
 auto_increment_offset          = 2
 bind-address                   = my2p.dns.podman
-log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 innodb_flush_log_at_trx_commit = 1 
 sync_binlog                    = 1
@@ -513,7 +506,6 @@ cat <<'__eot__' >reptest/my3c_my.cnf
 server_id                      = 3
 auto_increment_offset          = 3
 bind-address                   = my3p.dns.podman
-log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 innodb_flush_log_at_trx_commit = 1 
 sync_binlog                    = 1
@@ -525,7 +517,6 @@ cat <<'__eot__' >reptest/my4c_my.cnf
 server_id                      = 4
 auto_increment_offset          = 4
 bind-address                   = my4p.dns.podman
-log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 innodb_flush_log_at_trx_commit = 1 
 sync_binlog                    = 1
@@ -537,7 +528,6 @@ cat <<'__eot__' >reptest/my5c_my.cnf
 server_id                      = 5
 auto_increment_offset          = 5
 bind-address                   = my5p.dns.podman
-log_bin                        = mysql-bin.log
 binlog_format                  = STATEMENT
 innodb_flush_log_at_trx_commit = 1 
 sync_binlog                    = 1
