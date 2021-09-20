@@ -3,34 +3,20 @@
 
 
 cleanall() {
-    podman pod stop --ignore --all
-    podman images prune
-    podman container stop --ignore --all
-    podman pod rm --all --force
-    podman container rm --all --force
-    podman volume rm --all --force
-    for network in $(podman network ls --format json | jq -r '.[].Name'); do
-        if [[ $network != "podman" ]]; then
-            if podman network exists $network
-            then
-                podman network rm $network
+    for i in {1..2}; do
+        podman pod stop --ignore --all
+        podman container stop --ignore --all
+        podman pod rm --all --force
+        podman container rm --all --force
+        podman volume rm --all --force
+        for network in $(podman network ls --format json | jq -r '.[].Name'); do
+            if [[ $network != "podman" ]]; then
+                podman network exists $network && podman network rm $network
             fi
-        fi
+        done
+        podman images prune
     done
-    podman pod stop --ignore --all
-    podman images prune
-    podman container stop --ignore --all
-    podman pod rm --all --force
-    podman container rm --all --force
-    podman volume rm --all --force
-    for network in $(podman network ls --format json | jq -r '.[].Name'); do
-        if [[ $network != "podman" ]]; then
-            if podman network exists $network
-            then
-                podman network rm $network
-            fi
-        fi
-    done
+
     podman ps
     podman ps --pod
     podman ps -a --pod

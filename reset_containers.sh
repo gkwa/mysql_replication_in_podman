@@ -2,32 +2,20 @@
 set -o errexit
 
 cleanall() {
-    podman pod stop --ignore --all
-    podman images prune
-    podman container stop --ignore --all
-    podman pod rm --all --force
-    podman container rm --all --force
-    podman volume rm --all --force
-    for network in $(podman network ls --format json | jq -r '.[].Name'); do
-        if [[ $network != "podman" ]]; then
-            if podman network exists $network; then
-                podman network rm $network
+    for i in {1..2}; do
+        podman pod stop --ignore --all
+        podman container stop --ignore --all
+        podman pod rm --all --force
+        podman container rm --all --force
+        podman volume rm --all --force
+        for network in $(podman network ls --format json | jq -r '.[].Name'); do
+            if [[ $network != "podman" ]]; then
+                podman network exists $network && podman network rm $network
             fi
-        fi
+        done
+        podman images prune
     done
-    podman pod stop --ignore --all
-    podman images prune
-    podman container stop --ignore --all
-    podman pod rm --all --force
-    podman container rm --all --force
-    podman volume rm --all --force
-    for network in $(podman network ls --format json | jq -r '.[].Name'); do
-        if [[ $network != "podman" ]]; then
-            if podman network exists $network; then
-                podman network rm $network
-            fi
-        fi
-    done
+
     podman ps
     podman ps --pod
     podman ps -a --pod
@@ -107,6 +95,11 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -119,6 +112,15 @@ podman container rm --force --ignore my2c
 podman container rm --force --ignore my3c
 podman container rm --force --ignore my4c
 podman container rm --force --ignore my5c
+
+set +o errexit
+
+podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
+podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
+podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
+podman pod exists my4p && podman pod rm --force my4p --ignore my4p 2>podman_rm_pods.log >/dev/null
+podman pod exists my5p && podman pod rm --force my5p --ignore my5p 2>podman_rm_pods.log >/dev/null
+set -o errexit
 
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p >/dev/null
@@ -204,16 +206,11 @@ cat reptest/my4c_my.cnf && echo
 cat reptest/my5c_my.cnf && echo
 
 echo create pods
-podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
-podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
-podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
-podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
-podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
+podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
+podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
+podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
+podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -449,10 +446,8 @@ loop1 repcheck my1c my3p.dns.podman $sleep $tries
 loop1 repcheck my1c my4p.dns.podman $sleep $tries
 loop1 repcheck my1c my5p.dns.podman $sleep $tries
 
-epoch=$(date +%s)
-
 macro=mysql_check_ptest1_does_not_exist
-bats=${macro}_${epoch}.bats
+bats=${macro}.bats
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_does_not_exist" {
 
@@ -473,7 +468,7 @@ __eot__
 bats $bats
 
 macro=mysql_create_database_ptest1
-bats=${macro}_${epoch}.bats
+bats=${macro}.bats
 cat <<'__eot__' >$bats
 @test "mysql_create_database_ptest1" {
 
@@ -507,6 +502,11 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -519,6 +519,15 @@ podman container rm --force --ignore my2c
 podman container rm --force --ignore my3c
 podman container rm --force --ignore my4c
 podman container rm --force --ignore my5c
+
+set +o errexit
+
+podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
+podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
+podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
+podman pod exists my4p && podman pod rm --force my4p --ignore my4p 2>podman_rm_pods.log >/dev/null
+podman pod exists my5p && podman pod rm --force my5p --ignore my5p 2>podman_rm_pods.log >/dev/null
+set -o errexit
 
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p >/dev/null
@@ -541,16 +550,11 @@ if ! podman network exists replication; then
 fi
 
 echo create pods
-podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
-podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
-podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
-podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
-podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
+podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
+podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
+podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
+podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -671,7 +675,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 [[ $size -gt 80000 ]]
 
 macro=mysql_check_ptest1_exists_everywhere
-bats=${macro}_${epoch}.bats
+bats=${macro}.bats
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_exists_everywhere" {
 
@@ -816,6 +820,11 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -828,6 +837,15 @@ podman container rm --force --ignore my2c
 podman container rm --force --ignore my3c
 podman container rm --force --ignore my4c
 podman container rm --force --ignore my5c
+
+set +o errexit
+
+podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
+podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
+podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
+podman pod exists my4p && podman pod rm --force my4p --ignore my4p 2>podman_rm_pods.log >/dev/null
+podman pod exists my5p && podman pod rm --force my5p --ignore my5p 2>podman_rm_pods.log >/dev/null
+set -o errexit
 
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p >/dev/null
@@ -850,16 +868,11 @@ if ! podman network exists replication; then
 fi
 
 echo create pods
-podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
-podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
-podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
-podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
-podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
+podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
+podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
+podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
+podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -980,7 +993,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 [[ $size -gt 80000 ]]
 
 macro=mysql_check_ptest1_exists_everywhere
-bats=${macro}_${epoch}.bats
+bats=${macro}.bats
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_exists_everywhere" {
 
@@ -1125,6 +1138,11 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -1137,6 +1155,15 @@ podman container rm --force --ignore my2c
 podman container rm --force --ignore my3c
 podman container rm --force --ignore my4c
 podman container rm --force --ignore my5c
+
+set +o errexit
+
+podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
+podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
+podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
+podman pod exists my4p && podman pod rm --force my4p --ignore my4p 2>podman_rm_pods.log >/dev/null
+podman pod exists my5p && podman pod rm --force my5p --ignore my5p 2>podman_rm_pods.log >/dev/null
+set -o errexit
 
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p >/dev/null
@@ -1159,16 +1186,11 @@ if ! podman network exists replication; then
 fi
 
 echo create pods
-podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
-podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
-podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
-podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
-podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
+podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
+podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
+podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
+podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -1289,7 +1311,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 [[ $size -gt 80000 ]]
 
 macro=mysql_check_ptest1_exists_everywhere
-bats=${macro}_${epoch}.bats
+bats=${macro}.bats
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_exists_everywhere" {
 
@@ -1434,6 +1456,11 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -1446,6 +1473,15 @@ podman container rm --force --ignore my2c
 podman container rm --force --ignore my3c
 podman container rm --force --ignore my4c
 podman container rm --force --ignore my5c
+
+set +o errexit
+
+podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
+podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
+podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
+podman pod exists my4p && podman pod rm --force my4p --ignore my4p 2>podman_rm_pods.log >/dev/null
+podman pod exists my5p && podman pod rm --force my5p --ignore my5p 2>podman_rm_pods.log >/dev/null
+set -o errexit
 
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p >/dev/null
@@ -1468,16 +1504,11 @@ if ! podman network exists replication; then
 fi
 
 echo create pods
-podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
-podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
-podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
-podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
-podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
+podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
+podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
+podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
+podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -1598,7 +1629,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 [[ $size -gt 80000 ]]
 
 macro=mysql_check_ptest1_exists_everywhere
-bats=${macro}_${epoch}.bats
+bats=${macro}.bats
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_exists_everywhere" {
 
@@ -1743,6 +1774,11 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -1755,6 +1791,15 @@ podman container rm --force --ignore my2c
 podman container rm --force --ignore my3c
 podman container rm --force --ignore my4c
 podman container rm --force --ignore my5c
+
+set +o errexit
+
+podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
+podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
+podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
+podman pod exists my4p && podman pod rm --force my4p --ignore my4p 2>podman_rm_pods.log >/dev/null
+podman pod exists my5p && podman pod rm --force my5p --ignore my5p 2>podman_rm_pods.log >/dev/null
+set -o errexit
 
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p >/dev/null
@@ -1777,16 +1822,11 @@ if ! podman network exists replication; then
 fi
 
 echo create pods
-podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
-podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
-podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
-podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
-podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
+podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
+podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
+podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
+podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -1907,7 +1947,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 [[ $size -gt 80000 ]]
 
 macro=mysql_check_ptest1_exists_everywhere
-bats=${macro}_${epoch}.bats
+bats=${macro}.bats
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_exists_everywhere" {
 
@@ -2052,6 +2092,11 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -2064,6 +2109,15 @@ podman container rm --force --ignore my2c
 podman container rm --force --ignore my3c
 podman container rm --force --ignore my4c
 podman container rm --force --ignore my5c
+
+set +o errexit
+
+podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
+podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
+podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
+podman pod exists my4p && podman pod rm --force my4p --ignore my4p 2>podman_rm_pods.log >/dev/null
+podman pod exists my5p && podman pod rm --force my5p --ignore my5p 2>podman_rm_pods.log >/dev/null
+set -o errexit
 
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p >/dev/null
@@ -2086,16 +2140,11 @@ if ! podman network exists replication; then
 fi
 
 echo create pods
-podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
-podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
-podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
-podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
-podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
+podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
+podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
+podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
+podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -2216,7 +2265,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 [[ $size -gt 80000 ]]
 
 macro=mysql_check_ptest1_exists_everywhere
-bats=${macro}_${epoch}.bats
+bats=${macro}.bats
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_exists_everywhere" {
 
@@ -2244,6 +2293,11 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -2256,6 +2310,15 @@ podman container rm --force --ignore my2c
 podman container rm --force --ignore my3c
 podman container rm --force --ignore my4c
 podman container rm --force --ignore my5c
+
+set +o errexit
+
+podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
+podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
+podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
+podman pod exists my4p && podman pod rm --force my4p --ignore my4p 2>podman_rm_pods.log >/dev/null
+podman pod exists my5p && podman pod rm --force my5p --ignore my5p 2>podman_rm_pods.log >/dev/null
+set -o errexit
 
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p >/dev/null
@@ -2278,16 +2341,11 @@ if ! podman network exists replication; then
 fi
 
 echo create pods
-podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
-podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
-podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
-podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
-podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
+podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
+podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
+podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
+podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -2408,7 +2466,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 [[ $size -gt 80000 ]]
 
 macro=mysql_check_ptest1_exists_everywhere
-bats=${macro}_${epoch}.bats
+bats=${macro}.bats
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_exists_everywhere" {
 
@@ -2436,6 +2494,11 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -2448,6 +2511,15 @@ podman container rm --force --ignore my2c
 podman container rm --force --ignore my3c
 podman container rm --force --ignore my4c
 podman container rm --force --ignore my5c
+
+set +o errexit
+
+podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
+podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
+podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
+podman pod exists my4p && podman pod rm --force my4p --ignore my4p 2>podman_rm_pods.log >/dev/null
+podman pod exists my5p && podman pod rm --force my5p --ignore my5p 2>podman_rm_pods.log >/dev/null
+set -o errexit
 
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p >/dev/null
@@ -2470,16 +2542,11 @@ if ! podman network exists replication; then
 fi
 
 echo create pods
-podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
-podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
-podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
-podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
-podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
+podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
+podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
+podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
+podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -2600,7 +2667,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 [[ $size -gt 80000 ]]
 
 macro=mysql_check_ptest1_exists_everywhere
-bats=${macro}_${epoch}.bats
+bats=${macro}.bats
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_exists_everywhere" {
 
@@ -2628,6 +2695,11 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -2640,6 +2712,15 @@ podman container rm --force --ignore my2c
 podman container rm --force --ignore my3c
 podman container rm --force --ignore my4c
 podman container rm --force --ignore my5c
+
+set +o errexit
+
+podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
+podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
+podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
+podman pod exists my4p && podman pod rm --force my4p --ignore my4p 2>podman_rm_pods.log >/dev/null
+podman pod exists my5p && podman pod rm --force my5p --ignore my5p 2>podman_rm_pods.log >/dev/null
+set -o errexit
 
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p >/dev/null
@@ -2662,16 +2743,11 @@ if ! podman network exists replication; then
 fi
 
 echo create pods
-podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
-podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
-podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
-podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
-podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
+podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
+podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
+podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
+podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -2792,7 +2868,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 [[ $size -gt 80000 ]]
 
 macro=mysql_check_ptest1_exists_everywhere
-bats=${macro}_${epoch}.bats
+bats=${macro}.bats
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_exists_everywhere" {
 
@@ -2820,6 +2896,11 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
+podman container wait --condition=stopped my1c my2c my3c my4c my5c
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -2832,6 +2913,15 @@ podman container rm --force --ignore my2c
 podman container rm --force --ignore my3c
 podman container rm --force --ignore my4c
 podman container rm --force --ignore my5c
+
+set +o errexit
+
+podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
+podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
+podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
+podman pod exists my4p && podman pod rm --force my4p --ignore my4p 2>podman_rm_pods.log >/dev/null
+podman pod exists my5p && podman pod rm --force my5p --ignore my5p 2>podman_rm_pods.log >/dev/null
+set -o errexit
 
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p >/dev/null
@@ -2854,16 +2944,11 @@ if ! podman network exists replication; then
 fi
 
 echo create pods
-podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
-podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
-podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
-podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
-podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
+podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
+podman pod exists my2p || podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
+podman pod exists my3p || podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
+podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
+podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -2984,7 +3069,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 [[ $size -gt 80000 ]]
 
 macro=mysql_check_ptest1_exists_everywhere
-bats=${macro}_${epoch}.bats
+bats=${macro}.bats
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_exists_everywhere" {
 

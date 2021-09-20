@@ -147,8 +147,7 @@ podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }} >
 {%- set pods=manifest['pods'] %}
 echo create pods
 {%- for pod in pods %}
-podman pod exists {{ pod.name }} ||
-podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} --network={{ global.network }} >/dev/null
+podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} --network={{ global.network }} >/dev/null
 {%- endfor %}
 {%- endmacro -%}
 
@@ -240,6 +239,11 @@ podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --ignore {{ p
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] %}
+set +o errexit
+{% for pod in pods %}
+podman pod exists {{ pod.name }} && podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} 2>podman_rm_pods.log >/dev/null
+{%- endfor %}
+set -o errexit
 {% for pod in pods %}
 podman pod exists {{ pod.name }} && podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} >/dev/null
 {%- endfor %}
@@ -268,6 +272,9 @@ podman container stop --ignore {{ containers_as_single_line() }} 2>podman_stop_c
 set -o errexit
 {%- for pod in pods %}
 podman container exists {{ pod.containers[0].name }} && podman container stop --ignore {{ pod.containers[0].name }} >/dev/null
+{%- endfor %}
+{%- for pod in pods %}
+podman container wait --condition=stopped {{ containers_as_single_line() }}
 {%- endfor %}
 {%- endmacro -%}
 
@@ -401,34 +408,20 @@ echo mysql: flush privileges
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] -%}
 cleanall() {
-    podman pod stop --ignore --all
-    podman images prune
-    podman container stop --ignore --all
-    podman pod rm --all --force
-    podman container rm --all --force
-    podman volume rm --all --force
-    for network in $(podman network ls --format json | jq -r '.[].Name'); do
-        if [[ $network != "podman" ]]; then
-            if podman network exists $network
-            then
-                podman network rm $network
+    for i in {1..2}; do
+        podman pod stop --ignore --all
+        podman container stop --ignore --all
+        podman pod rm --all --force
+        podman container rm --all --force
+        podman volume rm --all --force
+        for network in $(podman network ls --format json | jq -r '.[].Name'); do
+            if [[ $network != "podman" ]]; then
+                podman network exists $network && podman network rm $network
             fi
-        fi
+        done
+        podman images prune
     done
-    podman pod stop --ignore --all
-    podman images prune
-    podman container stop --ignore --all
-    podman pod rm --all --force
-    podman container rm --all --force
-    podman volume rm --all --force
-    for network in $(podman network ls --format json | jq -r '.[].Name'); do
-        if [[ $network != "podman" ]]; then
-            if podman network exists $network
-            then
-                podman network rm $network
-            fi
-        fi
-    done
+
     podman ps
     podman ps --pod
     podman ps -a --pod
