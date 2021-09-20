@@ -23,7 +23,7 @@ curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/instal
 
 curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -
 
-result=$(./appveyor-tools/secure-file --version)
+result=$(./appveyor-tools/secure-file)
 
 set -x
 echo $result
