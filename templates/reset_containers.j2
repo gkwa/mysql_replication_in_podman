@@ -24,7 +24,7 @@ bats=${macro}.bats
 cat <<'__eot__' >$bats
 @test "mysql_create_database_ptest1" {
 
-{{ macros.mysql_create_database_ptest1(pods[0].name) }}
+{{ macros.mysql_create_db_on_host('ptest1', pods[0].name) }}
 
 {{ macros.mysql_check_ptest1_exists_everywhere() }}
 

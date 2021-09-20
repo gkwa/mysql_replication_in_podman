@@ -18,7 +18,7 @@ set -o errexit
 
 {{ macros.mysql_setup_replication() }}
 
-{{ macros.mysql_create_database_ptest1(pods[0].name) }}
+{{ macros.mysql_create_db_on_host('ptest1', pods[0].name) }}
 
 macro=mysql_check_ptest1_exists_everywhere
 bats=${macro}_${epoch}.bats

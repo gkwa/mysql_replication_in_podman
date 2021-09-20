@@ -8,13 +8,13 @@ cleanall() {
         podman container stop --ignore --all
         podman pod rm --all --force
         podman container rm --all --force
+        podman images prune
         podman volume rm --all --force
         for network in $(podman network ls --format json | jq -r '.[].Name'); do
             if [[ $network != "podman" ]]; then
                 podman network exists $network && podman network rm $network
             fi
         done
-        podman images prune
     done
 
     podman ps
