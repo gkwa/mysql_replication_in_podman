@@ -241,7 +241,7 @@ podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --ignore {{ p
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] %}
 set +o errexit
-{% for pod in pods %}
+{%- for pod in pods %}
 podman pod exists {{ pod.name }} && podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} 2>podman_rm_pods.log >/dev/null
 {%- endfor %}
 set -o errexit

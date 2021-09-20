@@ -1,8 +1,6 @@
 #!/bin/bash
 set -o errexit
 
-set -x
-
 cleanall() {
     for i in {1..2}; do
         podman pod stop --ignore --all
@@ -112,7 +110,6 @@ podman container exists my4c && podman container rm --force --ignore my4c >/dev/
 podman container exists my5c && podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
-
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
 podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
@@ -528,7 +525,6 @@ podman container exists my4c && podman container rm --force --ignore my4c >/dev/
 podman container exists my5c && podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
-
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
 podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
@@ -683,7 +679,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 
 bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
-@test "mysql_check_db_ptest1exists_everywhere" {
+@test "mysql_check_db_ptest1_exists_everywhere" {
 
 
 run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -856,7 +852,6 @@ podman container exists my4c && podman container rm --force --ignore my4c >/dev/
 podman container exists my5c && podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
-
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
 podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
@@ -1011,7 +1006,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 
 bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
-@test "mysql_check_db_ptest1exists_everywhere" {
+@test "mysql_check_db_ptest1_exists_everywhere" {
 
 
 run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -1184,7 +1179,6 @@ podman container exists my4c && podman container rm --force --ignore my4c >/dev/
 podman container exists my5c && podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
-
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
 podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
@@ -1339,7 +1333,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 
 bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
-@test "mysql_check_db_ptest1exists_everywhere" {
+@test "mysql_check_db_ptest1_exists_everywhere" {
 
 
 run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -1512,7 +1506,6 @@ podman container exists my4c && podman container rm --force --ignore my4c >/dev/
 podman container exists my5c && podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
-
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
 podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
@@ -1667,7 +1660,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 
 bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
-@test "mysql_check_db_ptest1exists_everywhere" {
+@test "mysql_check_db_ptest1_exists_everywhere" {
 
 
 run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -1840,7 +1833,6 @@ podman container exists my4c && podman container rm --force --ignore my4c >/dev/
 podman container exists my5c && podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
-
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
 podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
@@ -1995,7 +1987,7 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk
 
 bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
-@test "mysql_check_db_ptest1exists_everywhere" {
+@test "mysql_check_db_ptest1_exists_everywhere" {
 
 
 run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -2168,7 +2160,6 @@ podman container exists my4c && podman container rm --force --ignore my4c >/dev/
 podman container exists my5c && podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
-
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
 podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
@@ -2364,7 +2355,6 @@ podman container exists my4c && podman container rm --force --ignore my4c >/dev/
 podman container exists my5c && podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
-
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
 podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
@@ -2560,7 +2550,6 @@ podman container exists my4c && podman container rm --force --ignore my4c >/dev/
 podman container exists my5c && podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
-
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
 podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
@@ -2756,7 +2745,6 @@ podman container exists my4c && podman container rm --force --ignore my4c >/dev/
 podman container exists my5c && podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
-
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
 podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null
@@ -2952,7 +2940,6 @@ podman container exists my4c && podman container rm --force --ignore my4c >/dev/
 podman container exists my5c && podman container rm --force --ignore my5c >/dev/null
 
 set +o errexit
-
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
 podman pod exists my3p && podman pod rm --force my3p --ignore my3p 2>podman_rm_pods.log >/dev/null

@@ -1,8 +1,6 @@
 #!/bin/bash
 set -o errexit
 
-set -x
-
 {%- import "macros.j2" as macros with context %}
 
 {%- set global=manifest['global'] -%}
@@ -48,7 +46,7 @@ bats $bats
 
 bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
-@test "mysql_check_db_ptest1exists_everywhere" {
+@test "mysql_check_db_ptest1_exists_everywhere" {
 
 {{ macros.mysql_check_db_exists_everywhere('ptest1') }}
 
