@@ -1,6 +1,8 @@
 #!/bin/bash
 set -o errexit
 
+set -x
+
 cleanall() {
     for i in {1..2}; do
         podman pod stop --ignore --all

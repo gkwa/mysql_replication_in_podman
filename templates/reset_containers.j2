@@ -1,5 +1,8 @@
 #!/bin/bash
 set -o errexit
+
+set -x
+
 {%- import "macros.j2" as macros with context %}
 
 {%- set global=manifest['global'] -%}
