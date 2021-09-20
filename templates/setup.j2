@@ -2,6 +2,6 @@
 set -o errexit
 {%- import "macros.j2" as macros with context %}
 
-{{ macros.system_setup() }}
+{{ macros.start_over() }}
 
 {# keep newline at end of file please but only for aesthetics #}

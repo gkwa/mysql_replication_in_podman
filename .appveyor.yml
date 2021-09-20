@@ -13,18 +13,15 @@ install:
 - sudo bash setup_debian.sh >/dev/null
 - sudo bash create_setup.sh
 - sudo podman info --debug
-# - sudo bash setup.sh
 
 test_script:
 - sudo time bash reset_containers.sh
 
-- sudo time bash reset_data.sh
-- sudo time bash reset_data.sh
-- sudo time bash reset_data.sh
+# - sudo time bash reset_data.sh
+# - sudo time bash reset_data.sh
+# - sudo time bash reset_data.sh
 
-- sudo time bats test_statement_based_binlog_format.bats
-- sudo time bats test_percona_checksums.bats
-- sudo time bats test_fart.bats
-- sudo time bats test_recover_from_bad_state.bats
-
-
+# - sudo time bats test_statement_based_binlog_format.bats
+# - sudo time bats test_percona_checksums.bats
+# - sudo time bats test_fart.bats
+# - sudo time bats test_recover_from_bad_state.bats

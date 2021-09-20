@@ -6,42 +6,7 @@ set -o errexit
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] %}
 
-{{ macros.import_common_functions() }}
-
-{{ macros.podman_stop_containers() }}
-{{ macros.podman_stop_pods() }}
-{{ macros.podman_rm_containers() }}
-{{ macros.podman_rm_pods() }}
-
-{{ macros.podman_list_pods() }}
-
-{{ macros.podman_container_volume_setup() }}
-{{ macros.podman_create_network() }}
-
-{{ macros.mysql_conf_setup() }}
-
-{{ macros.podman_create_pods() }}
-{{ macros.podman_create_containers() }}
-{{ macros.podman_start_pods() }}
-
-# repeat
-{{ macros.podman_stop_containers() }}
-{{ macros.podman_stop_pods() }}
-{{ macros.podman_rm_containers() }}
-{{ macros.podman_rm_pods() }}
-
-{{ macros.podman_list_pods() }}
-
-{{ macros.podman_container_volume_setup() }}
-{{ macros.podman_create_network() }}
-
-{{ macros.mysql_conf_setup() }}
-
-{{ macros.podman_create_pods() }}
-{{ macros.podman_create_containers() }}
-{{ macros.podman_start_pods() }}
-
-{{ macros.mysql_setup_replication() }}
+{{ macros.start_over() }}
 
 epoch=$(date +%s)
 
@@ -63,15 +28,6 @@ cat <<'__eot__' >$bats
 
 {{ macros.mysql_create_database_ptest1(pods[0].name) }}
 
-}
-__eot__
-bats $bats
-
-macro=mysql_check_ptest1_exists_everywhere
-bats=${macro}_${epoch}.bats
-cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
-
 {{ macros.mysql_check_ptest1_exists_everywhere() }}
 
 }
@@ -81,11 +37,7 @@ bats $bats
 # cycle start
 {% for iter in range(5) %}
 
-{{ macros.podman_stop_containers() }}
-{{ macros.podman_stop_pods() }}
-{{ macros.podman_rm_containers() }}
-{{ macros.podman_rm_pods() }}
-
+{{ macros.delete_pods_and_containers() }}
 {{ macros.podman_list_pods() }}
 
 {{ macros.podman_container_volume_setup() }}
@@ -113,11 +65,7 @@ bats $bats
 
 {% for iter in range(5) %}
 
-{{ macros.podman_stop_containers() }}
-{{ macros.podman_stop_pods() }}
-{{ macros.podman_rm_containers() }}
-{{ macros.podman_rm_pods() }}
-
+{{ macros.delete_pods_and_containers() }}
 {{ macros.podman_list_pods() }}
 
 {{ macros.podman_container_volume_setup() }}
