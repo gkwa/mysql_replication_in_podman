@@ -27,7 +27,7 @@ repcheck() {
     jump_container=$1
     target_host=$2
 
-    result=$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=$target_host --execute 'SHOW SLAVE STATUS\G')
+    result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=$target_host --execute 'SHOW SLAVE STATUS\G')
 
     grep --silent 'Slave_IO_Running: Yes' <<<"$result"
     r1=$?
@@ -91,23 +91,23 @@ healthcheck() {
 
 
 
-result=$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --execute 'SHOW VARIABLES LIKE "binlog_format"')
+result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute 'SHOW VARIABLES LIKE "binlog_format"')
 run grep --silent -E 'binlog_format.*STATEMENT' <<<"$result"
 [ "$status" -eq 0 ]
 
-result=$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --execute 'SHOW VARIABLES LIKE "binlog_format"')
+result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --execute 'SHOW VARIABLES LIKE "binlog_format"')
 run grep --silent -E 'binlog_format.*STATEMENT' <<<"$result"
 [ "$status" -eq 0 ]
 
-result=$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --execute 'SHOW VARIABLES LIKE "binlog_format"')
+result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p --execute 'SHOW VARIABLES LIKE "binlog_format"')
 run grep --silent -E 'binlog_format.*STATEMENT' <<<"$result"
 [ "$status" -eq 0 ]
 
-result=$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --execute 'SHOW VARIABLES LIKE "binlog_format"')
+result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --execute 'SHOW VARIABLES LIKE "binlog_format"')
 run grep --silent -E 'binlog_format.*STATEMENT' <<<"$result"
 [ "$status" -eq 0 ]
 
-result=$(podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --execute 'SHOW VARIABLES LIKE "binlog_format"')
+result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p --execute 'SHOW VARIABLES LIKE "binlog_format"')
 run grep --silent -E 'binlog_format.*STATEMENT' <<<"$result"
 [ "$status" -eq 0 ]
 

@@ -2,13 +2,13 @@ global:
   network: replication
   internal_port: 3306
   user_non_root: joe
-  user_non_root_pass: joe
+  user_non_root_pass: joepass
   user_root: root
-  user_root_pass: root
+  user_root_pass: rootpass
   user_replication: repl
-  user_replication_pass: repl
+  user_replication_pass: replpass
   user_percona: percona
-  user_percona_pass: percona
+  user_percona_pass: perconapass
 
 pods:
 - name: my1p
