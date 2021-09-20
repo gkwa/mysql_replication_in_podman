@@ -258,7 +258,7 @@ fi
 {%- set pods=manifest['pods'] %}
 set +o errexit
 {% for pod in pods %}
-podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} >/dev/null
+podman pod exists {{ pod.name }} && podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} >/dev/null
 {%- endfor %}
 set -o errexit
 {% for pod in pods %}
