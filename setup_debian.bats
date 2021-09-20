@@ -21,6 +21,10 @@ curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:
 apt-get update
 apt-get -y install podman
 
+podman info --debug >podman-info.log
+
+run test -s podman-info.log
+[ $status -eq 0 ]
 
 }
 
