@@ -95,11 +95,9 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+set +o errexit
 podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
+set -o errexit
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -502,11 +500,9 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+set +o errexit
 podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
+set -o errexit
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -820,11 +816,9 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+set +o errexit
 podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
+set -o errexit
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -1138,11 +1132,9 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+set +o errexit
 podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
+set -o errexit
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -1456,11 +1448,9 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+set +o errexit
 podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
+set -o errexit
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -1774,11 +1764,9 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+set +o errexit
 podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
+set -o errexit
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -2092,11 +2080,9 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+set +o errexit
 podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
+set -o errexit
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -2293,11 +2279,9 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+set +o errexit
 podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
+set -o errexit
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -2494,11 +2478,9 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+set +o errexit
 podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
+set -o errexit
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -2695,11 +2677,9 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+set +o errexit
 podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
+set -o errexit
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
@@ -2896,11 +2876,9 @@ podman container exists my2c && podman container stop --ignore my2c >/dev/null
 podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
+set +o errexit
 podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
-podman container wait --condition=stopped my1c my2c my3c my4c my5c
+set -o errexit
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
