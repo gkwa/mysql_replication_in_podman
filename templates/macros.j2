@@ -348,6 +348,16 @@ run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE ptest1'
 {%- endfor %}
 {%- endmacro -%}
 
+{% macro test_can_connect_to_mysql_db() -%}
+{%- set global=manifest['global'] -%}
+{%- set replication=manifest['replication'] %}
+{%- set pods=manifest['pods'] -%}
+{%- for pod in pods %}
+run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE mysql'
+[ "$status" == 0 ]
+{%- endfor %}
+{%- endmacro -%}
+
 {% macro mysql_create_mysql_user_repl() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] %}
