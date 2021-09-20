@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # allow nice testing output
-git clone --quiet --depth 1 https://github.com/sstephenson/bats.git /tmp/bats
-pushd /tmp/bats >/dev/null
+rm -rf /tmp/bats-core
+git clone --quiet --depth 1 https://github.com/bats-core/bats-core.git /tmp/bats-core
+pushd /tmp/bats-core >/dev/null
 ./install.sh /usr/local
 popd >/dev/null
