@@ -15,5 +15,5 @@ apt-get update
 apt-get -y install podman
 
 # allow pretty-printing bash scripts
-curl -Lo /tmp/shfmt https://github.com/mvdan/sh/releases/download/v2.6.4/shfmt_v2.6.4_linux_386
+curl -Lo /tmp/shfmt https://github.com/mvdan/sh/releases/download/v3.3.1/shfmt_v3.3.1_linux_386
 install /tmp/shfmt /usr/local/bin/shfmt
