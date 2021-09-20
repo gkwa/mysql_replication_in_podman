@@ -469,6 +469,9 @@ run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.
 }
 
 __eot__
+
+sleep 60m
+
 bats $bats
 
 bats='mysql_create_database_ptest1.bats'
