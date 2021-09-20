@@ -1,6 +1,7 @@
 #!/usr/bin/env bats
 
 @test "deploy redhat key" {
+
     uid=$(id -u)
     gid=$(id -g)
 
@@ -14,4 +15,5 @@
 
     run test -s $HOME/.docker/config.json
     [ "$status" -eq 0 ]
+
 }
