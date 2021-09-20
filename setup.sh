@@ -208,6 +208,7 @@ podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --n
 podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
+mkdir -p ~/live_dbeval_comparing_records
 if ! podman container exists my1c; then
     podman container create \
         --name=my1c \
@@ -218,6 +219,7 @@ if ! podman container exists my1c; then
         --health-timeout=30s \
         --health-start-period=80s \
         --healthcheck-command 'CMD-SHELL mysql --user=root --password="rootpass" --host=my1p --execute "USE mysql" || exit 1' \
+        --volume=/root/live_dbeval_comparing_records:/data \
         --volume=./reptest/my1c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
         --volume=my1dbdata:/var/lib/mysql/data:Z \
         --env=MYSQL_ROOT_PASSWORD=rootpass \
@@ -236,6 +238,7 @@ if ! podman container exists my2c; then
         --health-timeout=30s \
         --health-start-period=80s \
         --healthcheck-command 'CMD-SHELL mysql --user=root --password="rootpass" --host=my2p --execute "USE mysql" || exit 1' \
+        --volume=/root/live_dbeval_comparing_records:/data \
         --volume=./reptest/my2c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
         --volume=my2dbdata:/var/lib/mysql/data:Z \
         --env=MYSQL_ROOT_PASSWORD=rootpass \
@@ -254,6 +257,7 @@ if ! podman container exists my3c; then
         --health-timeout=30s \
         --health-start-period=80s \
         --healthcheck-command 'CMD-SHELL mysql --user=root --password="rootpass" --host=my3p --execute "USE mysql" || exit 1' \
+        --volume=/root/live_dbeval_comparing_records:/data \
         --volume=./reptest/my3c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
         --volume=my3dbdata:/var/lib/mysql/data:Z \
         --env=MYSQL_ROOT_PASSWORD=rootpass \
@@ -272,6 +276,7 @@ if ! podman container exists my4c; then
         --health-timeout=30s \
         --health-start-period=80s \
         --healthcheck-command 'CMD-SHELL mysql --user=root --password="rootpass" --host=my4p --execute "USE mysql" || exit 1' \
+        --volume=/root/live_dbeval_comparing_records:/data \
         --volume=./reptest/my4c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
         --volume=my4dbdata:/var/lib/mysql/data:Z \
         --env=MYSQL_ROOT_PASSWORD=rootpass \
@@ -290,6 +295,7 @@ if ! podman container exists my5c; then
         --health-timeout=30s \
         --health-start-period=80s \
         --healthcheck-command 'CMD-SHELL mysql --user=root --password="rootpass" --host=my5p --execute "USE mysql" || exit 1' \
+        --volume=/root/live_dbeval_comparing_records:/data \
         --volume=./reptest/my5c_my.cnf:/etc/my.cnf.d/100-reptest.cnf \
         --volume=my5dbdata:/var/lib/mysql/data:Z \
         --env=MYSQL_ROOT_PASSWORD=rootpass \
