@@ -142,56 +142,56 @@ mkdir -p reptest
 
 cat <<'__eot__' >reptest/my1c_my.cnf
 [mysqld]
+innodb_flush_log_at_trx_commit = 1 
+sync_binlog                    = 1
 server_id                      = 1
 auto_increment_offset          = 1
 bind-address                   = my1p.dns.podman
 binlog_format                  = STATEMENT
-innodb_flush_log_at_trx_commit = 1 
-sync_binlog                    = 1
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 
 cat <<'__eot__' >reptest/my2c_my.cnf
 [mysqld]
+innodb_flush_log_at_trx_commit = 1 
+sync_binlog                    = 1
 server_id                      = 2
 auto_increment_offset          = 2
 bind-address                   = my2p.dns.podman
 binlog_format                  = STATEMENT
-innodb_flush_log_at_trx_commit = 1 
-sync_binlog                    = 1
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 
 cat <<'__eot__' >reptest/my3c_my.cnf
 [mysqld]
+innodb_flush_log_at_trx_commit = 1 
+sync_binlog                    = 1
 server_id                      = 3
 auto_increment_offset          = 3
 bind-address                   = my3p.dns.podman
 binlog_format                  = STATEMENT
-innodb_flush_log_at_trx_commit = 1 
-sync_binlog                    = 1
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 
 cat <<'__eot__' >reptest/my4c_my.cnf
 [mysqld]
+innodb_flush_log_at_trx_commit = 1 
+sync_binlog                    = 1
 server_id                      = 4
 auto_increment_offset          = 4
 bind-address                   = my4p.dns.podman
 binlog_format                  = STATEMENT
-innodb_flush_log_at_trx_commit = 1 
-sync_binlog                    = 1
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 
 cat <<'__eot__' >reptest/my5c_my.cnf
 [mysqld]
+innodb_flush_log_at_trx_commit = 1 
+sync_binlog                    = 1
 server_id                      = 5
 auto_increment_offset          = 5
 bind-address                   = my5p.dns.podman
 binlog_format                  = STATEMENT
-innodb_flush_log_at_trx_commit = 1 
-sync_binlog                    = 1
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 
@@ -203,20 +203,15 @@ cat reptest/my5c_my.cnf && echo
 
 echo create pods
 podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
 podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
 podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
 podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
 podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -383,56 +378,56 @@ mkdir -p reptest
 
 cat <<'__eot__' >reptest/my1c_my.cnf
 [mysqld]
+innodb_flush_log_at_trx_commit = 1 
+sync_binlog                    = 1
 server_id                      = 1
 auto_increment_offset          = 1
 bind-address                   = my1p.dns.podman
 binlog_format                  = STATEMENT
-innodb_flush_log_at_trx_commit = 1 
-sync_binlog                    = 1
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 
 cat <<'__eot__' >reptest/my2c_my.cnf
 [mysqld]
+innodb_flush_log_at_trx_commit = 1 
+sync_binlog                    = 1
 server_id                      = 2
 auto_increment_offset          = 2
 bind-address                   = my2p.dns.podman
 binlog_format                  = STATEMENT
-innodb_flush_log_at_trx_commit = 1 
-sync_binlog                    = 1
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 
 cat <<'__eot__' >reptest/my3c_my.cnf
 [mysqld]
+innodb_flush_log_at_trx_commit = 1 
+sync_binlog                    = 1
 server_id                      = 3
 auto_increment_offset          = 3
 bind-address                   = my3p.dns.podman
 binlog_format                  = STATEMENT
-innodb_flush_log_at_trx_commit = 1 
-sync_binlog                    = 1
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 
 cat <<'__eot__' >reptest/my4c_my.cnf
 [mysqld]
+innodb_flush_log_at_trx_commit = 1 
+sync_binlog                    = 1
 server_id                      = 4
 auto_increment_offset          = 4
 bind-address                   = my4p.dns.podman
 binlog_format                  = STATEMENT
-innodb_flush_log_at_trx_commit = 1 
-sync_binlog                    = 1
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 
 cat <<'__eot__' >reptest/my5c_my.cnf
 [mysqld]
+innodb_flush_log_at_trx_commit = 1 
+sync_binlog                    = 1
 server_id                      = 5
 auto_increment_offset          = 5
 bind-address                   = my5p.dns.podman
 binlog_format                  = STATEMENT
-innodb_flush_log_at_trx_commit = 1 
-sync_binlog                    = 1
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 
@@ -444,20 +439,15 @@ cat reptest/my5c_my.cnf && echo
 
 echo create pods
 podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
 podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
 podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
 podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
 podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -795,20 +785,15 @@ fi
 
 echo create pods
 podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
 podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
 podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
 podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
 podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -1109,20 +1094,15 @@ fi
 
 echo create pods
 podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
 podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
 podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
 podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
 podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -1423,20 +1403,15 @@ fi
 
 echo create pods
 podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
 podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
 podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
 podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
 podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -1737,20 +1712,15 @@ fi
 
 echo create pods
 podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
 podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
 podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
 podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
 podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -2051,20 +2021,15 @@ fi
 
 echo create pods
 podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
 podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
 podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
 podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
 podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -2365,20 +2330,15 @@ fi
 
 echo create pods
 podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
 podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
 podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
 podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
 podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -2562,20 +2522,15 @@ fi
 
 echo create pods
 podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
 podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
 podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
 podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
 podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -2759,20 +2714,15 @@ fi
 
 echo create pods
 podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
 podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
 podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
 podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
 podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -2956,20 +2906,15 @@ fi
 
 echo create pods
 podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
 podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
 podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
 podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
 podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
@@ -3153,20 +3098,15 @@ fi
 
 echo create pods
 podman pod exists my1p ||
-    podman pod create --name=my1p --publish=33061:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
 podman pod exists my2p ||
-    podman pod create --name=my2p --publish=33062:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my2p --publish=33062:3306 --network=replication >/dev/null
 podman pod exists my3p ||
-    podman pod create --name=my3p --publish=33063:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my3p --publish=33063:3306 --network=replication >/dev/null
 podman pod exists my4p ||
-    podman pod create --name=my4p --publish=33064:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my4p --publish=33064:3306 --network=replication >/dev/null
 podman pod exists my5p ||
-    podman pod create --name=my5p --publish=33065:3306 \
-        --network=replication >/dev/null
+    podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
 if ! podman container exists my1c; then
