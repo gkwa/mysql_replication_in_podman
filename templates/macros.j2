@@ -98,7 +98,8 @@ master_log_file=$(
 )
 [[ ! -z "$master_log_file" ]] # assert not empty
 position=$(
-  {{ mysql_jump() }} --host={{ block.source.pod }}.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+  {{ mysql_jump() }} --host={{ block.source.pod }}.dns.podman --execute 'SHOW MASTER STATUS\G' |
+  sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 {#- echo target:{{ block.instance.container }} source:{{ block.source.container }} position:$position #}
 {{ mysql_jump() }} --host={{ block.instance.pod }} --user={{ global.user_root }} --execute 'SHOW MASTER STATUS\G'
@@ -327,22 +328,12 @@ podman run --pod={{ pods[0].name }} --env=PTDEBUG=0 --env=MYSQL_PWD={{ global.us
 {%- endfor %}
 {%- endmacro -%}
 
-{% macro mysql_check_ptest_exists_everywhere() -%}
+{% macro mysql_check_db_exists_everywhere(db) -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] -%}
 {%- for pod in pods %}
-run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE ptest'
-[ "$status" == 0 ]
-{%- endfor %}
-{%- endmacro -%}
-
-{% macro mysql_check_ptest1_exists_everywhere() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] %}
-{%- set pods=manifest['pods'] -%}
-{%- for pod in pods %}
-run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE ptest1'
+run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE {{ db }}'
 [ "$status" == 0 ]
 {%- endfor %}
 {%- endmacro -%}

@@ -159,7 +159,4 @@ run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podm
 [ "$status" == 0 ]
 
 
-
-
-
 }

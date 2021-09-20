@@ -20,12 +20,10 @@ set -o errexit
 
 {{ macros.mysql_create_db_on_host('ptest1', pods[0].name) }}
 
-macro=mysql_check_ptest1_exists_everywhere
-bats=${macro}_${epoch}.bats
-cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
+cat <<'__eot__' >mysql_check_db_ptest1_exists_everywhere.bats
+@test "mysql_check_db_exists_everywhere(ptest1)" {
 
-{{ macros.mysql_check_ptest1_exists_everywhere() }}
+{{ macros.mysql_check_db_exists_everywhere('ptest1') }}
 
 }
 __eot__

@@ -26,7 +26,7 @@ cat <<'__eot__' >$bats
 
 {{ macros.mysql_create_db_on_host('ptest1', pods[0].name) }}
 
-{{ macros.mysql_check_ptest1_exists_everywhere() }}
+{{ macros.mysql_check_db_exists_everywhere('ptest1') }}
 
 }
 __eot__
@@ -45,12 +45,12 @@ bats $bats
 {{ macros.podman_create_containers() }}
 {{ macros.podman_start_pods() }}
 
-macro=mysql_check_ptest1_exists_everywhere
+macro=mysql_check_db_ptest1_exists_everywhere
 bats=${macro}.bats
 cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
+@test "mysql_check_db_ptest1exists_everywhere" {
 
-{{ macros.mysql_check_ptest1_exists_everywhere() }}
+{{ macros.mysql_check_db_exists_everywhere('ptest1') }}
 
 }
 __eot__
@@ -73,12 +73,12 @@ bats $bats
 {{ macros.podman_create_containers() }}
 {{ macros.podman_start_pods() }}
 
-macro=mysql_check_ptest1_exists_everywhere
+macro=mysql_check_db_ptest1_exists_everywhere
 bats=${macro}.bats
 cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
+@test "mysql_check_db_ptest1_exists_everywhere" {
 
-{{ macros.mysql_check_ptest1_exists_everywhere() }}
+{{ macros.mysql_check_db_exists_everywhere('ptest1') }}
 
 }
 __eot__

@@ -371,7 +371,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root --execute \
@@ -383,7 +384,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root --execute \
@@ -395,7 +397,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root --execute \
@@ -407,7 +410,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root --execute \
@@ -419,7 +423,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --user=root --execute \
@@ -666,10 +671,10 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_ptest1_exists_everywhere
+macro=mysql_check_db_ptest1_exists_everywhere
 bats=${macro}.bats
 cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
+@test "mysql_check_db_ptest1exists_everywhere" {
 
 
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -731,7 +736,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root --execute \
@@ -743,7 +749,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root --execute \
@@ -755,7 +762,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root --execute \
@@ -767,7 +775,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root --execute \
@@ -779,7 +788,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --user=root --execute \
@@ -980,10 +990,10 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_ptest1_exists_everywhere
+macro=mysql_check_db_ptest1_exists_everywhere
 bats=${macro}.bats
 cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
+@test "mysql_check_db_ptest1exists_everywhere" {
 
 
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -1045,7 +1055,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root --execute \
@@ -1057,7 +1068,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root --execute \
@@ -1069,7 +1081,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root --execute \
@@ -1081,7 +1094,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root --execute \
@@ -1093,7 +1107,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --user=root --execute \
@@ -1294,10 +1309,10 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_ptest1_exists_everywhere
+macro=mysql_check_db_ptest1_exists_everywhere
 bats=${macro}.bats
 cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
+@test "mysql_check_db_ptest1exists_everywhere" {
 
 
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -1359,7 +1374,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root --execute \
@@ -1371,7 +1387,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root --execute \
@@ -1383,7 +1400,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root --execute \
@@ -1395,7 +1413,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root --execute \
@@ -1407,7 +1426,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --user=root --execute \
@@ -1608,10 +1628,10 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_ptest1_exists_everywhere
+macro=mysql_check_db_ptest1_exists_everywhere
 bats=${macro}.bats
 cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
+@test "mysql_check_db_ptest1exists_everywhere" {
 
 
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -1673,7 +1693,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root --execute \
@@ -1685,7 +1706,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root --execute \
@@ -1697,7 +1719,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root --execute \
@@ -1709,7 +1732,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root --execute \
@@ -1721,7 +1745,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --user=root --execute \
@@ -1922,10 +1947,10 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_ptest1_exists_everywhere
+macro=mysql_check_db_ptest1_exists_everywhere
 bats=${macro}.bats
 cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
+@test "mysql_check_db_ptest1exists_everywhere" {
 
 
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -1987,7 +2012,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p --user=root --execute \
@@ -1999,7 +2025,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p --user=root --execute \
@@ -2011,7 +2038,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p --user=root --execute \
@@ -2023,7 +2051,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p --user=root --execute \
@@ -2035,7 +2064,8 @@ master_log_file=$(
 )
 [[ -n $master_log_file ]] # assert not empty
 position=$(
-    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+    podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+        sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --user=root --execute 'SHOW MASTER STATUS\G'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p --user=root --execute \
@@ -2236,10 +2266,10 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_ptest1_exists_everywhere
+macro=mysql_check_db_ptest1_exists_everywhere
 bats=${macro}.bats
 cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
+@test "mysql_check_db_ptest1_exists_everywhere" {
 
 
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -2433,10 +2463,10 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_ptest1_exists_everywhere
+macro=mysql_check_db_ptest1_exists_everywhere
 bats=${macro}.bats
 cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
+@test "mysql_check_db_ptest1_exists_everywhere" {
 
 
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -2630,10 +2660,10 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_ptest1_exists_everywhere
+macro=mysql_check_db_ptest1_exists_everywhere
 bats=${macro}.bats
 cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
+@test "mysql_check_db_ptest1_exists_everywhere" {
 
 
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -2827,10 +2857,10 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_ptest1_exists_everywhere
+macro=mysql_check_db_ptest1_exists_everywhere
 bats=${macro}.bats
 cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
+@test "mysql_check_db_ptest1_exists_everywhere" {
 
 
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
@@ -3024,10 +3054,10 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_ptest1_exists_everywhere
+macro=mysql_check_db_ptest1_exists_everywhere
 bats=${macro}.bats
 cat <<'__eot__' >$bats
-@test "mysql_check_ptest1_exists_everywhere" {
+@test "mysql_check_db_ptest1_exists_everywhere" {
 
 
 run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
