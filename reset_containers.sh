@@ -341,11 +341,6 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
 
 echo mysql: add user percona
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "percona"'
@@ -355,15 +350,15 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "percona"'
 
 echo mysql: grant percona pt-table-checksum permission
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
 
 echo mysql: flush privileges
@@ -722,11 +717,6 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
 
 echo mysql: add user percona
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "percona"'
@@ -736,15 +726,15 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "percona"'
 
 echo mysql: grant percona pt-table-checksum permission
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
 
 echo mysql: flush privileges
@@ -1059,11 +1049,6 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
 
 echo mysql: add user percona
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "percona"'
@@ -1073,15 +1058,15 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "percona"'
 
 echo mysql: grant percona pt-table-checksum permission
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
 
 echo mysql: flush privileges
@@ -1396,11 +1381,6 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
 
 echo mysql: add user percona
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "percona"'
@@ -1410,15 +1390,15 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "percona"'
 
 echo mysql: grant percona pt-table-checksum permission
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
 
 echo mysql: flush privileges
@@ -1733,11 +1713,6 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
 
 echo mysql: add user percona
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "percona"'
@@ -1747,15 +1722,15 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "percona"'
 
 echo mysql: grant percona pt-table-checksum permission
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
 
 echo mysql: flush privileges
@@ -2070,11 +2045,6 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "repl"'
 
 echo mysql: add user percona
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "percona"'
@@ -2084,15 +2054,15 @@ podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman -
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "percona"'
 
 echo mysql: grant percona pt-table-checksum permission
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO percona IDENTIFIED BY "percona"'
+podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%" IDENTIFIED BY "percona"'
 podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
 
 echo mysql: flush privileges

@@ -365,11 +365,6 @@ echo mysql: grant repl user replication permission
 {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO {{ user }}'
 {%- endfor %}
 
-{%- for pod in pods %}
-{%- set user = "`" ~ global.user_replication ~ "`" ~ "@" ~ '"' ~ '%' ~ '"' %}
-{{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'CREATE USER IF NOT EXISTS {{ user }} IDENTIFIED WITH mysql_native_password BY "{{ global.user_replication_pass }}"'
-{%- endfor %}
-
 echo mysql: add user {{ global.user_percona }}
 {% for pod in pods %}
 {%- set user = "`" ~ global.user_percona ~ "`" ~ "@" ~ '"' ~ '%' ~ '"' -%}
@@ -379,7 +374,7 @@ echo mysql: add user {{ global.user_percona }}
 echo mysql: grant {{ global.user_percona }} pt-table-checksum permission
 {%- for pod in pods %}
 {%- set user = "`" ~ global.user_percona ~ "`" ~ "@" ~ '"' ~ '%' ~ '"' %}
-{{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO {{ global.user_percona }} IDENTIFIED BY "{{ global.user_percona_pass }}"'
+{{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO {{ user }} IDENTIFIED BY "{{ global.user_percona_pass }}"'
 {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO {{ user }}'
 {%- endfor %}
 
