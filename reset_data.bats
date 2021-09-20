@@ -496,11 +496,11 @@ podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
 
 
 echo remove data from volume, but leaving volume in place
-rm -rf --preserve-root $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/*
-rm -rf --preserve-root $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/*
-rm -rf --preserve-root $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')/*
-rm -rf --preserve-root $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/*
-rm -rf --preserve-root $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/*
+path=$(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint'); rm -rf --preserve-root ${path:?"path is empty string"}/*
+path=$(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint'); rm -rf --preserve-root ${path:?"path is empty string"}/*
+path=$(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint'); rm -rf --preserve-root ${path:?"path is empty string"}/*
+path=$(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint'); rm -rf --preserve-root ${path:?"path is empty string"}/*
+path=$(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint'); rm -rf --preserve-root ${path:?"path is empty string"}/*
 
 echo check data directory is cleaned out
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')

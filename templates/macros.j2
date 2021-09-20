@@ -187,7 +187,7 @@ fi
 
 echo remove data from volume, but leaving volume in place
 {%- for pod in pods %}
-rm -rf --preserve-root $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/*
+path=$(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint'); rm -rf --preserve-root ${path:?"path is empty string"}/*
 {%- endfor %}
 
 echo check data directory is cleaned out
