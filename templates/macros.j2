@@ -344,7 +344,7 @@ run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE {{ db }}'
 {%- set pods=manifest['pods'] -%}
 {%- for pod in pods %}
 run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE ptest1'
-[ "$status" == 1 ]
+[ "$status" -eq 1 ]
 {%- endfor %}
 {%- endmacro -%}
 
