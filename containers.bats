@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bats
 
 uid=$(id -u)
 gid=$(id -g)
