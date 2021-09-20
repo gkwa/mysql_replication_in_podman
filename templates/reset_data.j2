@@ -2,12 +2,14 @@
 set -o errexit
 {%- import "macros.j2" as macros with context %}
 
-{{ macros.import_common_functions() }}
+{%- set global=manifest['global'] -%}
+{%- set replication=manifest['replication'] -%}
+{%- set pods=manifest['pods'] %}
+
+{{ macros.start_over() }}
 
 {{ macros.podman_stop_containers() }}
 {{ macros.podman_stop_pods() }}
-
-{{ macros.podman_list_pods() }}
 
 {{ macros.remove_mysql_data_but_keep_container_volume() }}
 {{ macros.podman_start_pods() }}
@@ -15,3 +17,16 @@ set -o errexit
 {{ macros.podman_list_pods() }}
 
 {{ macros.mysql_setup_replication() }}
+
+{{ macros.mysql_create_database_ptest1(pods[0].name) }}
+
+macro=mysql_check_ptest1_exists_everywhere
+bats=${macro}_${epoch}.bats
+cat <<'__eot__' >$bats
+@test "mysql_check_ptest1_exists_everywhere" {
+
+{{ macros.mysql_check_ptest1_exists_everywhere() }}
+
+}
+__eot__
+bats $bats
