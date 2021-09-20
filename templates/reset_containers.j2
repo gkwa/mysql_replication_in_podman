@@ -8,8 +8,7 @@ set -o errexit
 
 {{ macros.start_over() }}
 
-macro=mysql_check_ptest1_does_not_exist
-bats=${macro}.bats
+bats='mysql_check_ptest1_does_not_exist.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_does_not_exist" {
 
@@ -19,8 +18,7 @@ cat <<'__eot__' >$bats
 __eot__
 bats $bats
 
-macro=mysql_create_database_ptest1
-bats=${macro}.bats
+bats='mysql_create_database_ptest1.bats'
 cat <<'__eot__' >$bats
 @test "mysql_create_database_ptest1" {
 
@@ -45,8 +43,7 @@ bats $bats
 {{ macros.podman_create_containers() }}
 {{ macros.podman_start_pods() }}
 
-macro=mysql_check_db_ptest1_exists_everywhere
-bats=${macro}.bats
+bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_db_ptest1exists_everywhere" {
 
@@ -73,8 +70,7 @@ bats $bats
 {{ macros.podman_create_containers() }}
 {{ macros.podman_start_pods() }}
 
-macro=mysql_check_db_ptest1_exists_everywhere
-bats=${macro}.bats
+bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_db_ptest1_exists_everywhere" {
 

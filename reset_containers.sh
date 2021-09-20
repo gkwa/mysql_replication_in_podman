@@ -447,8 +447,7 @@ loop1 repcheck my1c my3p.dns.podman $sleep $tries
 loop1 repcheck my1c my4p.dns.podman $sleep $tries
 loop1 repcheck my1c my5p.dns.podman $sleep $tries
 
-macro=mysql_check_ptest1_does_not_exist
-bats=${macro}.bats
+bats='mysql_check_ptest1_does_not_exist.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_ptest1_does_not_exist" {
 
@@ -468,8 +467,7 @@ run podman exec --env=MYSQL_PWD=root my1c mysql --user=root --host=my5p.dns.podm
 __eot__
 bats $bats
 
-macro=mysql_create_database_ptest1
-bats=${macro}.bats
+bats='mysql_create_database_ptest1.bats'
 cat <<'__eot__' >$bats
 @test "mysql_create_database_ptest1" {
 
@@ -671,8 +669,7 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_db_ptest1_exists_everywhere
-bats=${macro}.bats
+bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_db_ptest1exists_everywhere" {
 
@@ -990,8 +987,7 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_db_ptest1_exists_everywhere
-bats=${macro}.bats
+bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_db_ptest1exists_everywhere" {
 
@@ -1309,8 +1305,7 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_db_ptest1_exists_everywhere
-bats=${macro}.bats
+bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_db_ptest1exists_everywhere" {
 
@@ -1628,8 +1623,7 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_db_ptest1_exists_everywhere
-bats=${macro}.bats
+bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_db_ptest1exists_everywhere" {
 
@@ -1947,8 +1941,7 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_db_ptest1_exists_everywhere
-bats=${macro}.bats
+bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_db_ptest1exists_everywhere" {
 
@@ -2266,8 +2259,7 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_db_ptest1_exists_everywhere
-bats=${macro}.bats
+bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_db_ptest1_exists_everywhere" {
 
@@ -2463,8 +2455,7 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_db_ptest1_exists_everywhere
-bats=${macro}.bats
+bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_db_ptest1_exists_everywhere" {
 
@@ -2660,8 +2651,7 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_db_ptest1_exists_everywhere
-bats=${macro}.bats
+bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_db_ptest1_exists_everywhere" {
 
@@ -2857,8 +2847,7 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_db_ptest1_exists_everywhere
-bats=${macro}.bats
+bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_db_ptest1_exists_everywhere" {
 
@@ -3054,8 +3043,7 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -gt 80000 ]]
 
-macro=mysql_check_db_ptest1_exists_everywhere
-bats=${macro}.bats
+bats='mysql_check_db_ptest1_exists_everywhere.bats'
 cat <<'__eot__' >$bats
 @test "mysql_check_db_ptest1_exists_everywhere" {
 
