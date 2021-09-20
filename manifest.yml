@@ -7,6 +7,8 @@ global:
   user_root_pass: root
   user_replication: repl
   user_replication_pass: repl
+  user_percona: percona
+  user_percona_pass: percona
 
 pods:
 - name: my1p
