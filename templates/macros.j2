@@ -175,7 +175,7 @@ podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --pu
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] -%}
 echo create containers
-mkdir -p ~/live_dbeval_comparing_records
+mkdir -p /root/live_dbeval_comparing_records
 {%- for pod in pods %}
 if ! podman container exists {{ pod.containers[0].name }}
 then
