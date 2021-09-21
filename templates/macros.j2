@@ -139,7 +139,6 @@ innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 server_id                      = {{ loop.index }}
 auto_increment_offset          = {{ loop.index }}
-bind-address                   = {{ pod.name }}.dns.podman
 binlog_format                  = STATEMENT
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
