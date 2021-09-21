@@ -151,7 +151,6 @@ innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 server_id                      = 1
 auto_increment_offset          = 1
-bind-address                   = my1p.dns.podman
 binlog_format                  = STATEMENT
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
@@ -161,7 +160,6 @@ innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 server_id                      = 2
 auto_increment_offset          = 2
-bind-address                   = my2p.dns.podman
 binlog_format                  = STATEMENT
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
@@ -171,7 +169,6 @@ innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 server_id                      = 3
 auto_increment_offset          = 3
-bind-address                   = my3p.dns.podman
 binlog_format                  = STATEMENT
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
@@ -181,7 +178,6 @@ innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 server_id                      = 4
 auto_increment_offset          = 4
-bind-address                   = my4p.dns.podman
 binlog_format                  = STATEMENT
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
@@ -191,7 +187,6 @@ innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 server_id                      = 5
 auto_increment_offset          = 5
-bind-address                   = my5p.dns.podman
 binlog_format                  = STATEMENT
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
@@ -211,7 +206,7 @@ podman pod exists my4p || podman pod create --name=my4p --publish=33064:3306 --n
 podman pod exists my5p || podman pod create --name=my5p --publish=33065:3306 --network=replication >/dev/null
 
 echo create containers
-mkdir -p ~/live_dbeval_comparing_records
+mkdir -p /root/live_dbeval_comparing_records
 if ! podman container exists my1c
 then
     podman container create \
