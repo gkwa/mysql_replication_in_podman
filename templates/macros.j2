@@ -251,6 +251,7 @@ fi
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] -%}
+echo stopping pods
 {% for pod in pods %}
 podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --ignore {{ pod.name }} >/dev/null
 {%- endfor %}
@@ -288,6 +289,7 @@ podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] %}
 {%- set pods=manifest['pods'] -%}
+echo stopping containers
 set +o errexit
 podman container stop --ignore {{ containers_as_single_line() }} 2>podman_stop_containers_$(date +%s).log >/dev/null
 set -o errexit

@@ -87,6 +87,7 @@ healthcheck() {
 podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
 podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 
+echo stopping containers
 set +o errexit
 podman container stop --ignore my1c my2c my3c my4c my5c 2>podman_stop_containers_$(date +%s).log >/dev/null
 set -o errexit
@@ -96,6 +97,7 @@ podman container exists my3c && podman container stop --ignore my3c >/dev/null
 podman container exists my4c && podman container stop --ignore my4c >/dev/null
 podman container exists my5c && podman container stop --ignore my5c >/dev/null
 podman container wait --condition=stopped my1c my2c my3c my4c my5c || true
+echo stopping pods
 
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
