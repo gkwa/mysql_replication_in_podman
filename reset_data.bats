@@ -138,6 +138,8 @@ podman volume exists my2dbdata || podman volume create my2dbdata >/dev/null
 podman volume exists my3dbdata || podman volume create my3dbdata >/dev/null
 podman volume exists my4dbdata || podman volume create my4dbdata >/dev/null
 podman volume exists my5dbdata || podman volume create my5dbdata >/dev/null
+
+echo creating network replication
 if ! podman network exists replication
 then
      echo create network

@@ -241,6 +241,7 @@ podman pod ls
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] -%}
+echo creating network {{ global.network}}
 if ! podman network exists {{ global.network}}
 then
      echo create network
