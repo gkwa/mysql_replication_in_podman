@@ -5,7 +5,6 @@
 
 set -o errexit
 
-
 cleanall() {
     for i in {1..2}; do
         podman pod stop --ignore --all
@@ -92,7 +91,6 @@ healthcheck() {
 podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
 podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 
-
 set +o errexit
 podman container stop --ignore my1c my2c my3c my4c my5c 2>podman_stop_containers_$(date +%s).log >/dev/null
 set -o errexit
@@ -115,7 +113,6 @@ podman container exists my2c && podman container rm --force --ignore my2c >/dev/
 podman container exists my3c && podman container rm --force --ignore my3c >/dev/null
 podman container exists my4c && podman container rm --force --ignore my4c >/dev/null
 podman container exists my5c && podman container rm --force --ignore my5c >/dev/null
-
 set +o errexit
 podman pod exists my1p && podman pod rm --force my1p --ignore my1p 2>podman_rm_pods.log >/dev/null
 podman pod exists my2p && podman pod rm --force my2p --ignore my2p 2>podman_rm_pods.log >/dev/null
@@ -133,14 +130,12 @@ podman pod exists my5p && podman pod rm --force my5p --ignore my5p >/dev/null
 
 podman pod ls
 
-
 echo create volumes
 podman volume exists my1dbdata || podman volume create my1dbdata >/dev/null
 podman volume exists my2dbdata || podman volume create my2dbdata >/dev/null
 podman volume exists my3dbdata || podman volume create my3dbdata >/dev/null
 podman volume exists my4dbdata || podman volume create my4dbdata >/dev/null
 podman volume exists my5dbdata || podman volume create my5dbdata >/dev/null
-
 if ! podman network exists replication
 then
      echo create network
@@ -149,6 +144,7 @@ fi
 
 mkdir -p reptest
 
+echo mysql: configure mysql service
 cat <<'__eot__' >reptest/my1c_my.cnf
 [mysqld]
 innodb_flush_log_at_trx_commit = 1 
@@ -159,7 +155,6 @@ bind-address                   = my1p.dns.podman
 binlog_format                  = STATEMENT
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
-
 cat <<'__eot__' >reptest/my2c_my.cnf
 [mysqld]
 innodb_flush_log_at_trx_commit = 1 
@@ -170,7 +165,6 @@ bind-address                   = my2p.dns.podman
 binlog_format                  = STATEMENT
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
-
 cat <<'__eot__' >reptest/my3c_my.cnf
 [mysqld]
 innodb_flush_log_at_trx_commit = 1 
@@ -181,7 +175,6 @@ bind-address                   = my3p.dns.podman
 binlog_format                  = STATEMENT
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
-
 cat <<'__eot__' >reptest/my4c_my.cnf
 [mysqld]
 innodb_flush_log_at_trx_commit = 1 
@@ -192,7 +185,6 @@ bind-address                   = my4p.dns.podman
 binlog_format                  = STATEMENT
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
-
 cat <<'__eot__' >reptest/my5c_my.cnf
 [mysqld]
 innodb_flush_log_at_trx_commit = 1 
@@ -204,14 +196,12 @@ binlog_format                  = STATEMENT
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 
-
-
+echo mysql: check mysql config
 cat reptest/my1c_my.cnf && echo
 cat reptest/my2c_my.cnf && echo
 cat reptest/my3c_my.cnf && echo
 cat reptest/my4c_my.cnf && echo
 cat reptest/my5c_my.cnf && echo
-
 
 echo create pods
 podman pod exists my1p || podman pod create --name=my1p --publish=33061:3306 --network=replication >/dev/null
@@ -322,7 +312,6 @@ then
         --env=MYSQL_DATABASE=db \
         registry.redhat.io/rhel8/mysql-80 >/dev/null
 fi
-
 set +o errexit
 podman pod start my1p my2p my3p my4p my5p 2>podman_start_pods_$(date +%s).log >/dev/null
 set -o errexit
@@ -348,7 +337,6 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ |awk 
 [[ $size -gt 80000 ]]
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')
 [[ $size -gt 80000 ]]
-
 
 echo mysql: add and grant user repl
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
@@ -388,19 +376,19 @@ podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podm
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'FLUSH PRIVILEGES'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'FLUSH PRIVILEGES'
 
-echo mysql: setup replication
-
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
-
+echo mysql: stop slave
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE'
+
+echo mysql: fetch positions
 master_log_file=$(
   podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
@@ -482,7 +470,6 @@ loop1 repcheck my1c my3p.dns.podman $sleep $tries
 loop1 repcheck my1c my4p.dns.podman $sleep $tries
 loop1 repcheck my1c my5p.dns.podman $sleep $tries
 
-
 set +o errexit
 podman container stop --ignore my1c my2c my3c my4c my5c 2>podman_stop_containers_$(date +%s).log >/dev/null
 set -o errexit
@@ -498,8 +485,6 @@ podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
 podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
 podman pod exists my4p && podman pod stop my4p --ignore my4p >/dev/null
 podman pod exists my5p && podman pod stop my5p --ignore my5p >/dev/null
-
-
 
 echo remove data from volume, but leaving volume in place
 path=$(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint'); rm -rf --preserve-root ${path:?"path is empty string"}/*
@@ -519,7 +504,6 @@ size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk
 [[ $size -le 8 ]]
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -le 8 ]]
-
 set +o errexit
 podman pod start my1p my2p my3p my4p my5p 2>podman_start_pods_$(date +%s).log >/dev/null
 set -o errexit
@@ -548,7 +532,6 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ |awk 
 
 
 podman pod ls
-
 
 echo mysql: add and grant user repl
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
@@ -588,19 +571,19 @@ podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podm
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'FLUSH PRIVILEGES'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'FLUSH PRIVILEGES'
 
-echo mysql: setup replication
-
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
-
+echo mysql: stop slave
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE'
+
+echo mysql: fetch positions
 master_log_file=$(
   podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'

@@ -3,24 +3,30 @@ import os
 import pathlib
 import stat
 import subprocess
+import typing
 
 import jinja2
 import yaml
 
-def shfmt():
-    cmd = ["shfmt", "-w", "-s", "-i", "4", "*.sh"]
-    cmd = ' '.join(cmd)
+
+def shfmt(path: str = __file__):
+    cmd: typing.List[str] = "shfmt -w -s -i 4".split()
+    glob: str = "**/*.sh"
+
+    basedir: pathlib.Path = pathlib.Path(path).parent.resolve()
+    cmd.extend([str(c) for c in pathlib.Path(basedir).glob(glob)])
+
+    logging.debug(cmd)
 
     proc = subprocess.Popen(
         cmd,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        shell=True,
     )
 
     try:
         outs, errs = proc.communicate(timeout=15)
-    except TimeoutExpired:
+    except subprocess.TimeoutExpired:
         proc.kill()
         outs, errs = proc.communicate()
 

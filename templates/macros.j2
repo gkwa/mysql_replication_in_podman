@@ -1,7 +1,7 @@
 {%- macro delete_pods_and_containers() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] %}
+{%- set pods=manifest['pods'] -%}
 
 {{ podman_stop_containers() }}
 {{ podman_stop_pods() }}
@@ -13,7 +13,7 @@
 {%- macro start_over() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] %}
+{%- set pods=manifest['pods'] -%}
 {{ import_common_functions() }}
 {{ podman_pull_images() }}
 
@@ -31,13 +31,12 @@
 {{ mysql_conf_setup() }}
 
 {{ podman_create_pods() }}
+
 {{ podman_create_containers() }}
 {{ podman_start_pods() }}
 
 {{ mysql_setup_replication() }}
 {%- endmacro -%}
-
-
 
 {%- macro podman_status() -%}
 podman ps
@@ -57,17 +56,20 @@ podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0]
 {%- macro mysql_setup_replication() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] %}
+{%- set pods=manifest['pods'] -%}
 {{ mysql_create_mysql_user_repl() }}
+
 {{ mysql_change_master_to_master_host() }}
+
 {{ mysql_start_slave() }}
+
 {{ mysql_wait_for_replication() }}
 {%- endmacro -%}
 
 {%- macro mysql_wait_for_replication() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] %}
+{%- set pods=manifest['pods'] -%}
 echo mysql: wait for replication to be ready
 sleep=2; tries=60
 {%- for pod in pods %}
@@ -78,20 +80,34 @@ loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.name }}.dns.podman $sleep
 {%- macro mysql_start_slave() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] %}
+{%- set pods=manifest['pods'] -%}
 echo mysql: start replication
 {%- for pod in pods %}
 {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE USER="{{ global.user_replication }}" PASSWORD="{{ global.user_replication_pass }}"'
 {%- endfor -%}
 {%- endmacro -%}
 
+{%- macro mysql_stop_slave() -%}
+{%- set global=manifest['global'] -%}
+{%- set replication=manifest['replication'] -%}
+{%- set pods=manifest['pods'] -%}
+echo mysql: stop slave
+{%- for pod in pods %}
+{{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+{%- endfor %}
+{%- for pod in pods %}
+{{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'STOP SLAVE'
+{%- endfor %}
+{%- endmacro -%}
+
 {%- macro mysql_change_master_to_master_host() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] -%}
-echo mysql: setup replication
 {{ mysql_stop_slave() }}
-{% for block in replication %}
+
+echo mysql: fetch positions
+{%- for block in replication %}
 master_log_file=$(
   {{ mysql_jump() }} --host={{ block.source.pod }}.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
@@ -114,7 +130,9 @@ MASTER_PASSWORD='{{ global.user_replication_pass }}',MASTER_LOG_FILE='"$master_l
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] -%}
 mkdir -p reptest
-{% for pod in pods %}
+
+echo mysql: configure mysql service
+{%- for pod in pods %}
 cat <<'__eot__' >reptest/{{ pod.containers[0].name }}_my.cnf
 [mysqld]
 innodb_flush_log_at_trx_commit = 1 
@@ -125,9 +143,10 @@ bind-address                   = {{ pod.name }}.dns.podman
 binlog_format                  = STATEMENT
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
-{% endfor %}
+{%- endfor %}
 
-{% for pod in pods %}
+echo mysql: check mysql config
+{%- for pod in pods %}
 cat reptest/{{ pod.containers[0].name }}_my.cnf && echo
 {%- endfor %}
 {%- endmacro -%}
@@ -135,7 +154,7 @@ cat reptest/{{ pod.containers[0].name }}_my.cnf && echo
 {%- macro podman_container_volume_setup() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] %}
+{%- set pods=manifest['pods'] -%}
 echo create volumes
 {%- for pod in pods %}
 podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }} >/dev/null
@@ -145,7 +164,7 @@ podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }} >
 {%- macro podman_create_pods() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] %}
+{%- set pods=manifest['pods'] -%}
 echo create pods
 {%- for pod in pods %}
 podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} --network={{ global.network }} >/dev/null
@@ -155,7 +174,7 @@ podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --pu
 {%- macro podman_create_containers() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] %}
+{%- set pods=manifest['pods'] -%}
 echo create containers
 mkdir -p ~/live_dbeval_comparing_records
 {%- for pod in pods %}
@@ -185,7 +204,7 @@ fi
 {%- macro remove_mysql_data_but_keep_container_volume() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] %}
+{%- set pods=manifest['pods'] -%}
 
 echo remove data from volume, but leaving volume in place
 {%- for pod in pods %}
@@ -202,7 +221,7 @@ size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')
 {%- macro podman_start_pods() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] %}
+{%- set pods=manifest['pods'] -%}
 set +o errexit
 podman pod start {{ pods |map(attribute='name') |join(' ') }} 2>podman_start_pods_$(date +%s).log >/dev/null
 set -o errexit
@@ -221,7 +240,7 @@ podman pod ls
 {%- macro podman_create_network() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] %}
+{%- set pods=manifest['pods'] -%}
 if ! podman network exists {{ global.network}}
 then
      echo create network
@@ -241,7 +260,7 @@ podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --ignore {{ p
 {%- macro podman_rm_pods() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] %}
+{%- set pods=manifest['pods'] -%}
 set +o errexit
 {%- for pod in pods %}
 podman pod exists {{ pod.name }} && podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} 2>podman_rm_pods.log >/dev/null
@@ -269,7 +288,7 @@ podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 {%- macro podman_stop_containers() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] %}
-{%- set pods=manifest['pods'] %}
+{%- set pods=manifest['pods'] -%}
 set +o errexit
 podman container stop --ignore {{ containers_as_single_line() }} 2>podman_stop_containers_$(date +%s).log >/dev/null
 set -o errexit
@@ -297,18 +316,6 @@ sleep=4
 tries=20
 {%- for pod in pods %}
 loop2 healthcheck {{ pod.containers[0].name }} $sleep $tries
-{%- endfor %}
-{%- endmacro -%}
-
-{%- macro mysql_stop_slave() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
-{%- for pod in pods %}
-{{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-{%- endfor -%}
-{% for pod in pods %}
-{{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'STOP SLAVE'
 {%- endfor %}
 {%- endmacro -%}
 
@@ -389,8 +396,7 @@ echo mysql: add and grant user {{ global.user_percona }}
 echo mysql: flush privileges
 {%- for pod in pods %}
 {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'FLUSH PRIVILEGES'
-{%- endfor %}
-
+{%- endfor -%}
 {%- endmacro -%}
 
 {%- macro import_common_functions() -%}
