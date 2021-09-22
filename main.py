@@ -14,9 +14,8 @@ def shfmt(path: str = __file__):
     glob: str = "**/*.sh"
 
     basedir: pathlib.Path = pathlib.Path(path).parent.resolve()
-    cmd.extend([str(c) for c in pathlib.Path(basedir).glob(glob)])
-
-    logging.debug(cmd)
+    files = [str(c) for c in pathlib.Path(basedir).glob(glob)]
+    cmd.extend(files)
 
     proc = subprocess.Popen(
         cmd,
@@ -36,53 +35,60 @@ def shfmt(path: str = __file__):
         logging.debug(f"ran ok: {cmd}")
 
 
-manifest_path = pathlib.Path(__file__).parent.resolve() / "manifest.yml"
+def main():
+    logging.basicConfig(level=logging.DEBUG)
+    logger = logging.getLogger(__name__)
+
+    manifest_path = pathlib.Path(__file__).parent.resolve() / "manifest.yml"
+
+    with open(manifest_path, "r") as stream:
+        try:
+            manifest = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+
+    env = jinja2.Environment()
+    env.loader = jinja2.FileSystemLoader("templates")
+    os.chdir(manifest_path.parent)  # to find templates
+
+    tmpl = env.get_template("setup.j2")
+    path = pathlib.Path("setup.sh")
+    expanded = tmpl.render(manifest=manifest, test_name=path.stem)
+    path.write_text(expanded)
+    path.chmod(path.stat().st_mode | stat.S_IEXEC)
+
+    path = pathlib.Path("test_statement_based_binlog_format.bats")
+    tmpl = env.get_template(f"{path.stem}.j2")
+    expanded = tmpl.render(manifest=manifest, test_name=path.stem)
+    path.write_text(expanded)
+    path.chmod(path.stat().st_mode | stat.S_IEXEC)
+
+    path = pathlib.Path("test_percona_checksums.bats")
+    tmpl = env.get_template(f"{path.stem}.j2")
+    expanded = tmpl.render(manifest=manifest, test_name=path.stem)
+    path.write_text(expanded)
+    path.chmod(path.stat().st_mode | stat.S_IEXEC)
+
+    path = pathlib.Path("test_fart.bats")
+    tmpl = env.get_template(f"{path.stem}.j2")
+    expanded = tmpl.render(manifest=manifest, test_name=path.stem)
+    path.write_text(expanded)
+    path.chmod(path.stat().st_mode | stat.S_IEXEC)
+
+    path = pathlib.Path("test_recover_from_bad_state.bats")
+    tmpl = env.get_template(f"{path.stem}.j2")
+    expanded = tmpl.render(manifest=manifest, test_name=path.stem)
+    path.write_text(expanded)
+    path.chmod(path.stat().st_mode | stat.S_IEXEC)
+
+    path = pathlib.Path("reset_data.bats")
+    tmpl = env.get_template(f"{path.stem}.j2")
+    expanded = tmpl.render(manifest=manifest, test_name=path.stem)
+    path.write_text(expanded)
+    path.chmod(path.stat().st_mode | stat.S_IEXEC)
+
+    shfmt()
 
 
-with open(manifest_path, "r") as stream:
-    try:
-        manifest = yaml.safe_load(stream)
-    except yaml.YAMLError as exc:
-        print(exc)
-
-env = jinja2.Environment()
-env.loader = jinja2.FileSystemLoader("templates")
-os.chdir(manifest_path.parent)  # to find templates
-
-tmpl = env.get_template("setup.j2")
-path = pathlib.Path("setup.sh")
-expanded = tmpl.render(manifest=manifest, test_name=path.stem)
-path.write_text(expanded)
-path.chmod(path.stat().st_mode | stat.S_IEXEC)
-
-path = pathlib.Path("test_statement_based_binlog_format.bats")
-tmpl = env.get_template(f"{path.stem}.j2")
-expanded = tmpl.render(manifest=manifest, test_name=path.stem)
-path.write_text(expanded)
-path.chmod(path.stat().st_mode | stat.S_IEXEC)
-
-path = pathlib.Path("test_percona_checksums.bats")
-tmpl = env.get_template(f"{path.stem}.j2")
-expanded = tmpl.render(manifest=manifest, test_name=path.stem)
-path.write_text(expanded)
-path.chmod(path.stat().st_mode | stat.S_IEXEC)
-
-path = pathlib.Path("test_fart.bats")
-tmpl = env.get_template(f"{path.stem}.j2")
-expanded = tmpl.render(manifest=manifest, test_name=path.stem)
-path.write_text(expanded)
-path.chmod(path.stat().st_mode | stat.S_IEXEC)
-
-path = pathlib.Path("test_recover_from_bad_state.bats")
-tmpl = env.get_template(f"{path.stem}.j2")
-expanded = tmpl.render(manifest=manifest, test_name=path.stem)
-path.write_text(expanded)
-path.chmod(path.stat().st_mode | stat.S_IEXEC)
-
-path = pathlib.Path("reset_data.bats")
-tmpl = env.get_template(f"{path.stem}.j2")
-expanded = tmpl.render(manifest=manifest, test_name=path.stem)
-path.write_text(expanded)
-path.chmod(path.stat().st_mode | stat.S_IEXEC)
-
-shfmt()
+if __name__ == "__main__":
+    main()
