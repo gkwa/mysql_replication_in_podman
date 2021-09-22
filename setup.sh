@@ -97,8 +97,8 @@ podman container exists my3c && podman container stop --ignore my3c 2>&1 | grep 
 podman container exists my4c && podman container stop --ignore my4c 2>&1 | grep -v 'Error: no container with name or ID '
 podman container exists my5c && podman container stop --ignore my5c 2>&1 | grep -v 'Error: no container with name or ID '
 podman container wait --condition=stopped my1c my2c my3c my4c my5c || true
-echo stopping pods
 
+echo stopping pods
 podman pod exists my1p && podman pod stop my1p --ignore my1p >/dev/null
 podman pod exists my2p && podman pod stop my2p --ignore my2p >/dev/null
 podman pod exists my3p && podman pod stop my3p --ignore my3p >/dev/null
@@ -133,9 +133,8 @@ podman volume exists my3dbdata || podman volume create my3dbdata >/dev/null
 podman volume exists my4dbdata || podman volume create my4dbdata >/dev/null
 podman volume exists my5dbdata || podman volume create my5dbdata >/dev/null
 
-echo creating network replication
 if ! podman network exists replication; then
-    echo create network
+    echo creating network replication
     podman network create replication >/dev/null
 fi
 

@@ -6,6 +6,7 @@
 {{ podman_pull_images() }}
 
 {{ podman_stop_containers() }}
+
 {{ podman_stop_pods() }}
 
 {{ podman_rm_containers() }}
@@ -241,10 +242,9 @@ podman pod ls
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] -%}
-echo creating network {{ global.network}}
 if ! podman network exists {{ global.network}}
 then
-     echo create network
+     echo creating network {{ global.network}}
      podman network create {{ global.network }} >/dev/null
 fi
 {%- endmacro -%}
@@ -254,9 +254,9 @@ fi
 {%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] -%}
 echo stopping pods
-{% for pod in pods %}
+{%- for pod in pods %}
 podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --ignore {{ pod.name }} >/dev/null
-{%- endfor %}
+{%- endfor -%}
 {%- endmacro -%}
 
 {%- macro podman_rm_pods() -%}
@@ -289,7 +289,7 @@ podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 
 {%- macro podman_stop_containers() -%}
 {%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] %}
+{%- set replication=manifest['replication'] -%}
 {%- set pods=manifest['pods'] -%}
 echo stopping containers
 set +o errexit

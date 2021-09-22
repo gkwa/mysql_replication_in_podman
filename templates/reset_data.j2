@@ -14,6 +14,7 @@ set -o errexit
 {{ macros.start_over() }}
 
 {{ macros.podman_stop_containers() }}
+
 {{ macros.podman_stop_pods() }}
 
 {{ macros.remove_mysql_data_but_keep_container_volume() }}
