@@ -1,5 +1,20 @@
 #!/usr/bin/env bats
 
+
+: <<'END_COMMENT'
+
+start over
+stop replication
+create db1 on host1 
+create db2 on host2 and verify it exist
+verify db1 exists on host1 and not on any other host
+verify db2 exists on host2 and not on any other host
+start replication
+verify db1 exists on all hosts (because it was replicated)
+verify db2 exists on all hosts (because it was replicated)
+
+END_COMMENT
+
 {% import "macros.j2" as macros with context %}
 {%- set global=manifest['global'] %}
 {%- set replication=manifest['replication'] %}
@@ -11,9 +26,7 @@
 
 
 
-
-
-{{ macros.mysql_wait_for_replication() }}
+{{ macros.start_over() }}
 
 {{ macros.mysql_jump() }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest1'
 {{ macros.mysql_jump() }} --host={{ pods[0].name }} --execute 'DROP DATABASE IF EXISTS ptest2'
@@ -25,13 +38,7 @@ run {{ macros.mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE pt
 [ "$status" == 1 ]
 {%- endfor %}
 
-{% for pod in pods %}
-{{ macros.mysql_jump() }} --host={{ pod.name }}.dns.podman --execute "STOP SLAVE IO_THREAD FOR CHANNEL ''"
-{%- endfor %}
-
-{% for pod in pods %}
-{{ macros.mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'STOP SLAVE'
-{%- endfor %}
+{{ macros.mysql_stop_slave() }}
 
 {{ macros.mysql_create_db_on_host('ptest1', pods[0].name) }}
 
@@ -58,6 +65,7 @@ run {{ macros.mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE pt
 {%- endfor %}
 
 {{ macros.mysql_start_slave() }}
+
 {{ macros.mysql_wait_for_replication() }}
 
 {% for pod in pods %}
