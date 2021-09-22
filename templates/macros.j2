@@ -293,10 +293,10 @@ podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 {%- set pods=manifest['pods'] -%}
 echo stopping containers
 set +o errexit
-podman container stop --ignore {{ containers_as_single_line() }} 2>podman_stop_containers_$(date +%s).log >/dev/null
+podman container stop --ignore {{ containers_as_single_line() }} | grep -v 'Error: no container with name or ID ' 2>podman_stop_containers_$(date +%s).log >/dev/null
 set -o errexit
 {%- for pod in pods %}
-podman container exists {{ pod.containers[0].name }} && podman container stop --ignore {{ pod.containers[0].name }} >/dev/null
+podman container exists {{ pod.containers[0].name }} && podman container stop --ignore {{ pod.containers[0].name }} | grep -v 'Error: no container with name or ID ' >/dev/null
 {%- endfor %}
 podman container wait --condition=stopped {{ containers_as_single_line() }} || true
 {%- endmacro -%}
