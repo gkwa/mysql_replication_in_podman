@@ -1,15 +1,3 @@
-{%- macro delete_pods_and_containers() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
-
-{{ podman_stop_containers() }}
-{{ podman_stop_pods() }}
-{{ podman_rm_containers() }}
-{{ podman_rm_pods() }}
-
-{%- endmacro -%}
-
 {%- macro start_over() -%}
 {%- set global=manifest['global'] -%}
 {%- set replication=manifest['replication'] -%}
@@ -37,6 +25,18 @@
 {{ podman_start_pods() }}
 
 {{ mysql_start_replication() }}
+{%- endmacro -%}
+
+{%- macro delete_pods_and_containers() -%}
+{%- set global=manifest['global'] -%}
+{%- set replication=manifest['replication'] -%}
+{%- set pods=manifest['pods'] -%}
+
+{{ podman_stop_containers() }}
+{{ podman_stop_pods() }}
+{{ podman_rm_containers() }}
+{{ podman_rm_pods() }}
+
 {%- endmacro -%}
 
 {%- macro podman_status() -%}
