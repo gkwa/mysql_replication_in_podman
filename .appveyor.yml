@@ -17,6 +17,7 @@ install:
 - sh: ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret $my_secret -salt $my_salt -out /tmp/auth.json.decrypted
 
 - sudo bats containers.bats
+- sudo time bash setup.sh
 
 test_script:
 - sudo time bats reset_data.bats
