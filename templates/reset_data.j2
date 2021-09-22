@@ -21,7 +21,7 @@ set -o errexit
 
 {{ macros.podman_list_pods() }}
 
-{{ macros.mysql_setup_replication() }}
+{{ macros.mysql_start_replication() }}
 
 {{ macros.mysql_create_db_on_host('ptest1', pods[0].name) }}
 
