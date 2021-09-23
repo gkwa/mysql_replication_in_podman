@@ -34,7 +34,6 @@ def shfmt(path: str = __file__):
     else:
         logging.debug(f"ran ok: {cmd}")
 
-
 def main():
     logging.basicConfig(level=logging.DEBUG)
     logger = logging.getLogger(__name__)
@@ -48,8 +47,8 @@ def main():
             print(exc)
 
     env = jinja2.Environment()
-    env.loader = jinja2.FileSystemLoader("templates")
     os.chdir(manifest_path.parent)  # to find templates
+    env.loader = jinja2.FileSystemLoader("templates")
 
     tmpl = env.get_template("setup.j2")
     path = pathlib.Path("setup.sh")
