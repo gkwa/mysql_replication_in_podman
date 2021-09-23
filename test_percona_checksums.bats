@@ -27,7 +27,7 @@ repcheck() {
     jump_container=$1
     target_host=$2
 
-    result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=$target_host --execute 'SHOW SLAVE STATUS\G')
+    result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=$target_host --execute 'SHOW SLAVE STATUS\G')
 
     grep --silent 'Slave_IO_Running: Yes' <<<"$result"
     r1=$?
@@ -87,11 +87,11 @@ healthcheck() {
 @test 'test_percona_checksums' {
 
 echo mysql: start replication
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
 echo mysql: wait for replication to be ready
 sleep=2; tries=60
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
@@ -100,22 +100,22 @@ loop1 repcheck my1c my3p.dns.podman $sleep $tries
 loop1 repcheck my1c my4p.dns.podman $sleep $tries
 loop1 repcheck my1c my5p.dns.podman $sleep $tries
 
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p --execute 'DROP DATABASE IF EXISTS ptest'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest'
 
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p --execute 'USE ptest'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute 'USE ptest'
 [ "$status" -eq 1 ]
 
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p --execute 'USE ptest'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --execute 'USE ptest'
 [ "$status" -eq 1 ]
 
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p --execute 'CREATE DATABASE IF NOT EXISTS ptest'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --database=ptest --host=my4p --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --database=ptest --host=my4p --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --execute 'CREATE DATABASE IF NOT EXISTS ptest'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --database=ptest --host=my4p --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --database=ptest --host=my4p --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 
-result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p --database=ptest --skip-column-names --execute 'SELECT id FROM dummy WHERE name="a"')
+result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --database=ptest --skip-column-names --execute 'SELECT id FROM dummy WHERE name="a"')
 [ $result -eq 1 ]
 
-result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p --database=ptest --skip-column-names --execute 'SELECT id FROM dummy WHERE name="c"')
+result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --database=ptest --skip-column-names --execute 'SELECT id FROM dummy WHERE name="c"')
 [ "$result" == "" ]
 
 

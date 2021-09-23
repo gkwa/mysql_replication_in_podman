@@ -44,7 +44,7 @@ repcheck() {
     jump_container=$1
     target_host=$2
 
-    result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=$target_host --execute 'SHOW SLAVE STATUS\G')
+    result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=$target_host --execute 'SHOW SLAVE STATUS\G')
 
     grep --silent 'Slave_IO_Running: Yes' <<<"$result"
     r1=$?
@@ -132,7 +132,7 @@ repcheck() {
     jump_container=$1
     target_host=$2
 
-    result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=$target_host --execute 'SHOW SLAVE STATUS\G')
+    result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=$target_host --execute 'SHOW SLAVE STATUS\G')
 
     grep --silent 'Slave_IO_Running: Yes' <<<"$result"
     r1=$?
@@ -437,128 +437,128 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ |awk 
 [[ $size -gt 80000 ]]
 
 echo mysql: add and grant user repl
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
 
 
 echo mysql: add and grant user percona
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "perconapass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "perconapass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "perconapass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "perconapass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "perconapass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "perconapass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "perconapass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "perconapass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "perconapass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `percona`@"%" IDENTIFIED WITH mysql_native_password BY "perconapass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT REPLICATION SLAVE,PROCESS,SUPER,SELECT ON *.* TO `percona`@"%"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'GRANT ALL PRIVILEGES ON percona.* TO `percona`@"%"'
 
 
 echo mysql: flush privileges
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'FLUSH PRIVILEGES'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'FLUSH PRIVILEGES'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'FLUSH PRIVILEGES'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'FLUSH PRIVILEGES'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'FLUSH PRIVILEGES'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'FLUSH PRIVILEGES'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'FLUSH PRIVILEGES'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'FLUSH PRIVILEGES'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'FLUSH PRIVILEGES'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'FLUSH PRIVILEGES'
 
 echo mysql: stop slave
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE'
 
 echo mysql: fetch positions
 master_log_file=$(
-  podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+  podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
 [[ ! -z "$master_log_file" ]] # assert not empty
 position=$(
-  podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+  podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p --user=root --execute 'SHOW MASTER STATUS\G'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p --user=root --execute \
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --user=root --execute 'SHOW MASTER STATUS\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --user=root --execute \
 "CHANGE MASTER TO MASTER_HOST='my5p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='replpass',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 master_log_file=$(
-  podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+  podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
 [[ ! -z "$master_log_file" ]] # assert not empty
 position=$(
-  podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+  podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p --user=root --execute 'SHOW MASTER STATUS\G'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p --user=root --execute \
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --user=root --execute 'SHOW MASTER STATUS\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --user=root --execute \
 "CHANGE MASTER TO MASTER_HOST='my1p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='replpass',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 master_log_file=$(
-  podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+  podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
 [[ ! -z "$master_log_file" ]] # assert not empty
 position=$(
-  podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+  podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p --user=root --execute 'SHOW MASTER STATUS\G'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p --user=root --execute \
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p --user=root --execute 'SHOW MASTER STATUS\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p --user=root --execute \
 "CHANGE MASTER TO MASTER_HOST='my2p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='replpass',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 master_log_file=$(
-  podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+  podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
 [[ ! -z "$master_log_file" ]] # assert not empty
 position=$(
-  podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+  podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p --user=root --execute 'SHOW MASTER STATUS\G'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p --user=root --execute \
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --user=root --execute 'SHOW MASTER STATUS\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --user=root --execute \
 "CHANGE MASTER TO MASTER_HOST='my3p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='replpass',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 master_log_file=$(
-  podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+  podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
 [[ ! -z "$master_log_file" ]] # assert not empty
 position=$(
-  podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' |
+  podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p --user=root --execute 'SHOW MASTER STATUS\G'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p --user=root --execute \
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p --user=root --execute 'SHOW MASTER STATUS\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p --user=root --execute \
 "CHANGE MASTER TO MASTER_HOST='my4p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='replpass',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 
 echo mysql: start replication
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
 
 echo mysql: wait for replication to be ready
 sleep=2; tries=60
@@ -568,81 +568,81 @@ loop1 repcheck my1c my3p.dns.podman $sleep $tries
 loop1 repcheck my1c my4p.dns.podman $sleep $tries
 loop1 repcheck my1c my5p.dns.podman $sleep $tries
 
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p --execute 'DROP DATABASE IF EXISTS ptest1'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p --execute 'DROP DATABASE IF EXISTS ptest2'
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'USE ptest1'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest1'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest2'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'USE ptest2'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest2'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'USE ptest1'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'USE ptest2'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest2'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'USE ptest1'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'USE ptest2'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'USE ptest2'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'USE ptest1'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'USE ptest2'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'USE ptest2'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'USE ptest1'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest1'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'USE ptest2'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest2'
 [ "$status" == 1 ]
 
 echo mysql: stop slave
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE'
 
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p --execute 'CREATE DATABASE IF NOT EXISTS ptest1'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --database=ptest1 --host=my1p --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --database=ptest1 --host=my1p --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute 'CREATE DATABASE IF NOT EXISTS ptest1'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --database=ptest1 --host=my1p --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --database=ptest1 --host=my1p --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p --execute 'CREATE DATABASE IF NOT EXISTS ptest2'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --database=ptest2 --host=my2p --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --database=ptest2 --host=my2p --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --execute 'CREATE DATABASE IF NOT EXISTS ptest2'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --database=ptest2 --host=my2p --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --database=ptest2 --host=my2p --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'USE ptest1'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1'
 [ "$status" == 0 ]
 
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'USE ptest2'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest2'
 [ "$status" == 0 ]
 
 
 
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'USE ptest1' #2
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest1' #2
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'USE ptest1' #3
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'USE ptest1' #3
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'USE ptest1' #4
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'USE ptest1' #4
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'USE ptest1' #5
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest1' #5
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'USE ptest2' #1
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest2' #1
 [ "$status" == 1 ]
 
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'USE ptest2' #3
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'USE ptest2' #3
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'USE ptest2' #4
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'USE ptest2' #4
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'USE ptest2' #5
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest2' #5
 [ "$status" == 1 ]
 
 echo mysql: start replication
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
 
 echo mysql: wait for replication to be ready
 sleep=2; tries=60
@@ -653,25 +653,25 @@ loop1 repcheck my1c my4p.dns.podman $sleep $tries
 loop1 repcheck my1c my5p.dns.podman $sleep $tries
 
 
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'USE ptest1' #1
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest1' #1
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'USE ptest2' #1
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest2' #1
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'USE ptest1' #2
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest1' #2
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'USE ptest2' #2
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest2' #2
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'USE ptest1' #3
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'USE ptest1' #3
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'USE ptest2' #3
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'USE ptest2' #3
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'USE ptest1' #4
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'USE ptest1' #4
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'USE ptest2' #4
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'USE ptest2' #4
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'USE ptest1' #5
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest1' #5
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'USE ptest2' #5
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest2' #5
 [ "$status" == 0 ]
 
 
