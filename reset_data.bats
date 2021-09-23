@@ -396,8 +396,8 @@ position=$(
   podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --user=root --execute 'SHOW MASTER STATUS\G'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --user=root --execute \
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute 'SHOW MASTER STATUS\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute \
 "CHANGE MASTER TO MASTER_HOST='my5p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='replpass',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 master_log_file=$(
@@ -409,8 +409,8 @@ position=$(
   podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --user=root --execute 'SHOW MASTER STATUS\G'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --user=root --execute \
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --execute 'SHOW MASTER STATUS\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --execute \
 "CHANGE MASTER TO MASTER_HOST='my1p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='replpass',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 master_log_file=$(
@@ -422,8 +422,8 @@ position=$(
   podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p --user=root --execute 'SHOW MASTER STATUS\G'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p --user=root --execute \
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p --execute 'SHOW MASTER STATUS\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p --execute \
 "CHANGE MASTER TO MASTER_HOST='my2p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='replpass',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 master_log_file=$(
@@ -435,8 +435,8 @@ position=$(
   podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --user=root --execute 'SHOW MASTER STATUS\G'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --user=root --execute \
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --execute 'SHOW MASTER STATUS\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --execute \
 "CHANGE MASTER TO MASTER_HOST='my3p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='replpass',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 master_log_file=$(
@@ -448,8 +448,8 @@ position=$(
   podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p --user=root --execute 'SHOW MASTER STATUS\G'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p --user=root --execute \
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p --execute 'SHOW MASTER STATUS\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p --execute \
 "CHANGE MASTER TO MASTER_HOST='my4p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='replpass',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 
@@ -593,8 +593,8 @@ position=$(
   podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --user=root --execute 'SHOW MASTER STATUS\G'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --user=root --execute \
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute 'SHOW MASTER STATUS\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute \
 "CHANGE MASTER TO MASTER_HOST='my5p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='replpass',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 master_log_file=$(
@@ -606,8 +606,8 @@ position=$(
   podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --user=root --execute 'SHOW MASTER STATUS\G'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --user=root --execute \
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --execute 'SHOW MASTER STATUS\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --execute \
 "CHANGE MASTER TO MASTER_HOST='my1p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='replpass',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 master_log_file=$(
@@ -619,8 +619,8 @@ position=$(
   podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p --user=root --execute 'SHOW MASTER STATUS\G'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p --user=root --execute \
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p --execute 'SHOW MASTER STATUS\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p --execute \
 "CHANGE MASTER TO MASTER_HOST='my2p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='replpass',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 master_log_file=$(
@@ -632,8 +632,8 @@ position=$(
   podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --user=root --execute 'SHOW MASTER STATUS\G'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --user=root --execute \
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --execute 'SHOW MASTER STATUS\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --execute \
 "CHANGE MASTER TO MASTER_HOST='my3p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='replpass',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 master_log_file=$(
@@ -645,8 +645,8 @@ position=$(
   podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'SHOW MASTER STATUS\G' |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p --user=root --execute 'SHOW MASTER STATUS\G'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p --user=root --execute \
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p --execute 'SHOW MASTER STATUS\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p --execute \
 "CHANGE MASTER TO MASTER_HOST='my4p.dns.podman',MASTER_USER='repl',\
 MASTER_PASSWORD='replpass',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
 
