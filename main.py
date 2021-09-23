@@ -34,6 +34,7 @@ def shfmt(path: str = __file__):
     else:
         logging.debug(f"ran ok: {cmd}")
 
+
 def main():
     logging.basicConfig(level=logging.DEBUG)
     logger = logging.getLogger(__name__)
