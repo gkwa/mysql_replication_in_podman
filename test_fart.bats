@@ -27,7 +27,7 @@ repcheck() {
     jump_container=$1
     target_host=$2
 
-    result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=$target_host --execute 'SHOW SLAVE STATUS\G')
+    result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=$target_host --execute 'SHOW SLAVE STATUS\G')
 
     grep --silent 'Slave_IO_Running: Yes' <<<"$result"
     r1=$?
@@ -95,44 +95,44 @@ loop1 repcheck my1c my3p.dns.podman $sleep $tries
 loop1 repcheck my1c my4p.dns.podman $sleep $tries
 loop1 repcheck my1c my5p.dns.podman $sleep $tries
 
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute 'DROP DATABASE IF EXISTS ptest'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p --execute 'DROP DATABASE IF EXISTS ptest'
 
 echo mysql: stop slave
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'STOP SLAVE'
 
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute 'CREATE DATABASE IF NOT EXISTS ptest'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --database=ptest --host=my1p --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --database=ptest --host=my1p --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p --execute 'CREATE DATABASE IF NOT EXISTS ptest'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --database=ptest --host=my1p --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --database=ptest --host=my1p --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 
-result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --skip-column-names --database=ptest --execute 'SELECT id FROM dummy WHERE name="a"')
+result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p --skip-column-names --database=ptest --execute 'SELECT id FROM dummy WHERE name="a"')
 [ "$result" == 1 ]
 
 # ensure these fail
 
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'USE ptest'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'USE ptest'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'USE ptest'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'USE ptest'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'USE ptest'
 [ "$status" == 1 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'USE ptest'
 [ "$status" == 1 ]
 
 echo mysql: start replication
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
 
 echo mysql: wait for replication to be ready
 sleep=2; tries=60
@@ -143,15 +143,15 @@ loop1 repcheck my1c my4p.dns.podman $sleep $tries
 loop1 repcheck my1c my5p.dns.podman $sleep $tries
 
 
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'USE ptest'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my1p.dns.podman --execute 'USE ptest'
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'USE ptest'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my2p.dns.podman --execute 'USE ptest'
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'USE ptest'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my3p.dns.podman --execute 'USE ptest'
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'USE ptest'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my4p.dns.podman --execute 'USE ptest'
 [ "$status" == 0 ]
-run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'USE ptest'
+run podman exec --env=MYSQL_PWD=rootpass my1c mysql --host=my5p.dns.podman --execute 'USE ptest'
 [ "$status" == 0 ]
 
 
