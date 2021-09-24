@@ -274,8 +274,8 @@ podman pod exists {{ pod.name }} && podman pod rm --force {{ pod.name }} --ignor
 {%- endmacro -%}
 
 {%- macro podman_pull_images() -%}
-! grep --quiet ---regexp 'registry.redhat.io/rhel8/mysql-80.*latest' <<<"$(podman images)" && time podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
-! grep --quiet ---regexp 'docker.io/perconalab/percona-toolkit.*latest' <<<"$(podman images)" && time podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
+! grep --quiet --regexp 'registry.redhat.io/rhel8/mysql-80.*latest' <<<"$(podman images)" && time podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
+! grep --quiet --regexp 'docker.io/perconalab/percona-toolkit.*latest' <<<"$(podman images)" && time podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
 {%- endmacro -%}
 
 {%- macro containers_as_single_line() -%}
