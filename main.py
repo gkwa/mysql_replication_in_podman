@@ -1,6 +1,5 @@
 import dataclasses
 import logging
-import os
 import pathlib
 import stat
 import subprocess
@@ -82,16 +81,18 @@ def main():
         except yaml.YAMLError as exc:
             print(exc)
 
-    os.chdir(manifest_path.parent)  # to find templates/
-
     env = jinja2.Environment(keep_trailing_newline=True)
-    env.loader = jinja2.FileSystemLoader("templates")
+    env.loader = jinja2.FileSystemLoader(manifest_path.parent / "templates/")
 
     ScriptExpander("sh", "setup", data=manifest, jinja_env=env).write()
     ScriptExpander("sh", "setup", data=manifest, jinja_env=env).write()
-    ScriptExpander("bats", "test_percona_checksums", data=manifest, jinja_env=env).write()
+    ScriptExpander(
+        "bats", "test_percona_checksums", data=manifest, jinja_env=env
+    ).write()
     ScriptExpander("bats", "test_fart", data=manifest, jinja_env=env).write()
-    ScriptExpander("bats", "test_recover_from_bad_state", data=manifest, jinja_env=env).write()
+    ScriptExpander(
+        "bats", "test_recover_from_bad_state", data=manifest, jinja_env=env
+    ).write()
     ScriptExpander("bats", "test_reset_data", data=manifest, jinja_env=env).write()
     ScriptExpander(
         "bats", "test_statement_based_binlog_format", data=manifest, jinja_env=env
