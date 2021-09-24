@@ -142,6 +142,7 @@ sync_binlog                    = 1
 server_id                      = {{ loop.index }}
 auto_increment_offset          = {{ loop.index }}
 binlog_format                  = STATEMENT
+default-storage-engine         = INNODB
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 {%- endfor %}

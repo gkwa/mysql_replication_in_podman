@@ -255,6 +255,7 @@ sync_binlog                    = 1
 server_id                      = 1
 auto_increment_offset          = 1
 binlog_format                  = STATEMENT
+default-storage-engine         = INNODB
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 cat <<'__eot__' >reptest/my2c_my.cnf
@@ -264,6 +265,7 @@ sync_binlog                    = 1
 server_id                      = 2
 auto_increment_offset          = 2
 binlog_format                  = STATEMENT
+default-storage-engine         = INNODB
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 cat <<'__eot__' >reptest/my3c_my.cnf
@@ -273,6 +275,7 @@ sync_binlog                    = 1
 server_id                      = 3
 auto_increment_offset          = 3
 binlog_format                  = STATEMENT
+default-storage-engine         = INNODB
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 cat <<'__eot__' >reptest/my4c_my.cnf
@@ -282,6 +285,7 @@ sync_binlog                    = 1
 server_id                      = 4
 auto_increment_offset          = 4
 binlog_format                  = STATEMENT
+default-storage-engine         = INNODB
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 cat <<'__eot__' >reptest/my5c_my.cnf
@@ -291,6 +295,7 @@ sync_binlog                    = 1
 server_id                      = 5
 auto_increment_offset          = 5
 binlog_format                  = STATEMENT
+default-storage-engine         = INNODB
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
 
