@@ -16,9 +16,9 @@ verify db2 exists on all hosts (because it was replicated)
 END_COMMENT
 
 {% import "macros.j2" as macros with context %}
-{%- set global=manifest['global'] %}
-{%- set replication=manifest['replication'] %}
-{%- set pods=manifest['pods'] %}
+{%- set global=data['global'] %}
+{%- set replication=data['replication'] %}
+{%- set pods=data['pods'] %}
 
 {{ macros.import_common_functions() }}
 

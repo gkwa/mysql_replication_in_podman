@@ -49,6 +49,16 @@ def shfmt(path: str = __file__):
     Executor(cmd).run()
 
 
+def write_script(extension, prefix, data):
+    env = jinja2.Environment(keep_trailing_newline=True)
+    env.loader = jinja2.FileSystemLoader("templates")
+    path = pathlib.Path(f"{prefix}.{extension}")
+    tpl = env.get_template(f"{path.stem}.j2")
+    rtpl = tpl.render(data=data, test_name=path.stem)
+    path.write_text(rtpl)
+    path.chmod(path.stat().st_mode | stat.S_IEXEC)
+
+
 def main():
     logging.basicConfig(level=logging.DEBUG)
     logger = logging.getLogger(__name__)
@@ -63,50 +73,12 @@ def main():
 
     os.chdir(manifest_path.parent)  # to find templates
 
-    env = jinja2.Environment(keep_trailing_newline=True)
-    env.loader = jinja2.FileSystemLoader("templates")
-
-    extension = ".sh"
-    path = pathlib.Path(f"setup{extension}")
-    tpl = env.get_template(f"{path.stem}.j2")
-    rtpl = tpl.render(manifest=manifest, test_name=path.stem)
-    path.write_text(rtpl)
-    path.chmod(path.stat().st_mode | stat.S_IEXEC)
-
-    extension = ".bats"
-    path = pathlib.Path(f"test_statement_based_binlog_format{extension}")
-    tpl = env.get_template(f"{path.stem}.j2")
-    rtpl = tpl.render(manifest=manifest, test_name=path.stem)
-    path.write_text(rtpl)
-    path.chmod(path.stat().st_mode | stat.S_IEXEC)
-
-    extension = ".bats"
-    path = pathlib.Path(f"test_percona_checksums{extension}")
-    tpl = env.get_template(f"{path.stem}.j2")
-    rtpl = tpl.render(manifest=manifest, test_name=path.stem)
-    path.write_text(rtpl)
-    path.chmod(path.stat().st_mode | stat.S_IEXEC)
-
-    extension = ".bats"
-    path = pathlib.Path(f"test_fart{extension}")
-    tpl = env.get_template(f"{path.stem}.j2")
-    rtpl = tpl.render(manifest=manifest, test_name=path.stem)
-    path.write_text(rtpl)
-    path.chmod(path.stat().st_mode | stat.S_IEXEC)
-
-    extension = ".bats"
-    path = pathlib.Path(f"test_recover_from_bad_state{extension}")
-    tpl = env.get_template(f"{path.stem}.j2")
-    rtpl = tpl.render(manifest=manifest, test_name=path.stem)
-    path.write_text(rtpl)
-    path.chmod(path.stat().st_mode | stat.S_IEXEC)
-
-    extension = ".bats"
-    path = pathlib.Path(f"reset_data{extension}")
-    tpl = env.get_template(f"{path.stem}.j2")
-    rtpl = tpl.render(manifest=manifest, test_name=path.stem)
-    path.write_text(rtpl)
-    path.chmod(path.stat().st_mode | stat.S_IEXEC)
+    write_script("sh", "setup", data=manifest)
+    write_script("bats", "test_statement_based_binlog_format", data=manifest)
+    write_script("bats", "test_percona_checksums", data=manifest)
+    write_script("bats", "test_fart", data=manifest)
+    write_script("bats", "test_recover_from_bad_state", data=manifest)
+    write_script("bats", "test_reset_data", data=manifest)
 
     shfmt()
 

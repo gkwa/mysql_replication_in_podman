@@ -2,11 +2,11 @@
 
 {%- import "macros.j2" as macros with context %}
 
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] %}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] %}
 
-@test "reset_data" {
+@test "test_reset_data" {
 
 
 set -o errexit

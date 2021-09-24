@@ -1,9 +1,9 @@
 #!/usr/bin/env bats
 
 {% import "macros.j2" as macros with context -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 
 {{ macros.import_common_functions() }}
 

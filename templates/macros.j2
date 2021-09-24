@@ -1,7 +1,7 @@
 {%- macro start_over() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 {{ import_common_functions() }}
 {{ podman_pull_images() }}
 
@@ -29,9 +29,9 @@
 {%- endmacro -%}
 
 {%- macro delete_pods_and_containers() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 
 {{ podman_stop_containers() }}
 {{ podman_stop_pods() }}
@@ -50,15 +50,15 @@ podman pod ls
 {%- endmacro -%}
 
 {%- macro mysql_jump() -%}
-{%- set global=manifest['global'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set pods=data['pods'] -%}
 podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0].name }} mysql --user={{ global.user_root }}
 {%- endmacro -%}
 
 {%- macro mysql_start_replication() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 {{ mysql_create_mysql_user_repl() }}
 
 {{ mysql_change_master_to_master_host() }}
@@ -69,9 +69,9 @@ podman exec --env=MYSQL_PWD={{ global.user_root_pass }} {{ pods[0].containers[0]
 {%- endmacro -%}
 
 {%- macro mysql_wait_for_replication() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 echo mysql: wait for replication to be ready
 sleep=2; tries=60
 {%- for pod in pods %}
@@ -80,9 +80,9 @@ loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.name }}.dns.podman $sleep
 {%- endmacro -%}
 
 {%- macro mysql_start_slave() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 echo mysql: start replication
 {%- for pod in pods %}
 {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'START SLAVE USER="{{ global.user_replication }}" PASSWORD="{{ global.user_replication_pass }}"'
@@ -90,9 +90,9 @@ echo mysql: start replication
 {%- endmacro -%}
 
 {%- macro mysql_stop_slave() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 echo mysql: stop slave
 {%- for pod in pods %}
 {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
@@ -103,9 +103,9 @@ echo mysql: stop slave
 {%- endmacro -%}
 
 {%- macro mysql_change_master_to_master_host() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 {{ mysql_stop_slave() }}
 
 echo mysql: fetch positions
@@ -128,9 +128,9 @@ MASTER_PASSWORD='{{ global.user_replication_pass }}',MASTER_LOG_FILE='"$master_l
 {%- endmacro -%}
 
 {%- macro mysql_conf_setup() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 mkdir -p reptest
 
 echo mysql: configure mysql service
@@ -153,9 +153,9 @@ cat reptest/{{ pod.containers[0].name }}_my.cnf && echo
 {%- endmacro -%}
 
 {%- macro podman_container_volume_setup() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 echo create volumes
 {%- for pod in pods %}
 podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }} >/dev/null
@@ -163,9 +163,9 @@ podman volume exists {{ pod.volume }} || podman volume create {{ pod.volume }} >
 {%- endmacro -%}
 
 {%- macro podman_create_pods() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 echo create pods
 {%- for pod in pods %}
 podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --publish={{ global.internal_port }}{{loop.index}}:{{ global.internal_port }} --network={{ global.network }} >/dev/null
@@ -173,9 +173,9 @@ podman pod exists {{ pod.name }} || podman pod create --name={{ pod.name }} --pu
 {%- endmacro -%}
 
 {%- macro podman_create_containers() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 echo create containers
 mkdir -p /root/live_dbeval_comparing_records
 {%- for pod in pods %}
@@ -203,9 +203,9 @@ fi
 {%- endmacro -%}
 
 {%- macro remove_mysql_data_but_keep_container_volume() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 
 echo remove data from volume, but leaving volume in place
 {%- for pod in pods %}
@@ -220,9 +220,9 @@ size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')
 {%- endmacro -%}
 
 {%- macro podman_start_pods() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 set +o errexit
 podman pod start {{ pods |map(attribute='name') |join(' ') }} 2>podman_start_pods_$(date +%s).log >/dev/null
 set -o errexit
@@ -239,9 +239,9 @@ podman pod ls
 {%- endmacro -%}
 
 {%- macro podman_create_network() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 if ! podman network exists {{ global.network}}
 then
      echo creating network {{ global.network}}
@@ -250,9 +250,9 @@ fi
 {%- endmacro -%}
 
 {%- macro podman_stop_pods() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 echo stopping pods
 {%- for pod in pods %}
 podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --ignore {{ pod.name }} >/dev/null
@@ -260,9 +260,9 @@ podman pod exists {{ pod.name }} && podman pod stop {{ pod.name }} --ignore {{ p
 {%- endmacro -%}
 
 {%- macro podman_rm_pods() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 set +o errexit
 {%- for pod in pods %}
 podman pod exists {{ pod.name }} && podman pod rm --force {{ pod.name }} --ignore {{ pod.name }} 2>podman_rm_pods.log >/dev/null
@@ -279,18 +279,18 @@ podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 {%- endmacro -%}
 
 {%- macro containers_as_single_line() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 {%- for lst in pods | map(attribute="containers") -%}
     {{ lst[0]['name'] }}{{ ' ' if not loop.last }}
 {%- endfor %}
 {%- endmacro -%}
 
 {%- macro podman_stop_containers() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 echo stopping containers
 set +o errexit
 podman container stop --ignore {{ containers_as_single_line() }} 2>&1 | grep -v 'Error: no container with name or ID ' >podman_stop_containers_$(date +%s).log
@@ -302,18 +302,18 @@ podman container wait --condition=stopped {{ containers_as_single_line() }} || t
 {%- endmacro -%}
 
 {%- macro podman_rm_containers() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] %}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] %}
+{%- set pods=data['pods'] -%}
 {%- for pod in pods %}
 podman container exists {{ pod.containers[0].name }} && podman container rm --force --ignore {{ pod.containers[0].name }} >/dev/null
 {%- endfor %}
 {%- endmacro -%}
 
 {%- macro healthcheck() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] %}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] %}
+{%- set pods=data['pods'] -%}
 echo 'wait for container healthcheck(s)'
 sleep=4
 tries=20
@@ -323,27 +323,27 @@ loop2 healthcheck {{ pod.containers[0].name }} $sleep $tries
 {%- endmacro -%}
 
 {%- macro mysql_create_db_on_host(db, host) -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] -%}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
 {{ mysql_jump() }} --host={{ host }} --execute 'CREATE DATABASE IF NOT EXISTS {{ db }}'
 {{ mysql_jump() }} --database={{ db }} --host={{ host }} --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
 {{ mysql_jump() }} --database={{ db }} --host={{ host }} --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 {%- endmacro -%}
 
 {%- macro percona_checksum() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] %}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] %}
+{%- set pods=data['pods'] -%}
 {% for pod in pods %}
 podman run --pod={{ pods[0].name }} --env=PTDEBUG=0 --env=MYSQL_PWD={{ global.user_root_pass }} percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h={{ pod.name }}.dns.podman,u={{ global.user_root }},p={{ global.user_root_pass }},P=3306
 {%- endfor %}
 {%- endmacro -%}
 
 {%- macro bats_test_mysql_check_db_exists_everywhere(db) -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] %}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] %}
+{%- set pods=data['pods'] -%}
 {%- for pod in pods %}
 run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE {{ db }}'
 [ "$status" == 0 ]
@@ -351,9 +351,9 @@ run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE {{ db }}'
 {%- endmacro -%}
 
 {%- macro bats_test_mysql_check_ptest1_does_not_exist() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] %}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] %}
+{%- set pods=data['pods'] -%}
 {%- for pod in pods %}
 run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE ptest1'
 [ "$status" -ne 0 ]
@@ -361,9 +361,9 @@ run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE ptest1'
 {%- endmacro -%}
 
 {%- macro bats_test_test_can_connect_to_mysql_db() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] %}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] %}
+{%- set pods=data['pods'] -%}
 {%- for pod in pods %}
 run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE mysql'
 [ "$status" == 0 ]
@@ -371,9 +371,9 @@ run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE mysql'
 {%- endmacro -%}
 
 {%- macro mysql_create_mysql_user_repl() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] %}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] %}
+{%- set pods=data['pods'] -%}
 
 echo mysql: add and grant user {{ global.user_replication }}
 {% for pod in pods %}
@@ -403,9 +403,9 @@ echo mysql: flush privileges
 {%- endmacro -%}
 
 {%- macro import_common_functions() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] %}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] %}
+{%- set pods=data['pods'] -%}
 cleanall() {
     for i in {1..2}; do
         podman pod stop --ignore --all
@@ -492,9 +492,9 @@ healthcheck() {
 {%- endmacro -%}
 
 {%- macro assert_mysql_data_volume_size() -%}
-{%- set global=manifest['global'] -%}
-{%- set replication=manifest['replication'] %}
-{%- set pods=manifest['pods'] -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] %}
+{%- set pods=data['pods'] -%}
 echo 'check data directory is larger than 80MB, ~97MB is expected size'
 {%- for pod in pods %}
 size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ |awk '{print $1}')

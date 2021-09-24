@@ -20,7 +20,7 @@ install:
 - sudo time bash setup.sh
 
 test_script:
-- sudo time bats reset_data.bats
+- sudo time bats test_reset_data.bats
 - sudo time bats test_percona_checksums.bats
 - sudo time bats test_statement_based_binlog_format.bats
 - sudo time bats test_fart.bats
@@ -31,6 +31,6 @@ test_script:
 - sudo time bash setup.sh
 - sudo time bats test_statement_based_binlog_format.bats
 - sudo time bats test_recover_from_bad_state.bats
-- sudo time bats reset_data.bats
+- sudo time bats test_reset_data.bats
 - sudo time bats test_percona_checksums.bats
 - sudo time bats test_fart.bats
