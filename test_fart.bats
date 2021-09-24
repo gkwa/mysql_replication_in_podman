@@ -156,3 +156,4 @@ run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.
 
 
 }
+
