@@ -49,14 +49,25 @@ def shfmt(path: str = __file__):
     Executor(cmd).run()
 
 
-def write_script(extension, prefix, data):
-    env = jinja2.Environment(keep_trailing_newline=True)
-    env.loader = jinja2.FileSystemLoader("templates")
-    path = pathlib.Path(f"{prefix}.{extension}")
-    tpl = env.get_template(f"{path.stem}.j2")
-    rtpl = tpl.render(data=data, test_name=path.stem)
-    path.write_text(rtpl)
-    path.chmod(path.stat().st_mode | stat.S_IEXEC)
+@dataclasses.dataclass
+class ScriptExpander:
+    extension: str
+    prefix: str
+    data: object
+    jinja_env: jinja2.Environment
+    path: pathlib.Path = dataclasses.field(init=False)
+
+    def __post_init__(self):
+        self.path = pathlib.Path(f"{self.prefix}.{self.extension}")
+
+    def write(self):
+        tpl = self.jinja_env.get_template(f"{self.path.stem}.j2")
+        rtpl = tpl.render(data=self.data, test_name=self.path.stem)
+        self.path.write_text(rtpl)
+        self.set_executable()
+
+    def set_executable(self):
+        self.path.chmod(self.path.stat().st_mode | stat.S_IEXEC)
 
 
 def main():
@@ -71,14 +82,20 @@ def main():
         except yaml.YAMLError as exc:
             print(exc)
 
-    os.chdir(manifest_path.parent)  # to find templates
+    os.chdir(manifest_path.parent)  # to find templates/
 
-    write_script("sh", "setup", data=manifest)
-    write_script("bats", "test_statement_based_binlog_format", data=manifest)
-    write_script("bats", "test_percona_checksums", data=manifest)
-    write_script("bats", "test_fart", data=manifest)
-    write_script("bats", "test_recover_from_bad_state", data=manifest)
-    write_script("bats", "test_reset_data", data=manifest)
+    env = jinja2.Environment(keep_trailing_newline=True)
+    env.loader = jinja2.FileSystemLoader("templates")
+
+    ScriptExpander("sh", "setup", data=manifest, jinja_env=env).write()
+    ScriptExpander("sh", "setup", data=manifest, jinja_env=env).write()
+    ScriptExpander("bats", "test_percona_checksums", data=manifest, jinja_env=env).write()
+    ScriptExpander("bats", "test_fart", data=manifest, jinja_env=env).write()
+    ScriptExpander("bats", "test_recover_from_bad_state", data=manifest, jinja_env=env).write()
+    ScriptExpander("bats", "test_reset_data", data=manifest, jinja_env=env).write()
+    ScriptExpander(
+        "bats", "test_statement_based_binlog_format", data=manifest, jinja_env=env
+    ).write()
 
     shfmt()
 
