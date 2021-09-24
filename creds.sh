@@ -3,12 +3,17 @@
 set -o errexit
 set +o history
 
-PASSWORD="$1"
+echo redhat
+echo $USERNAME_REDHAT
+echo $PASSWORD_REDHAT
 
-echo $PASSWORD
+echo docker
+echo $USERNAME_DOCKER
+echo $PASSWORD_DOCKER
 
 # base64 encode basic credentials
-auth=$(echo -n "mtmonacelli:$PASSWORD" | python -m base64)
+auth_redhat=$(echo -n "$USERNAME_REDHAT:$PASSWORD_REDHAT" | python -m base64)
+auth_docker=$(echo -n "$USERNAME_DOCKER:$PASSWORD_DOCKER" | python -m base64)
 
 # wrap in json that podman will recognize
 tmp=/tmp/sensitive
@@ -18,8 +23,11 @@ mkdir -p $tmp
 cat <<__eot__ >$tmp/auth.json.tmp
 {
   "auths": {
+    "docker.io": {
+      "auth": "$auth_docker"
+    },
     "registry.redhat.io": {
-      "auth": "$auth"
+      "auth": "$auth_redhat"
     }
   }
 }
@@ -42,6 +50,9 @@ cat $tmp/auth.json.decrypted.tmp | python -m base64 -d >$tmp/auth.json.decrypted
 rm -f $tmp/auth.json.decrypted.tmp
 
 credentials=$(jq -r .auths.'"registry.redhat.io"'.auth $tmp/auth.json.decrypted | python -m base64 -d)
+echo $credentials
+
+credentials=$(jq -r .auths.'"docker.io"'.auth $tmp/auth.json.decrypted | python -m base64 -d)
 echo $credentials
 
 cp $tmp/auth.json.enc .
