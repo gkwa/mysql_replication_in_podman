@@ -84,8 +84,8 @@ healthcheck() {
 
     [ $r1 -eq 0 ]
 }
-podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
-podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
+! grep --quiet --extended-regexp 'registry.redhat.io/rhel8/mysql-80.*latest' <<<"$(podman images)" && time podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
+! grep --quiet --extended-regexp 'docker.io/perconalab/percona-toolkit.*latest' <<<"$(podman images)" && time podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
 
 echo stopping containers
 set +o errexit
