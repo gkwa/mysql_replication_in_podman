@@ -79,6 +79,37 @@ loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.name }}.dns.podman $sleep
 {%- endfor %}
 {%- endmacro -%}
 
+{%- macro mysql_data_load() -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
+{{ import_common_functions() }}
+
+cleanall
+
+{{ podman_list_pods() }}
+
+{{ podman_container_volume_setup() }}
+
+{{ podman_create_network() }}
+
+{{ mysql_conf_setup() }}
+
+{{ podman_create_pods() }}
+
+{{ podman_create_containers() }}
+
+{{ podman_start_pods() }}
+
+{{ mysql_start_replication() }}
+
+cd ~/live_dbeval_comparing_records
+{{ mysql_stop_slave() }}
+
+echo mysql: data_load
+time podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'SOURCE /data/all_import.sql'
+{%- endmacro -%}
+
 {%- macro mysql_start_slave() -%}
 {%- set global=data['global'] -%}
 {%- set replication=data['replication'] -%}
@@ -141,7 +172,7 @@ innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 server_id                      = {{ loop.index }}
 auto_increment_offset          = {{ loop.index }}
-binlog_format                  = STATEMENT
+binlog_format                  = ROW
 default-storage-engine         = INNODB
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
@@ -201,6 +232,25 @@ then
         registry.redhat.io/rhel8/mysql-80 >/dev/null
 fi        
 {%- endfor %}
+if ! podman container exists mypy
+then
+    podman container run \
+        --rm \
+        --detach \
+        --name=mypy \
+        --pod=my1p \
+        --volume=/root/live_dbeval_comparing_records:/data \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL python --version | grep 3 || exit 1' \
+        --env=MYSQL_ROOT_PASSWORD=rootpass \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joepass \
+        docker.io/library/python:bullseye tail -f /dev/null >/dev/null
+fi
 {%- endmacro -%}
 
 {%- macro remove_mysql_data_but_keep_container_volume() -%}
@@ -216,7 +266,9 @@ path=$(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint'); rm -rf
 echo check data directory is cleaned out
 {%- for pod in pods %}
 size=$(du -s $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
+size_friendly=$(du -sh $(podman volume inspect {{ pod.volume }} | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -le 8 ]]
+echo {{ pod.volume }}:$size_friendly
 {%- endfor -%}
 {%- endmacro -%}
 
@@ -277,6 +329,7 @@ podman pod exists {{ pod.name }} && podman pod rm --force {{ pod.name }} --ignor
 {%- macro podman_pull_images() -%}
 ! grep --quiet --regexp 'registry.redhat.io/rhel8/mysql-80.*latest' <<<"$(podman images)" && time podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 ! grep --quiet --regexp 'docker.io/perconalab/percona-toolkit.*latest' <<<"$(podman images)" && time podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
+! grep --quiet --regexp 'docker.io/library/python.*bullseye' <<<"$(podman images)" && time podman pull --quiet docker.io/library/python:bullseye >/dev/null
 {%- endmacro -%}
 
 {%- macro containers_as_single_line() -%}

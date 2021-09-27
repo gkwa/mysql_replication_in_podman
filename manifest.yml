@@ -9,7 +9,9 @@ global:
   user_replication_pass: replpass
   user_percona: percona
   user_percona_pass: perconapass
-
+  mysql_container: 'registry.redhat.io/rhel8/mysql-80:latest'
+  python_container: 'docker.io/library/python:bullseye'
+    
 pods:
 - name: my1p
   volume: my1dbdata

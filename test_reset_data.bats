@@ -90,6 +90,7 @@ healthcheck() {
 }
 ! grep --quiet --regexp 'registry.redhat.io/rhel8/mysql-80.*latest' <<<"$(podman images)" && time podman pull --quiet registry.redhat.io/rhel8/mysql-80 >/dev/null
 ! grep --quiet --regexp 'docker.io/perconalab/percona-toolkit.*latest' <<<"$(podman images)" && time podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
+! grep --quiet --regexp 'docker.io/library/python.*bullseye' <<<"$(podman images)" && time podman pull --quiet docker.io/library/python:bullseye >/dev/null
 
 echo stopping containers
 set +o errexit
@@ -154,7 +155,7 @@ innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 server_id                      = 1
 auto_increment_offset          = 1
-binlog_format                  = STATEMENT
+binlog_format                  = ROW
 default-storage-engine         = INNODB
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
@@ -164,7 +165,7 @@ innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 server_id                      = 2
 auto_increment_offset          = 2
-binlog_format                  = STATEMENT
+binlog_format                  = ROW
 default-storage-engine         = INNODB
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
@@ -174,7 +175,7 @@ innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 server_id                      = 3
 auto_increment_offset          = 3
-binlog_format                  = STATEMENT
+binlog_format                  = ROW
 default-storage-engine         = INNODB
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
@@ -184,7 +185,7 @@ innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 server_id                      = 4
 auto_increment_offset          = 4
-binlog_format                  = STATEMENT
+binlog_format                  = ROW
 default-storage-engine         = INNODB
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
@@ -194,7 +195,7 @@ innodb_flush_log_at_trx_commit = 1
 sync_binlog                    = 1
 server_id                      = 5
 auto_increment_offset          = 5
-binlog_format                  = STATEMENT
+binlog_format                  = ROW
 default-storage-engine         = INNODB
 ;slave-skip-errors              = 1050,1062,1032
 __eot__
@@ -314,6 +315,25 @@ then
         --env=MYSQL_PASSWORD=joepass \
         --env=MYSQL_DATABASE=db \
         registry.redhat.io/rhel8/mysql-80 >/dev/null
+fi
+if ! podman container exists mypy
+then
+    podman container run \
+        --rm \
+        --detach \
+        --name=mypy \
+        --pod=my1p \
+        --volume=/root/live_dbeval_comparing_records:/data \
+        --log-driver=journald \
+        --healthcheck-interval=0 \
+        --health-retries=10 \
+        --health-timeout=30s \
+        --health-start-period=80s \
+        --healthcheck-command 'CMD-SHELL python --version | grep 3 || exit 1' \
+        --env=MYSQL_ROOT_PASSWORD=rootpass \
+        --env=MYSQL_USER=joe \
+        --env=MYSQL_PASSWORD=joepass \
+        docker.io/library/python:bullseye tail -f /dev/null >/dev/null
 fi
 set +o errexit
 podman pod start my1p my2p my3p my4p my5p 2>podman_start_pods_$(date +%s).log >/dev/null
@@ -500,15 +520,25 @@ path=$(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint'); rm -rf --pres
 
 echo check data directory is cleaned out
 size=$(du -s $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
+size_friendly=$(du -sh $(podman volume inspect my1dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -le 8 ]]
+echo my1dbdata:$size_friendly
 size=$(du -s $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
+size_friendly=$(du -sh $(podman volume inspect my2dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -le 8 ]]
+echo my2dbdata:$size_friendly
 size=$(du -s $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
+size_friendly=$(du -sh $(podman volume inspect my3dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -le 8 ]]
+echo my3dbdata:$size_friendly
 size=$(du -s $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
+size_friendly=$(du -sh $(podman volume inspect my4dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -le 8 ]]
+echo my4dbdata:$size_friendly
 size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
+size_friendly=$(du -sh $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ | awk '{print $1}')
 [[ $size -le 8 ]]
+echo my5dbdata:$size_friendly
 set +o errexit
 podman pod start my1p my2p my3p my4p my5p 2>podman_start_pods_$(date +%s).log >/dev/null
 set -o errexit
