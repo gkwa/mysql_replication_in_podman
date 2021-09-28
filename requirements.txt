@@ -1,3 +1,11 @@
-pytest
-jinja2
-pyyaml
+monacelli_pylog_prefs
+ipython
+django-extensions
+Django
+humanfriendly
+Jinja2
+Pandas
+PyYAML
+mysqlclient
+pydantic
+wheel

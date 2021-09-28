@@ -1,7 +1,12 @@
 #!/bin/bash
 
+
 set -o errexit
 set +o history
+
+# set +o history
+# export USERNAME_REDHAT='username' PASSWORD_REDHAT='secret' USERNAME_DOCKER='username' PASSWORD_DOCKER='secret'
+# set -o history
 
 echo redhat
 echo $USERNAME_REDHAT
