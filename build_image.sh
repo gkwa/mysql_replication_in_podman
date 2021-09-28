@@ -21,7 +21,7 @@ pydantic
 wheel
 __eot__
 
-buildah copy $container /tmp/requirements.txt /tmp/requirements.txt 
+buildah copy $container /tmp/requirements.txt /tmp/requirements.txt
 buildah run $container pip install -r /tmp/requirements.txt
 buildah run $container pip list
 buildah config --workingdir /data $container

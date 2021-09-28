@@ -333,7 +333,7 @@ then
         --env=MYSQL_ROOT_PASSWORD=rootpass \
         --env=MYSQL_USER=joe \
         --env=MYSQL_PASSWORD=joepass \
-        docker.io/library/python:bullseye tail -f /dev/null >/dev/null
+        localhost/dbeval:latest tail -f /dev/null >/dev/null 
 fi
 set +o errexit
 podman pod start my1p my2p my3p my4p my5p 2>podman_start_pods_$(date +%s).log >/dev/null
