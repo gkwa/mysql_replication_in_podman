@@ -1,5 +1,4 @@
 import dataclasses
-import monacelli_pylog_prefs.logger
 import logging
 import pathlib
 import stat
@@ -7,6 +6,7 @@ import subprocess
 import typing
 
 import jinja2
+import monacelli_pylog_prefs
 import yaml
 
 
@@ -71,7 +71,9 @@ class ScriptExpander:
 
 
 def main():
-    monacelli_pylog_prefs.logger.setup(filename=f"{pathlib.Path(__file__).stem}.log", stream_level=logging.DEBUG)
+    monacelli_pylog_prefs.logger.setup(
+        filename=f"{pathlib.Path(__file__).stem}.log", stream_level=logging.DEBUG
+    )
 
     manifest_path = pathlib.Path(__file__).parent.resolve() / "manifest.yml"
 
