@@ -37,7 +37,13 @@ install /tmp/shfmt /usr/local/bin/shfmt
 
 }
 
+@test "install buildah" {
+
+apt-get -qqy update </dev/null
+
+apt-get -o APT::Install-Suggests="true" -y install buildah
 
 
+}
 
 

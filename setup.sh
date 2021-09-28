@@ -304,11 +304,11 @@ if ! podman container exists my5c; then
         --env=MYSQL_DATABASE=db \
         registry.redhat.io/rhel8/mysql-80 >/dev/null
 fi
-if ! podman container exists mypy; then
+if ! podman container exists dbeval; then
     podman container run \
         --rm \
         --detach \
-        --name=mypy \
+        --name=dbeval \
         --pod=my1p \
         --volume=/root/live_dbeval_comparing_records:/data \
         --log-driver=journald \

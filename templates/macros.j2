@@ -232,12 +232,12 @@ then
         registry.redhat.io/rhel8/mysql-80 >/dev/null
 fi        
 {%- endfor %}
-if ! podman container exists mypy
+if ! podman container exists dbeval
 then
     podman container run \
         --rm \
         --detach \
-        --name=mypy \
+        --name=dbeval \
         --pod=my1p \
         --volume=/root/live_dbeval_comparing_records:/data \
         --log-driver=journald \
@@ -249,7 +249,7 @@ then
         --env=MYSQL_ROOT_PASSWORD=rootpass \
         --env=MYSQL_USER=joe \
         --env=MYSQL_PASSWORD=joepass \
-        docker.io/library/python:bullseye tail -f /dev/null >/dev/null
+        localhost/dbeval:latest tail -f /dev/null >/dev/null 
 fi
 {%- endmacro -%}
 
