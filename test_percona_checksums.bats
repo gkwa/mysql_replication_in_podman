@@ -118,12 +118,13 @@ result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p
 result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --database=ptest --skip-column-names --execute 'SELECT id FROM dummy WHERE name="c"')
 [ "$result" == "" ]
 
+# disabled for now.  django complains about using binlog_format=STATEMENT and pt-table-checksum complains about using binlog_format=ROW from https://bit.ly/3zL5Zxx
 
-podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=rootpass percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h=my1p.dns.podman,u=root,p=rootpass,P=3306
-podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=rootpass percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h=my2p.dns.podman,u=root,p=rootpass,P=3306
-podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=rootpass percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h=my3p.dns.podman,u=root,p=rootpass,P=3306
-podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=rootpass percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h=my4p.dns.podman,u=root,p=rootpass,P=3306
-podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=rootpass percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h=my5p.dns.podman,u=root,p=rootpass,P=3306
+# podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=rootpass percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h=my1p.dns.podman,u=root,p=rootpass,P=3306
+# podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=rootpass percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h=my2p.dns.podman,u=root,p=rootpass,P=3306
+# podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=rootpass percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h=my3p.dns.podman,u=root,p=rootpass,P=3306
+# podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=rootpass percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h=my4p.dns.podman,u=root,p=rootpass,P=3306
+# podman run --pod=my1p --env=PTDEBUG=0 --env=MYSQL_PWD=rootpass percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h=my5p.dns.podman,u=root,p=rootpass,P=3306
 
 
 }

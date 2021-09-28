@@ -389,8 +389,9 @@ loop2 healthcheck {{ pod.containers[0].name }} $sleep $tries
 {%- set global=data['global'] -%}
 {%- set replication=data['replication'] %}
 {%- set pods=data['pods'] -%}
+# disabled for now.  django complains about using binlog_format=STATEMENT and pt-table-checksum complains about using binlog_format=ROW from https://bit.ly/3zL5Zxx
 {% for pod in pods %}
-podman run --pod={{ pods[0].name }} --env=PTDEBUG=0 --env=MYSQL_PWD={{ global.user_root_pass }} percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h={{ pod.name }}.dns.podman,u={{ global.user_root }},p={{ global.user_root_pass }},P=3306
+# podman run --pod={{ pods[0].name }} --env=PTDEBUG=0 --env=MYSQL_PWD={{ global.user_root_pass }} percona-toolkit pt-table-checksum --replicate=percona.checksums --ignore-databases=sys,mysql h={{ pod.name }}.dns.podman,u={{ global.user_root }},p={{ global.user_root_pass }},P=3306
 {%- endfor %}
 {%- endmacro -%}
 
