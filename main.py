@@ -6,7 +6,7 @@ import subprocess
 import typing
 
 import jinja2
-import monacelli_pylog_prefs
+import monacelli_pylog_prefs.logger
 import yaml
 
 
