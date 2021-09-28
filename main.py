@@ -1,4 +1,5 @@
 import dataclasses
+import monacelli_pylog_prefs.logger
 import logging
 import pathlib
 import stat
@@ -70,8 +71,7 @@ class ScriptExpander:
 
 
 def main():
-    logging.basicConfig(level=logging.DEBUG)
-    logger = logging.getLogger(__name__)
+    monacelli_pylog_prefs.logger.setup(filename=f"{pathlib.Path(__file__).stem}.log", stream_level=logging.DEBUG)
 
     manifest_path = pathlib.Path(__file__).parent.resolve() / "manifest.yml"
 
