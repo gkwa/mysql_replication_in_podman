@@ -24,14 +24,14 @@ install:
 test_script:
 - sudo time bats test_reset_data.bats
 - sudo time bats test_percona_checksums.bats
-- sudo time bats test_statement_based_binlog_format.bats
+# - sudo time bats test_statement_based_binlog_format.bats
 - sudo time bats test_fart.bats
 - sudo time bats test_recover_from_bad_state.bats
 
 - sudo bash -c '. setup.sh && cleanall'
 
 - sudo time bash setup.sh
-- sudo time bats test_statement_based_binlog_format.bats
+# - sudo time bats test_statement_based_binlog_format.bats
 - sudo time bats test_recover_from_bad_state.bats
 - sudo time bats test_reset_data.bats
 - sudo time bats test_percona_checksums.bats
