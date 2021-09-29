@@ -194,14 +194,16 @@ echo mysql: stop slave
 {{ mysql_stop_slave() }}
 
 echo mysql: fetch positions
-{% for block in replication %}
-{%- set host = block.instance.pod ~ '.dns.podman' -%}
+{%- for block in replication %}
+{%- set host = block.instance.pod ~ '.dns.podman' %}
 master_log_file=$(
-  {{ mysql_show_master_status(host) }} | sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
+  {{ mysql_show_master_status(host) }} |
+  sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
 [[ ! -z "$master_log_file" ]] # assert not empty
 position=$(
-  {{ mysql_show_master_status(host) }} | sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
+  {{ mysql_show_master_status(host) }} |
+  sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 {#- echo target:{{ block.instance.container }} source:{{ block.source.container }} position:$position #}
 {{ mysql_show_master_status(host) }} 
@@ -222,9 +224,8 @@ echo mysql: disable replication
 {{ mysql_jump() }} --host={{ block.instance.pod }} --execute 'RESET SLAVE ALL'
 {%- endfor -%}
 
-echo mysql: disable replication 
 {%- for block in replication %}
-{{ mysql_jump() }} --host={{ block.instance.pod }} --execute 'SHOW MASTER STATUS\G'
+{{ mysql_show_master_status(block.instance.pod) }}
 {%- endfor -%}
 {%- endmacro -%}
 
