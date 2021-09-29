@@ -6,6 +6,5 @@ humanfriendly
 Jinja2
 Pandas
 PyYAML
-mysqlclient
 pydantic
 wheel

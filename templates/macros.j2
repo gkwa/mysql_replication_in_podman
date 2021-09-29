@@ -88,12 +88,11 @@ repcheck() {
 }
 {%- endmacro -%}
 
-{%- macro mysql_wait_for_replication2() -%}
+{%- macro mysql_wait_for_replication() -%}
 {%- set global=data['global'] -%}
 {%- set replication=data['replication'] -%}
 {%- set pods=data['pods'] -%}
 echo mysql: wait for replication to be ready
-{{ repcheck_function() }}
 sleep=2; tries=60
 {%- for pod in pods %}
 loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.name }}.dns.podman $sleep $tries
@@ -112,6 +111,18 @@ r1=$?
 grep --silent 'Slave_SQL_Running: Yes' <<<"$result"
 r2=$?
 [ $r1 -eq 0 ] && [ $r2 -eq 0 ]
+{%- endfor %}
+{%- endmacro -%}
+
+{%- macro mysql_wait_for_replication2() -%}
+{%- set global=data['global'] -%}
+{%- set replication=data['replication'] -%}
+{%- set pods=data['pods'] -%}
+echo mysql: wait for replication to be ready
+{{ repcheck_function() }}
+sleep=2; tries=60
+{%- for pod in pods %}
+loop1 repcheck {{ pods[0].containers[0].name }} {{ pod.name }}.dns.podman $sleep $tries
 {%- endfor %}
 {%- endmacro -%}
 
@@ -202,8 +213,9 @@ MASTER_PASSWORD='{{ global.user_replication_pass }}',MASTER_LOG_FILE='"$master_l
 
 echo mysql: disable replication 
 {%- for block in replication %}
-{#- echo target:{{ block.instance.container }} source:{{ block.source.container }} position:$position #}
 {{ mysql_jump() }} --host={{ block.instance.pod }} --execute 'RESET SLAVE ALL'
+{%- endfor -%}
+{%- for block in replication %}
 {{ mysql_jump() }} --host={{ block.instance.pod }} --execute 'SHOW MASTER STATUS\G'
 {%- endfor -%}
 {%- endmacro -%}
