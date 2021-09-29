@@ -38,6 +38,7 @@ repcheck() {
     [ $r1 -eq 0 ] && [ $r2 -eq 0 ]
 }
 
+
 loop2() {
     func=$1
     container=$2
@@ -88,6 +89,20 @@ healthcheck() {
 
 
 echo mysql: wait for replication to be ready
+repcheck() {
+    jump_container=$1
+    target_host=$2
+
+    result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=$target_host --execute 'SHOW SLAVE STATUS\G')
+
+    grep --silent 'Slave_IO_Running: Yes' <<<"$result"
+    r1=$?
+
+    grep --silent 'Slave_SQL_Running: Yes' <<<"$result"
+    r2=$?
+
+    [ $r1 -eq 0 ] && [ $r2 -eq 0 ]
+}
 sleep=2; tries=60
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
 loop1 repcheck my1c my2p.dns.podman $sleep $tries
@@ -135,6 +150,20 @@ podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podm
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'START SLAVE USER="repl" PASSWORD="replpass"'
 
 echo mysql: wait for replication to be ready
+repcheck() {
+    jump_container=$1
+    target_host=$2
+
+    result=$(podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=$target_host --execute 'SHOW SLAVE STATUS\G')
+
+    grep --silent 'Slave_IO_Running: Yes' <<<"$result"
+    r1=$?
+
+    grep --silent 'Slave_SQL_Running: Yes' <<<"$result"
+    r2=$?
+
+    [ $r1 -eq 0 ] && [ $r2 -eq 0 ]
+}
 sleep=2; tries=60
 loop1 repcheck my1c my1p.dns.podman $sleep $tries
 loop1 repcheck my1c my2p.dns.podman $sleep $tries

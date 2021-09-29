@@ -38,6 +38,7 @@ repcheck() {
     [ $r1 -eq 0 ] && [ $r2 -eq 0 ]
 }
 
+
 loop2() {
     func=$1
     container=$2

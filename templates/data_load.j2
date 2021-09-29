@@ -1,0 +1,9 @@
+#!/bin/bash
+set -o errexit
+{%- import "macros.j2" as macros with context %}
+
+{{ macros.mysql_data_load() }}
+
+{{ macros.mysql_disable_replication() }}
+
+{# keep newline at end of file please but only for aesthetics #}
