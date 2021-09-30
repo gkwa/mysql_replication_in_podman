@@ -196,16 +196,16 @@ echo mysql: stop slave
 echo mysql: fetch positions
 {%- for block in replication %}
 master_log_file=$(
-  {{ mysql_jump() }} --host={{ block.source.pod }}.dns.podman --execute 'SHOW MASTER STATUS\G' |
+  {{ mysql_show_master_status(block.source.pod ~ '.dns.podman') }} |
   sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
 [[ ! -z "$master_log_file" ]] # assert not empty
 position=$(
-  {{ mysql_jump() }} --host={{ block.source.pod }}.dns.podman --execute 'SHOW MASTER STATUS\G' |
+  {{ mysql_show_master_status(block.source.pod ~ '.dns.podman') }} |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 {#- echo target:{{ block.instance.container }} source:{{ block.source.container }} position:$position #}
-{{ mysql_jump() }} --host={{ block.instance.pod }} --execute 'SHOW MASTER STATUS\G'
+{{ mysql_show_master_status(block.instance.pod) }}
 {{ mysql_jump() }} --host={{ block.instance.pod }} --execute \
 "CHANGE MASTER TO MASTER_HOST='{{ block.source.pod }}.dns.podman',MASTER_USER='{{ global.user_replication }}',\
 MASTER_PASSWORD='{{ global.user_replication_pass }}',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
@@ -223,7 +223,7 @@ echo mysql: disable replication
 {{ mysql_jump() }} --host={{ block.instance.pod }} --execute 'RESET SLAVE ALL'
 {%- endfor -%}
 {%- for block in replication %}
-{{ mysql_jump() }} --host={{ block.instance.pod }} --execute 'SHOW MASTER STATUS\G'
+{{ mysql_show_master_status(block.instance.pod) }}
 {%- endfor -%}
 {%- endmacro -%}
 
