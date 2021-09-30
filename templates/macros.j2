@@ -76,7 +76,7 @@ repcheck() {
     jump_container=$1
     target_host=$2
 
-    result=$({{ mysql_jump() }} --host=$target_host --execute 'SHOW SLAVE STATUS\G')
+    result=$({{ mysql_exe('$target_host', 'SHOW SLAVE STATUS') }})
 
     grep --silent 'Slave_IO_Running: Yes' <<<"$result"
     r1=$?
@@ -167,11 +167,11 @@ echo mysql: start replication
 {%- endfor -%}
 {%- endmacro -%}
 
-{%- macro mysql_show_master_status(host) -%}
+{%- macro mysql_exe(host, cmd) -%}
 {%- set global=data['global'] -%}
 {%- set replication=data['replication'] -%}
 {%- set pods=data['pods'] -%}
-{{ mysql_jump() }} --host={{ host }} --execute 'SHOW MASTER STATUS\G'
+{{ mysql_jump() }} --host={{ host }} --execute '{{ cmd }}\G'
 {%- endmacro -%}
 
 {%- macro mysql_stop_slave() -%}
@@ -180,10 +180,10 @@ echo mysql: start replication
 {%- set pods=data['pods'] -%}
 echo mysql: stop slave
 {%- for pod in pods %}
-{{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
+{{ mysql_exe(pod.name ~ '.dns.podman', 'STOP SLAVE IO_THREAD FOR CHANNEL ""') }}
 {%- endfor %}
 {%- for pod in pods %}
-{{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'STOP SLAVE'
+{{ mysql_exe(pod.name, 'STOP SLAVE') }}
 {%- endfor %}
 {%- endmacro -%}
 
@@ -196,16 +196,16 @@ echo mysql: stop slave
 echo mysql: fetch positions
 {%- for block in replication %}
 master_log_file=$(
-  {{ mysql_show_master_status(block.source.pod ~ '.dns.podman') }} |
+  {{ mysql_exe(block.source.pod ~ '.dns.podman', 'SHOW MASTER STATUS') }} |
   sed -e '/^ *File:/!d' -e 's/File://g' -e 's/ //g'
 )
 [[ ! -z "$master_log_file" ]] # assert not empty
 position=$(
-  {{ mysql_show_master_status(block.source.pod ~ '.dns.podman') }} |
+  {{ mysql_exe(block.source.pod ~ '.dns.podman', 'SHOW MASTER STATUS') }} |
   sed -e '/^ *Position:/!d' -e 's/[^0-9]*//g'
 )
 {#- echo target:{{ block.instance.container }} source:{{ block.source.container }} position:$position #}
-{{ mysql_show_master_status(block.instance.pod) }}
+{{ mysql_exe(block.instance.pod, 'SHOW MASTER STATUS') }}
 {{ mysql_jump() }} --host={{ block.instance.pod }} --execute \
 "CHANGE MASTER TO MASTER_HOST='{{ block.source.pod }}.dns.podman',MASTER_USER='{{ global.user_replication }}',\
 MASTER_PASSWORD='{{ global.user_replication_pass }}',MASTER_LOG_FILE='"$master_log_file"',MASTER_LOG_POS=$position"
@@ -220,10 +220,10 @@ MASTER_PASSWORD='{{ global.user_replication_pass }}',MASTER_LOG_FILE='"$master_l
 
 echo mysql: disable replication 
 {%- for block in replication %}
-{{ mysql_jump() }} --host={{ block.instance.pod }} --execute 'RESET SLAVE ALL'
+{{ mysql_exe(block.instance.pod, 'RESET SLAVE ALL') }}
 {%- endfor -%}
 {%- for block in replication %}
-{{ mysql_show_master_status(block.instance.pod) }}
+{{ mysql_exe(block.instance.pod, 'SHOW MASTER STATUS') }}
 {%- endfor -%}
 {%- endmacro -%}
 
@@ -449,7 +449,7 @@ loop2 healthcheck {{ pod.containers[0].name }} $sleep $tries
 {%- set global=data['global'] -%}
 {%- set replication=data['replication'] -%}
 {%- set pods=data['pods'] -%}
-{{ mysql_jump() }} --host={{ host }} --execute 'CREATE DATABASE IF NOT EXISTS {{ db }}'
+{{ mysql_exe(host, 'CREATE DATABASE IF NOT EXISTS ' ~ db) }}
 {{ mysql_jump() }} --database={{ db }} --host={{ host }} --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
 {{ mysql_jump() }} --database={{ db }} --host={{ host }} --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 {%- endmacro -%}
