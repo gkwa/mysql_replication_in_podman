@@ -5,7 +5,7 @@
     apt-get -qqy install ca-certificates
 }
 
-@test "install apps" {
+@test "Install apps" {
     apt-get update
     apt-get -qqy install \
         jq \
@@ -14,7 +14,7 @@
         python3-venv
 }
 
-@test "install podman for ubuntu 2.10+" {
+@test "Install podman for ubuntu 2.10+" {
     skip
     apt-get update
     apt-get -y install podman
@@ -25,7 +25,7 @@
     [ $status -eq 0 ]
 }
 
-@test "install podman" {
+@test "Install podman" {
     . /etc/os-release
     #echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
     #curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | apt-key add -
@@ -43,13 +43,13 @@
 }
 
 # https://github.com/mvdan/sh/releases
-@test "install shfmt" {
+@test "Install shfmt" {
     version=$(curl --silent -sSL https://api.github.com/repos/mvdan/sh/releases/latest | jq -r .tag_name | sed -e 's#v##')
     curl -Lo /tmp/shfmt https://github.com/mvdan/sh/releases/download/v$version/shfmt_v${version}_linux_386
     install /tmp/shfmt /usr/local/bin/shfmt
 }
 
-@test "install buildah" {
+@test "Install buildah" {
     apt-get -qqy update
     apt-get -o APT::Install-Suggests="true" -y install buildah
 }
