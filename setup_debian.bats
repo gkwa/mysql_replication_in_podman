@@ -40,7 +40,7 @@
 
 # https://github.com/mvdan/sh/releases
 @test "install shfmt" {
-    version=$(curl --silent -sSL https://api.github.com/repos/mvdan/sh/releases/latest | jq -r .tag_name)
+    version=$(curl --silent -sSL https://api.github.com/repos/mvdan/sh/releases/latest | jq -r .tag_name | sed -e 's#v##')
     curl -Lo /tmp/shfmt https://github.com/mvdan/sh/releases/download/v$version/shfmt_v${version}_linux_386
     install /tmp/shfmt /usr/local/bin/shfmt
 }
