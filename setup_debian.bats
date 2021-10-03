@@ -14,7 +14,8 @@
         python3-venv
 }
 
-@test "install podman" {
+@test "install podman for ubuntu 2.10+" {
+    skip
     apt-get update
     apt-get -y install podman
 
@@ -24,11 +25,10 @@
     [ $status -eq 0 ]
 }
 
-@test "install podman old method" {
-    skip
+@test "install podman" {
     . /etc/os-release
-    echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-    curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | apt-key add -
+    echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+    curl -L "http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | apt-key add -
     apt-get update
     apt-get -y install podman
 
@@ -46,6 +46,6 @@
 }
 
 @test "install buildah" {
-    apt-get -qqy update </dev/null
+    apt-get -qqy update
     apt-get -o APT::Install-Suggests="true" -y install buildah
 }
