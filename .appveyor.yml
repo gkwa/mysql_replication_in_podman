@@ -1,5 +1,4 @@
 environment:
-  APPVEYOR_SSH_BLOCK: true
   APPVEYOR_SSH_KEY: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFp48yQviDu3U2mGdwv7CO3O84IAj4LJUXzyGbs6mT0q taylor.monacelli@streambox.com
 
 image: Ubuntu2004
@@ -12,6 +11,9 @@ install:
 - sudo bash install_bats.sh
 
 - sudo bats setup_debian.bats
+
+- sh: sleep 60m
+
 - sudo bash create_setup.sh
 
 - bats secure_file_setup.bats
