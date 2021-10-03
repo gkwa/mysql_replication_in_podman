@@ -1,6 +1,7 @@
 monacelli_pylog_prefs
 ipython
 django-extensions
+cog
 Django
 humanfriendly
 Jinja2

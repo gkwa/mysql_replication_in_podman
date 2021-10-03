@@ -502,16 +502,16 @@ podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podm
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'FLUSH PRIVILEGES'
 
 echo mysql: stop slave
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute 'STOP SLAVE\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --execute 'STOP SLAVE\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p --execute 'STOP SLAVE\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --execute 'STOP SLAVE\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p --execute 'STOP SLAVE\G'
 
 echo mysql: fetch positions
 master_log_file=$(
@@ -619,22 +619,22 @@ run podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.
 [ "$status" == 1 ]
 
 echo mysql: stop slave
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'STOP SLAVE IO_THREAD FOR CHANNEL ""\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute 'STOP SLAVE\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --execute 'STOP SLAVE\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p --execute 'STOP SLAVE\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --execute 'STOP SLAVE\G'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p --execute 'STOP SLAVE\G'
 
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute 'CREATE DATABASE IF NOT EXISTS ptest1'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute 'CREATE DATABASE IF NOT EXISTS ptest1\G'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --database=ptest1 --host=my1p --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --database=ptest1 --host=my1p --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --execute 'CREATE DATABASE IF NOT EXISTS ptest2'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --execute 'CREATE DATABASE IF NOT EXISTS ptest2\G'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --database=ptest2 --host=my2p --execute 'CREATE TABLE dummy (id INT(11) NOT NULL auto_increment PRIMARY KEY, name CHAR(5)) engine=innodb;'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --database=ptest2 --host=my2p --execute 'INSERT INTO dummy (name) VALUES ("a"), ("b")'
 
