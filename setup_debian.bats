@@ -1,5 +1,10 @@
 #!/bin/bash
 
+@test "Attempt fix podman/buildah install" {
+    apt-get -qy upgrade
+    apt-get -qqy install ca-certificates
+}
+
 @test "install apps" {
     apt-get update
     apt-get -qqy install \
