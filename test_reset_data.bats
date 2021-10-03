@@ -93,6 +93,9 @@ healthcheck() {
 ! grep --quiet --regexp 'docker.io/perconalab/percona-toolkit.*latest' <<<"$(podman images)" && time podman pull --quiet docker.io/perconalab/percona-toolkit:latest >/dev/null
 ! grep --quiet --regexp 'docker.io/library/python.*bullseye' <<<"$(podman images)" && time podman pull --quiet docker.io/library/python:bullseye >/dev/null
 
+echo podman: build dbeval image
+~/dbevaltest/build_image.sh
+
 echo stopping containers
 set +o errexit
 podman container stop --ignore my1c my2c my3c my4c my5c 2>&1 | grep -v 'Error: no container with name or ID ' >podman_stop_containers_$(date +%s).log

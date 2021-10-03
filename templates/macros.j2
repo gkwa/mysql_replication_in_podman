@@ -5,6 +5,8 @@
 {{ import_common_functions() }}
 {{ podman_pull_images() }}
 
+{{ podman_build_image() }}
+
 {{ podman_stop_containers() }}
 
 {{ podman_stop_pods() }}
@@ -26,6 +28,11 @@
 {{ podman_start_pods() }}
 
 {{ mysql_start_replication() }}
+{%- endmacro -%}
+
+{%- macro podman_build_image() -%}
+echo podman: build dbeval image
+~/dbevaltest/build_image.sh
 {%- endmacro -%}
 
 {%- macro delete_pods_and_containers() -%}
