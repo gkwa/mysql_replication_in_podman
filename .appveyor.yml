@@ -12,7 +12,7 @@ install:
 - sudo bats setup_debian.bats
 - sudo bash create_setup.sh
 - bats secure_file_setup.bats
-- bash: sudo ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret $my_secret -salt $my_salt -out /tmp/auth.json.decrypted
+- sh: sudo ./appveyor-tools/secure-file -decrypt ./auth.json.enc -secret $my_secret -salt $my_salt -out /tmp/auth.json.decrypted
 - sudo bash build_image.sh
 - sudo bats containers.bats
 - sudo time bash -x setup.sh
