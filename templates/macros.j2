@@ -32,7 +32,7 @@
 
 {%- macro podman_build_image() -%}
 echo podman: build dbeval image
-~/dbevaltest/build_image.sh
+./build_image.sh
 {%- endmacro -%}
 
 {%- macro delete_pods_and_containers() -%}

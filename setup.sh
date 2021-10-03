@@ -89,7 +89,7 @@ healthcheck() {
 ! grep --quiet --regexp 'docker.io/library/python.*bullseye' <<<"$(podman images)" && time podman pull --quiet docker.io/library/python:bullseye >/dev/null
 
 echo podman: build dbeval image
-~/dbevaltest/build_image.sh
+./build_image.sh
 
 echo stopping containers
 set +o errexit
