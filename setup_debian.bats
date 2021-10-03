@@ -10,7 +10,6 @@
 }
 
 @test "install podman" {
-    # run containers with podman
     . /etc/os-release
     echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
     curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | apt-key add -
@@ -23,10 +22,10 @@
     [ $status -eq 0 ]
 }
 
-
+# https://github.com/mvdan/sh/releases
 @test "install shfmt" {
-    # allow pretty-printing bash scripts
-    curl -Lo /tmp/shfmt https://github.com/mvdan/sh/releases/download/v3.3.1/shfmt_v3.3.1_linux_386
+    version=3.4.0
+    curl -Lo /tmp/shfmt https://github.com/mvdan/sh/releases/download/v$version/shfmt_v${version}_linux_386
     install /tmp/shfmt /usr/local/bin/shfmt
 }
 
