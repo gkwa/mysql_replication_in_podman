@@ -12,8 +12,6 @@ install:
 
 - sudo bats setup_debian.bats
 
-- sh: sleep 60m
-
 - sudo bash create_setup.sh
 
 - bats secure_file_setup.bats
