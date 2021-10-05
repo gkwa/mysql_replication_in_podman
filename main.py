@@ -86,6 +86,7 @@ def main():
     env = jinja2.Environment(keep_trailing_newline=True)
     env.loader = jinja2.FileSystemLoader(manifest_path.parent / "templates/")
 
+    ScriptExpander("sh", "lib", data=manifest, jinja_env=env).write()
     ScriptExpander("sh", "data_load", data=manifest, jinja_env=env).write()
     ScriptExpander("sh", "setup", data=manifest, jinja_env=env).write()
     ScriptExpander("sh", "setup", data=manifest, jinja_env=env).write()

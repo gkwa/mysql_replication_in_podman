@@ -1,0 +1,5 @@
+#!/bin/bash
+set -o errexit
+{%- import "macros.j2" as macros with context %}
+
+{{ macros.import_common_functions() }}
