@@ -467,11 +467,11 @@ size=$(du -s $(podman volume inspect my5dbdata | jq -r '.[]|.Mountpoint')/ |awk 
 [[ $size -gt 80000 ]]
 
 echo mysql: add and grant user repl
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
-podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p.dns.podman --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my4p --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
+podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my5p --execute 'CREATE USER IF NOT EXISTS `repl`@"%" IDENTIFIED WITH mysql_native_password BY "replpass"'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my1p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my2p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'
 podman exec --env=MYSQL_PWD=rootpass my1c mysql --user=root --host=my3p.dns.podman --execute 'GRANT REPLICATION SLAVE ON *.* TO `repl`@"%"'

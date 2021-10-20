@@ -509,7 +509,7 @@ run {{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'USE mysql'
 echo mysql: add and grant user {{ global.user_replication }}
 {% for pod in pods %}
 {%- set user = "`" ~ global.user_replication ~ "`" ~ "@" ~ '"' ~ '%' ~ '"' -%}
-{{ mysql_jump() }} --host={{ pod.name }}.dns.podman --execute 'CREATE USER IF NOT EXISTS {{ user }} IDENTIFIED WITH mysql_native_password BY "{{ global.user_replication_pass }}"'
+{{ mysql_jump() }} --host={{ pod.name }} --execute 'CREATE USER IF NOT EXISTS {{ user }} IDENTIFIED WITH mysql_native_password BY "{{ global.user_replication_pass }}"'
 {% endfor %}
 {%- for pod in pods %}
 {%- set user = "`" ~ global.user_replication ~ "`" ~ "@" ~ '"' ~ '%' ~ '"' -%}
