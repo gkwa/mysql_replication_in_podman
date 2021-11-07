@@ -32,7 +32,10 @@
 
 {%- macro podman_build_image() -%}
 echo podman: build dbeval image
-./build_image.sh
+if ! podman image exists localhost/dbeval:latest
+then
+    ./build_image.sh
+fi
 {%- endmacro -%}
 
 {%- macro delete_pods_and_containers() -%}
@@ -160,7 +163,7 @@ cleanall
 cd ~/live_dbeval_comparing_records
 {{ mysql_stop_slave() }}
 
-echo mysql: data_load
+echo mysql: loading data
 {{ mysql_exe(pods[0].containers[0].name, 'SOURCE /data/all_import.sql') }}
 {%- endmacro -%}
 
